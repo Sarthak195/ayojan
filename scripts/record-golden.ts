@@ -1,4 +1,4 @@
-// Records what the real model reads from each fixture into golden/llm/<promptId>/<fixture>.json,
+// Records what the real model reads from each fixture into golden/llm/<fixture>.<promptId>.json,
 // the replies the offline tests replay (requirements 4.4). Every call spends shared free-tier
 // quota, so the script refuses any flag it does not know (a typo must never record everything),
 // records only fixtures that have no recording yet unless one is named with --only, and stops at
@@ -24,6 +24,7 @@ import { loadKeyPool } from '@/server/config/key-pool';
 import { GatewayBugError } from '@/server/genai/classify';
 import { defaultGateway } from '@/server/genai/gateway';
 import type { LlmGateway, PromptSpec } from '@/server/pipeline/llm-gateway';
+import { SCHEMA_VERSIONS } from '@/server/pipeline/schema-versions';
 import * as brief from '@/server/prompts/brief';
 import * as change from '@/server/prompts/change';
 import * as familyUpdate from '@/server/prompts/family-update';
@@ -32,9 +33,6 @@ import { PROMPTS, type PromptId } from '@/server/prompts/registry';
 
 export const FIXTURES_DIR = join(process.cwd(), 'fixtures');
 export const GOLDEN_DIR = join(process.cwd(), 'golden', 'llm');
-
-// Written into every recording so replay can flag one made against an older reading shape.
-export const SCHEMA_VERSION = '1';
 
 // D33 budgets one draft call. Hindi is the language the persona's parents read and the one the
 // video shows (beat 12), and it is where a template reads stiffest (D07).
@@ -123,7 +121,7 @@ export function parseArgs(argv: readonly string[], fixtures: ReadonlySet<string>
 }
 
 export function recordingPath(promptId: PromptId, fixture: string): string {
-  return join(GOLDEN_DIR, promptId, `${fixture}.json`);
+  return join(GOLDEN_DIR, `${fixture}.${promptId}.json`);
 }
 
 /** How many of the reading's quotes occur in the text: a hand-review aid, not the pipeline's verdict. */
@@ -165,7 +163,7 @@ async function recordOne(
     result = await gateway.extract({
       prompt: route.prompt,
       schema: route.schema,
-      schemaVersion: SCHEMA_VERSION,
+      schemaVersion: SCHEMA_VERSIONS[promptId],
       text: route.toText(raw),
       origin: { kind: 'typed' },
       cacheInputs: route.cacheInputs,
@@ -180,16 +178,16 @@ async function recordOne(
     console.error(`${fixture}: no reading (${why}).`);
     return false;
   }
-  // The `reading` key matches the fake gateway's reply shape, so a recording can feed it as is.
+  // The shape the example book reads (pipeline/example-readings.ts); extra keys are ignored there.
   const recording = {
     fixture,
     promptId,
     promptVersion: route.prompt.version,
-    schemaVersion: SCHEMA_VERSION,
+    schemaVersion: SCHEMA_VERSIONS[promptId],
     cacheInputs: route.cacheInputs,
     answeredBy: result.answeredBy,
     recordedOn: todayInIndia(),
-    reading: result.value,
+    reply: result.value,
   };
   const path = recordingPath(promptId, fixture);
   const json = await format(JSON.stringify(recording), {
@@ -199,7 +197,7 @@ async function recordOne(
   // Belt and braces: nothing above comes from the environment, but a key must never be committed.
   if (keys.some((key) => json.includes(key)))
     throw new Error(`${fixture}: a key reached the recording; nothing written.`);
-  mkdirSync(join(GOLDEN_DIR, promptId), { recursive: true });
+  mkdirSync(GOLDEN_DIR, { recursive: true });
   writeFileSync(path, json, 'utf8');
   console.log(`${fixture}: ${reviewLine(promptId, raw, result.value)} (${result.answeredBy})`);
   return true;

@@ -2,6 +2,8 @@
 // booking task, and delayed by a number of days. Both languages share one interface, so a key
 // missing from either fails `tsc`.
 
+import { daysEn, slackEn, slackHi } from '../slack-words';
+
 export interface TasksDictionary {
   readonly markDone: string;
   readonly doneFormLabel: (task: string) => string;
@@ -33,7 +35,7 @@ export const en: TasksDictionary = {
   save: 'Save',
   notBefore: (date) => `Cannot start before ${date}`,
   moved: (task, days, because, slack) =>
-    `${task}: moved ${String(days)} days later because ${because} was delayed; ${String(slack)} days of slack now`,
+    `${task}: moved ${daysEn(days)} later because ${because} was delayed; now ${slackEn(slack)}`,
   summaryMoved: (tasks) => `Moved later: ${tasks}.`,
   summaryNoneMoved: 'No other task moved.',
 };
@@ -52,7 +54,7 @@ export const hi: TasksDictionary = {
   save: 'सहेजें',
   notBefore: (date) => `${date} से पहले शुरू नहीं हो सकता`,
   moved: (task, days, because, slack) =>
-    `${task}: ${String(days)} दिन आगे खिसका, क्योंकि ${because} में देर हुई; अब ${String(slack)} दिन की गुंजाइश`,
+    `${task}: ${String(days)} दिन आगे खिसका, क्योंकि ${because} में देर हुई; अब ${slackHi(slack)}`,
   summaryMoved: (tasks) => `आगे खिसके: ${tasks}।`,
   summaryNoneMoved: 'कोई और काम नहीं खिसका।',
 };

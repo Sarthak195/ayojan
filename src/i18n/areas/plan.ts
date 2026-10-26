@@ -1,6 +1,8 @@
 // The plan page (spec 6.4): the headline, the money table, the timeline, a short ledger and the
 // links onward. Functions take only strings and numbers, so the parity test can call each one.
 
+import { slackEn, slackHi } from '../slack-words';
+
 export interface PlanDictionary {
   readonly title: (version: number, occasion: string, date: string) => string;
   readonly readByAi: (matched: number, total: number) => string;
@@ -32,6 +34,7 @@ export interface PlanDictionary {
   readonly whyHeading: string;
   readonly tasksHeading: string;
   readonly finishBy: (date: string) => string;
+  /** Negative is days late, positive days to spare. */
   readonly slack: (days: number) => string;
   readonly critical: string;
   readonly doneOn: (date: string) => string;
@@ -78,7 +81,7 @@ export const en: PlanDictionary = {
   whyHeading: 'Why these numbers?',
   tasksHeading: 'Tasks (critical path first)',
   finishBy: (date) => `Finish by ${date}`,
-  slack: (days) => (days === 1 ? '1 day slack' : `${String(days)} days slack`),
+  slack: slackEn,
   critical: 'On the critical path',
   doneOn: (date) => `Done on ${date}`,
   ledgerHeading: 'Ledger',
@@ -124,7 +127,7 @@ export const hi: PlanDictionary = {
   whyHeading: 'ये आँकड़े क्यों?',
   tasksHeading: 'काम (सबसे ज़रूरी पहले)',
   finishBy: (date) => `${date} तक पूरा करें`,
-  slack: (days) => `${String(days)} दिन की गुंजाइश`,
+  slack: slackHi,
   critical: 'सबसे ज़रूरी कड़ी में',
   doneOn: (date) => `${date} को हो गया`,
   ledgerHeading: 'बही',

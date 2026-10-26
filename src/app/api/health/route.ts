@@ -1,29 +1,15 @@
-import { loadKeyPool } from '@/server/config/key-pool';
+import { healthReport } from '@/server/observability/health';
 
 // Reads the environment on each call, so it must never be prerendered at build time.
 export const dynamic = 'force-dynamic';
 
-interface HealthReport {
-  readonly status: 'ok' | 'unavailable';
-  readonly keys: number;
-  readonly problems: readonly string[];
-}
-
-// Makes no model call (it would spend quota on every probe) and reports only a count,
-// never key material.
+// Makes no model call (it would spend quota on every probe) and reports counts only, never
+// key material. 503 only when the seal key or the planning data cannot load: without a
+// Gemini key the form twin still works, so that is `ai: "unavailable"` with a 200 (FR-45).
 export function GET(): Response {
-  const { count } = loadKeyPool();
-  const report: HealthReport =
-    count > 0
-      ? { status: 'ok', keys: count, problems: [] }
-      : {
-          status: 'unavailable',
-          keys: 0,
-          problems: ['No Gemini API key is configured: set GEMINI_API_KEY.'],
-        };
-
+  const { httpStatus, report } = healthReport();
   return Response.json(report, {
-    status: count > 0 ? 200 : 503,
+    status: httpStatus,
     headers: { 'Cache-Control': 'no-store' },
   });
 }

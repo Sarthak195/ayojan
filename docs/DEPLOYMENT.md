@@ -11,8 +11,8 @@ setting below was read back from the running service with `gcloud run services d
 | Fact (as read on 26 Oct 2026) | Value                                                                                                                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                      |
-| Revision serving traffic      | `ayojan-00002-7hr` at 100 percent of traffic; the first revision, `ayojan-00001-jxf`, is kept for rollback                                                                                                            |
-| Source of that revision       | commit `a9184fe` on `main`                                                                                                                                                                                            |
+| Revision serving traffic      | `ayojan-00003-lx6` at 100 percent of traffic; the earlier revisions, `ayojan-00001-jxf` and `ayojan-00002-7hr`, are kept for rollback                                                                                 |
+| Source of that revision       | commit `eb37d0d` on `main`                                                                                                                                                                                            |
 | Request timeout               | 60 seconds                                                                                                                                                                                                            |
 | Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 3                                                                                                                              |
 | Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                          |
@@ -28,6 +28,9 @@ the `usb=()` entry in the Permissions-Policy, the answering model on the check p
 in amount fields and the page icon; `git log --oneline f694edb..a9184fe` lists every commit. The
 image leaves out Markdown files and `docs/` (see `.dockerignore`), so a later commit that changes
 only those needs no deploy.
+
+The third revision was built from `eb37d0d` on 26 Oct 2026 at about 23:20 IST. It adds the privacy
+sentence under every read button, in English and Hindi (`git log --oneline a9184fe..eb37d0d`).
 
 ## The container image
 
@@ -69,7 +72,8 @@ gcloud run deploy ayojan --source "$DEPLOY_DIR" --region asia-south1 \
 For the first deploy, on 26 Oct 2026, the directory was the archive of `f694edb`. gcloud
 reported "Building using Dockerfile", created the revision `ayojan-00001-jxf`, and routed 100
 percent of traffic to it. The second deploy, the same evening, used the archive of `a9184fe`
-and created `ayojan-00002-7hr`, which took all traffic.
+and created `ayojan-00002-7hr`, which took all traffic. The third, from the archive of `eb37d0d`,
+created `ayojan-00003-lx6`.
 
 Why a git archive and not `--source .`:
 
@@ -189,6 +193,11 @@ What was checked against `ayojan-00002-7hr` the same evening:
 | A plan link made on `ayojan-00001-jxf` (the anniversary from the first check)               | still opens, with 200; with the new lead times it shows 13 tasks On track and none Late, where the first revision showed every task Late                                                                                                                                                        |
 | Headers and icon                                                                            | `Permissions-Policy` includes `usb=()`; pages link `/icon.svg`, which answers 200                                                                                                                                                                                                               |
 | Plan page at 360 px in Chromium (Playwright, mobile emulation), money table scrolled 120 px | the caption stayed in view (17 to 337 px), the page stayed 360 px wide, and the console showed no error                                                                                                                                                                                         |
+
+What was checked against `ayojan-00003-lx6` that night, with no model call: `/api/health` answered
+`ok` with 7 keys, the seal key loaded and an empty reading cache; and in English and in Hindi, the
+privacy sentence sits in the element that each read button names in `aria-describedby`, on the
+start page (the brief and the example), in the plan's change box and on the quotes page.
 
 ## Rollback
 

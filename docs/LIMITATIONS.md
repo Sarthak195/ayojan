@@ -165,7 +165,7 @@ starting a new plan is the way out. The measurement is
 
 ### Model quota is shared, treated as free-tier and assumed
 
-Ayojan is treated as a free-tier Gemini client, and from commit `8ab00a3` (live after the next deploy) its read pages tell users so. On 26 Oct 2026 the
+Ayojan is treated as a free-tier Gemini client, and from commit `8ab00a3` (live since revision `ayojan-00003-lx6`) its read pages tell users so. On 26 Oct 2026 the
 Cloud Run project had billing enabled but the Gemini API was not enabled in it, so none of the 7
 working keys can come from that billed project; the projects the keys do come from were not
 inspected. No paid key was added: a paid last step on the model ladder was offered and declined,

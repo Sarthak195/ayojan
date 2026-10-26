@@ -70,12 +70,12 @@ therefore governed by Google's terms, summarised next, not by anything Ayojan ch
 
 ### Free-tier disclosure
 
-Ayojan is treated as a free-tier Gemini client, and, from the next deploy, tells its users so. As checked on 26 Oct 2026,
+Ayojan is treated as a free-tier Gemini client, and tells its users so. As checked on 26 Oct 2026,
 the Cloud Run project has billing enabled, but the Gemini API (`generativelanguage.googleapis.com`)
 is not enabled in it, so none of the 7 working Gemini keys can come from that billed project. The
 projects the keys do come from were not inspected, so this page does not claim that each key was
 verified to be on the free tier. No paid key was added: a paid fallback key was offered and
-declined. The UI carries the notice since commit `8ab00a3` (live after the next deploy): under
+declined. The UI carries the notice since commit `8ab00a3` (live since revision `ayojan-00003-lx6`): under
 every read button (the start page brief and its examples, the vendor quote box and the plan change box) it says
 "Gemini's free tier may use what you send to improve Google's products, so leave out names and
 phone numbers." The Hindi interface has the same sentence. It sits in the same hint as "Reading can

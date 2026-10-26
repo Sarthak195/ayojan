@@ -177,7 +177,7 @@ export async function draftFamilyUpdate(
   log.info('family-update', {
     promptId: familyUpdate.id,
     readingSource: result.kind === 'draft' ? result.source : 'template',
-    ...(result.kind === 'template' ? { reason: result.reasons.join('-') } : {}),
+    ...(result.kind === 'template' ? { reason: result.reasons[0] } : {}),
   });
   return result;
 }

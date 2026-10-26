@@ -63,6 +63,25 @@ describe('readChange', () => {
     expect(pending.values.guests).toEqual({ mode: 'delta', count: -30 });
   });
 
+  it('stores a budget delta as its size, with the direction carrying the sign', async () => {
+    const pending = await readReading(
+      'budget 50 hazaar kam karo',
+      changeReading({
+        budget: {
+          mode: 'delta',
+          direction: 'decrease',
+          amountInr: -50_000,
+          quote: 'budget 50 hazaar kam',
+        },
+      }),
+    );
+    expect(pending.values.budget).toEqual({
+      mode: 'delta',
+      direction: 'decrease',
+      amountInr: 50_000,
+    });
+  });
+
   it('offers two dates when a shift and a written date disagree (FR-24)', async () => {
     const pending = await readReading(
       '2 weeks earlier, on 5 March',

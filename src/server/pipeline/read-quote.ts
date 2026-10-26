@@ -90,7 +90,11 @@ function buildQuote(reading: QuoteReading, verdicts: Verdicts): PendingValues {
     quote: basis.quote,
   });
   const rateVerdict = verdicts.check('rateInr', {
-    presence: rateInr.amountInr === null && rateInr.quote === '' ? 'absent' : 'present',
+    // A rate the quote talks about without a number ("rate baad mein") is asked, not matched.
+    presence:
+      rateInr.amountInr === null && rateInr.quote === ''
+        ? 'absent'
+        : presenceWith('present', rateInr.amountInr),
     quote: rateInr.quote,
     numbers: spelled(rateInr.amountInr, RATE),
   });

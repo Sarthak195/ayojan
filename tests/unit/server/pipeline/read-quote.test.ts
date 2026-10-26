@@ -79,6 +79,15 @@ describe('readQuote', () => {
     });
   });
 
+  it('asks for a rate the quote mentions without a number', async () => {
+    const pending = await readReading(
+      'rate baad mein batayenge, min 200 plate',
+      quoteReading({ rateInr: { amountInr: null, quote: 'rate baad mein batayenge' } }),
+    );
+    expect(pending.values.rateInr).toBeNull();
+    expect(pending.fields.find((field) => field.field === 'rateInr')?.status).toBe('unclear');
+  });
+
   it('leaves out an extra whose words are not in the quote', async () => {
     const pending = await readReading(CATERER_A, {
       ...CATERER_A_READING,

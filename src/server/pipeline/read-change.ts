@@ -94,7 +94,11 @@ function readBudget(
     return isVerified(verdict) ? { mode, direction, amountInr: null } : null;
   }
   const kept =
-    mode === 'absolute' ? keptNumber(verdict, amountInr) : isVerified(verdict) ? amountInr : null;
+    mode === 'absolute'
+      ? keptNumber(verdict, amountInr)
+      : isVerified(verdict)
+        ? sizeOf(amountInr)
+        : null;
   return kept === null ? null : { mode, direction, amountInr: kept };
 }
 

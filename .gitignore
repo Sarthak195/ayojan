@@ -1,0 +1,43 @@
+# Secrets: never committed, never recoverable once they are in history
+.env
+.env.*
+!.env.example
+*.pem
+*-key.json
+service-account*.json
+
+# Dependencies and build output
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Test and coverage artefacts
+coverage/
+test-results/
+
+# Tooling state
+.eslintcache
+npm-debug.log*
+
+# Planning notes: private working files, not product documentation
+.planning/
+
+# Binaries and media: the contest caps the repository at 10 MB including history.
+# Screenshots go to GitHub's CDN (drag them into an issue comment), never into git.
+*.mp4
+*.webm
+*.mov
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+*.docx
+
+# OS noise
+.DS_Store
+Thumbs.db

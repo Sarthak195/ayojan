@@ -1,0 +1,76 @@
+{
+  "occasion": "wedding",
+  "now": {
+    "budgetInr": 750000,
+    "guests": 250,
+    "eventDate": "2027-02-12",
+    "projectedInr": 734400
+  },
+  "before": {
+    "budgetInr": 800000,
+    "guests": 200,
+    "eventDate": "2027-02-26",
+    "projectedInr": 743000
+  },
+  "daysToEvent": 104,
+  "levers": [
+    {
+      "id": "e-invites",
+      "label": {
+        "en": "E-invites and simpler return gifts",
+        "hi": "ई-कार्ड और सादे रिटर्न गिफ़्ट"
+      },
+      "effectInr": 26500
+    },
+    {
+      "id": "half-contingency",
+      "label": {
+        "en": "Use half the contingency",
+        "hi": "अचानक के ख़र्च की आधी रक़म इस्तेमाल करें"
+      },
+      "effectInr": 38000
+    }
+  ],
+  "atRisk": [
+    {
+      "taskId": "book-caterer",
+      "name": { "en": "Book the caterer", "hi": "केटरर बुक करें" },
+      "status": "atRisk",
+      "dueBy": "2026-11-04"
+    },
+    {
+      "taskId": "book-decorator",
+      "name": { "en": "Book the decorator", "hi": "डेकोरेटर बुक करें" },
+      "status": "atRisk",
+      "dueBy": "2026-11-09"
+    }
+  ],
+  "vendors": [
+    {
+      "label": { "en": "Venue", "hi": "शादी की जगह" },
+      "category": "venue",
+      "questionIds": ["venue-capacity", "date-reconfirmation"],
+      "bookedCapacity": 220
+    },
+    {
+      "label": { "en": "Caterer A", "hi": "केटरर A" },
+      "category": "catering",
+      "questionIds": ["tax-rate", "guest-count-reconfirmation", "date-reconfirmation"],
+      "bookedCapacity": null
+    },
+    {
+      "label": { "en": "Caterer B", "hi": "केटरर B" },
+      "category": "catering",
+      "questionIds": ["guest-count-reconfirmation", "date-reconfirmation"],
+      "bookedCapacity": null
+    }
+  ],
+  "unclearQuotes": [
+    {
+      "vendor": { "en": "Caterer A", "hi": "केटरर A" },
+      "fields": ["taxRate"]
+    }
+  ],
+  "diet": ["jain"],
+  "venueLimits": ["indoorOnly"]
+}

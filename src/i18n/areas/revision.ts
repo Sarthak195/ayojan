@@ -2,7 +2,7 @@
 // key; both objects below are annotated with it, so a key missing from either language, or
 // present in only one, fails `tsc`.
 
-export type RevisionDictionary = Record<never, string>;
+export type RevisionDictionary = Readonly<Record<string, never>>;
 
 export const en: RevisionDictionary = {};
 

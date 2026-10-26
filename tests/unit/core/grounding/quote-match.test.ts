@@ -152,6 +152,13 @@ describe('locateQuote never starts or ends a match inside a word', () => {
     });
   });
 
+  it('keeps a rupee marker glued to a digit apart from the number', () => {
+    // Canonicalisation writes the marker as "Rs " with a space, so the digit opens a word.
+    const rupee = String.fromCodePoint(0x20b9);
+    expect(outcomeOf(locate(`budget ${rupee}8 lakh`, '8 lakh'))).toBe('found:exact');
+    expect(outcomeOf(locate('Rs.1300/plate', '1300/plate'))).toBe('found:exact');
+  });
+
   it('skips an occurrence inside a word and shows the next whole one', () => {
     const match = locate('18 lakh nahi, 8 lakh', '8 lakh');
     expect(match.kind === 'found' ? match.start : -1).toBe(14);

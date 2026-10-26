@@ -6,6 +6,9 @@
 # books: marking this task done with an amount books this category (the one booking path).
 # fasterAlternative: what the task becomes when a lever chooses the quicker route.
 # weddingOnly: dropped for the small-celebration profile.
+# celebration: the small-celebration profile's own two day counts, with their basis (null only
+#   on a wedding-only task). A birthday is planned weeks ahead, not months, so the wedding's
+#   lead times would show every task Late. reviewed stays empty until the user signs it off.
 
 thresholds:
   atRiskSlackDays:
@@ -29,6 +32,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 100
     durationDays: 10
+    celebration:
+      latestFinishDaysBefore: 14
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: a party hall or restaurant for a small gathering is usually still free two weeks ahead and chosen in a few days.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: venue
@@ -43,6 +51,11 @@ tasks:
     dependsOn: [book-venue]
     latestFinishDaysBefore: 90
     durationDays: 10
+    celebration:
+      latestFinishDaysBefore: 12
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: a caterer for a small gathering is fixed once the venue is known, about two weeks ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: catering
@@ -57,6 +70,11 @@ tasks:
     dependsOn: [book-venue]
     latestFinishDaysBefore: 75
     durationDays: 10
+    celebration:
+      latestFinishDaysBefore: 10
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: simple decoration for a small gathering is booked about ten days ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: decor
@@ -71,6 +89,11 @@ tasks:
     dependsOn: [book-decorator]
     latestFinishDaysBefore: 30
     durationDays: 7
+    celebration:
+      latestFinishDaysBefore: 5
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: five days is enough for a small decorator to buy what the agreed plan needs.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -85,6 +108,7 @@ tasks:
     dependsOn: [decor-sign-off]
     latestFinishDaysBefore: 21
     durationDays: 7
+    celebration: null
     activatedBy: [{ when: always }]
     weddingOnly: true
     books: null
@@ -99,6 +123,11 @@ tasks:
     dependsOn: [mandap-design, decor-sign-off, book-caterer]
     latestFinishDaysBefore: 7
     durationDays: 1
+    celebration:
+      latestFinishDaysBefore: 2
+      durationDays: 1
+      basis: 'Planning assumption chosen by the author: a short look at the venue two days ahead still leaves time to fix a small problem.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -113,6 +142,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 75
     durationDays: 14
+    celebration:
+      latestFinishDaysBefore: 14
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: a short guest list is settled in a few days, two weeks ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -127,6 +161,11 @@ tasks:
     dependsOn: [finalise-guest-list]
     latestFinishDaysBefore: 60
     durationDays: 21
+    celebration:
+      latestFinishDaysBefore: 10
+      durationDays: 4
+      basis: 'Planning assumption chosen by the author: a small batch of cards from a local printer takes about four days, and an e-invite a day or two.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -135,6 +174,7 @@ tasks:
       hi: ई-कार्ड बनवाएँ
       latestFinishDaysBefore: 52
       durationDays: 3
+      celebration: { latestFinishDaysBefore: 8, durationDays: 2 }
     basis: 'Planning assumption chosen by the author: design, proofs and printing take about three weeks, while e-invites take a few days.'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
@@ -145,6 +185,11 @@ tasks:
     dependsOn: [print-invitations]
     latestFinishDaysBefore: 45
     durationDays: 7
+    celebration:
+      latestFinishDaysBefore: 7
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: guests of a small gathering are invited about a week ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -159,6 +204,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 60
     durationDays: 5
+    celebration:
+      latestFinishDaysBefore: 14
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: a dhol player or DJ for a small gathering is booked about two weeks ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }, { when: mustHave, mustHave: dhol }]
     weddingOnly: false
     books: music
@@ -173,6 +223,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 45
     durationDays: 3
+    celebration:
+      latestFinishDaysBefore: 7
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: one mehndi artist for a small gathering is booked about a week ahead.'
+      reviewed: ''
     activatedBy: [{ when: function, function: mehndi }, { when: mustHave, mustHave: mehndiArtist }]
     weddingOnly: false
     books: null
@@ -187,6 +242,11 @@ tasks:
     dependsOn: [book-venue]
     latestFinishDaysBefore: 60
     durationDays: 3
+    celebration:
+      latestFinishDaysBefore: 10
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: step-free access is confirmed soon after the venue is chosen, about ten days ahead.'
+      reviewed: ''
     activatedBy: [{ when: need, need: wheelchair }]
     weddingOnly: false
     books: null
@@ -201,6 +261,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 90
     durationDays: 7
+    celebration:
+      latestFinishDaysBefore: 14
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: a photographer for a few hours is booked about two weeks ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: photo
@@ -215,6 +280,11 @@ tasks:
     dependsOn: [book-caterer]
     latestFinishDaysBefore: 30
     durationDays: 1
+    celebration:
+      latestFinishDaysBefore: 5
+      durationDays: 1
+      basis: 'Planning assumption chosen by the author: a small menu is tasted in the last week, once the caterer is booked.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -229,6 +299,11 @@ tasks:
     dependsOn: [book-caterer]
     latestFinishDaysBefore: 30
     durationDays: 2
+    celebration:
+      latestFinishDaysBefore: 5
+      durationDays: 2
+      basis: 'Planning assumption chosen by the author: a live counter is confirmed with the caterer in the last week.'
+      reviewed: ''
     activatedBy: [{ when: mustHave, mustHave: liveCounter }]
     weddingOnly: false
     books: null
@@ -243,6 +318,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 45
     durationDays: 3
+    celebration:
+      latestFinishDaysBefore: 14
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: a short dance needs about two weeks of practice, so the choreographer is booked first.'
+      reviewed: ''
     activatedBy: [{ when: mustHave, mustHave: choreographer }]
     weddingOnly: false
     books: null
@@ -257,6 +337,7 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 14
     durationDays: 3
+    celebration: null
     activatedBy: [{ when: function, function: haldi }]
     weddingOnly: true
     books: null
@@ -271,6 +352,7 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 30
     durationDays: 7
+    celebration: null
     activatedBy: [{ when: function, function: sangeet }]
     weddingOnly: true
     books: null
@@ -285,6 +367,11 @@ tasks:
     dependsOn: []
     latestFinishDaysBefore: 21
     durationDays: 10
+    celebration:
+      latestFinishDaysBefore: 5
+      durationDays: 3
+      basis: 'Planning assumption chosen by the author: return gifts for a small gathering are bought in the last week.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null
@@ -299,6 +386,11 @@ tasks:
     dependsOn: [send-invitations, book-caterer]
     latestFinishDaysBefore: 7
     durationDays: 1
+    celebration:
+      latestFinishDaysBefore: 3
+      durationDays: 1
+      basis: 'Planning assumption chosen by the author: a small caterer needs the final count about three days ahead.'
+      reviewed: ''
     activatedBy: [{ when: always }]
     weddingOnly: false
     books: null

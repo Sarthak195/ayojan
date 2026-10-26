@@ -1,7 +1,16 @@
 import { z } from 'zod';
 
 import { Category, FunctionName, GuestNeed, MustHave } from '../readings/vocabulary';
-import { Days, DurationDays, English, Hindi, RowId, planningRow } from './planning-row';
+import {
+  Basis,
+  Days,
+  DurationDays,
+  English,
+  Hindi,
+  Reviewed,
+  RowId,
+  planningRow,
+} from './planning-row';
 
 // A task is active when any one of its conditions holds. A list rather than one condition,
 // because the mehndi artist is needed both when there is a mehndi function and when the
@@ -13,11 +22,18 @@ const Activation = z.discriminatedUnion('when', [
   z.strictObject({ when: z.literal('need'), need: GuestNeed }),
 ]);
 
+const LeadTime = { latestFinishDaysBefore: Days, durationDays: DurationDays };
+
+// The small-celebration profile's own day counts (D40): a birthday planned seven weeks out
+// would show every task Late against a wedding's three-month lead times. Null only on a
+// wedding-only task, which that profile drops anyway (checked by the knowledge validator).
+const CelebrationTiming = z.strictObject({ ...LeadTime, basis: Basis, reviewed: Reviewed });
+
 const FasterAlternative = z.strictObject({
   en: English,
   hi: Hindi,
-  latestFinishDaysBefore: Days,
-  durationDays: DurationDays,
+  ...LeadTime,
+  celebration: z.strictObject(LeadTime).nullable(),
 });
 
 const TaskRow = z.strictObject({
@@ -27,8 +43,8 @@ const TaskRow = z.strictObject({
   // Ids are plain strings here, not the generated enum: the enum is generated from this file,
   // so referential integrity is checked by the knowledge validator instead.
   dependsOn: z.array(RowId),
-  latestFinishDaysBefore: Days,
-  durationDays: DurationDays,
+  ...LeadTime,
+  celebration: CelebrationTiming.nullable(),
   activatedBy: z.array(Activation).min(1),
   weddingOnly: z.boolean(),
   // The one booking path (D10): marking this task done with an amount books this category.

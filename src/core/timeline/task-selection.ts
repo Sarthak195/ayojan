@@ -18,7 +18,7 @@ export interface TaskNeeds {
 }
 
 export interface TaskSelection {
-  /** Active templates in data order. */
+  /** Active templates in data order, with the profile's day counts applied. */
   readonly active: readonly TaskRow[];
   /** Every template id in the data, active or not, so a dependency on a dropped template can be told from a typo. */
   readonly knownIds: ReadonlySet<string>;
@@ -54,15 +54,29 @@ function isActive(row: TaskRow, needs: TaskNeeds): boolean {
   });
 }
 
+// The small celebration's own day counts replace the wedding's (D40), so everything after
+// selection, the scheduler and the faster alternative included, reads one set of numbers.
+function timedFor(row: TaskRow, profile: OccasionProfile): TaskRow {
+  if (profile !== 'celebration' || row.celebration === null) return row;
+  const { latestFinishDaysBefore, durationDays } = row.celebration;
+  const faster = row.fasterAlternative;
+  return {
+    ...row,
+    latestFinishDaysBefore,
+    durationDays,
+    fasterAlternative: faster?.celebration ? { ...faster, ...faster.celebration } : faster,
+  };
+}
+
 export function selectTasks(
   templates: readonly TaskRow[],
   needs: TaskNeeds,
   profile: OccasionProfile,
 ): TaskSelection {
-  const active = templates.filter(
+  const active = templates
     // A small celebration has no mandap or haldi: those templates are wedding-only in data.
-    (row) => !(row.weddingOnly && profile === 'celebration') && isActive(row, needs),
-  );
+    .filter((row) => !(row.weddingOnly && profile === 'celebration') && isActive(row, needs))
+    .map((row) => timedFor(row, profile));
   return { active, knownIds: new Set(templates.map((row) => row.id)) };
 }
 

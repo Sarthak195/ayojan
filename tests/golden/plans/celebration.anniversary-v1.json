@@ -1,0 +1,893 @@
+{
+  "current": {
+    "version": 1,
+    "brief": {
+      "occasion": "anniversary",
+      "budgetInr": 150000,
+      "guests": 30,
+      "eventDate": "2026-12-19",
+      "venueCapacity": null,
+      "functions": {
+        "haldi": "unsure",
+        "mehndi": "unsure",
+        "sangeet": "unsure",
+        "wedding": "unsure",
+        "reception": "unsure"
+      },
+      "priorities": {
+        "venue": "unclear",
+        "catering": "more",
+        "decor": "save",
+        "photo": "unclear",
+        "music": "unclear",
+        "invites": "unclear",
+        "contingency": "unclear"
+      },
+      "mustHaves": [],
+      "needs": [],
+      "diet": [],
+      "venueLimits": [],
+      "notes": []
+    },
+    "profile": "celebration",
+    "priorities": {
+      "venue": "unclear",
+      "catering": "more",
+      "decor": "save",
+      "photo": "unclear",
+      "music": "unclear",
+      "invites": "unclear",
+      "contingency": "unclear"
+    },
+    "headline": {
+      "budget": {
+        "inr": 150000,
+        "provenance": "your-number"
+      },
+      "guests": 30,
+      "eventDate": "2026-12-19",
+      "venue": {
+        "capacity": null,
+        "source": null
+      },
+      "projected": {
+        "inr": 150000,
+        "provenance": "computed"
+      },
+      "gap": {
+        "inr": 0,
+        "provenance": "computed"
+      },
+      "status": "within-budget"
+    },
+    "money": {
+      "input": {
+        "split": {
+          "profile": "celebration",
+          "roundingUnitInr": 1000,
+          "budgetAtSplit": {
+            "inr": 150000,
+            "provenance": "your-number"
+          },
+          "guestsAtSplit": 30,
+          "order": ["venue", "catering", "decor", "photo", "music", "invites", "contingency"],
+          "lines": {
+            "venue": {
+              "category": "venue",
+              "allocation": {
+                "inr": 28000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 30,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "catering": {
+              "category": "catering",
+              "allocation": {
+                "inr": 70000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 100,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "decor": {
+              "category": "decor",
+              "allocation": {
+                "inr": 12000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 20,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "photo": {
+              "category": "photo",
+              "allocation": {
+                "inr": 8000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 0,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "music": {
+              "category": "music",
+              "allocation": {
+                "inr": 8000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 0,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "invites": {
+              "category": "invites",
+              "allocation": {
+                "inr": 8000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 100,
+              "floor": {
+                "of": "allocation",
+                "percent": 50
+              }
+            },
+            "contingency": {
+              "category": "contingency",
+              "allocation": {
+                "inr": 16000,
+                "provenance": "your-split"
+              },
+              "perGuestSharePercent": 0,
+              "floor": {
+                "of": "budget",
+                "percent": 5
+              }
+            }
+          }
+        },
+        "deltas": {},
+        "guestsNow": 30,
+        "budgetNowInr": 150000,
+        "evidence": {}
+      },
+      "baseline": {
+        "guestsNow": 30,
+        "budget": {
+          "inr": 150000,
+          "provenance": "your-number"
+        },
+        "order": ["venue", "catering", "decor", "photo", "music", "invites", "contingency"],
+        "lines": {
+          "venue": {
+            "category": "venue",
+            "allocation": {
+              "inr": 28000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 28000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "catering": {
+            "category": "catering",
+            "allocation": {
+              "inr": 70000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 70000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "decor": {
+            "category": "decor",
+            "allocation": {
+              "inr": 12000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 12000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "photo": {
+            "category": "photo",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "music": {
+            "category": "music",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "invites": {
+            "category": "invites",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "contingency": {
+            "category": "contingency",
+            "allocation": {
+              "inr": 16000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 16000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          }
+        },
+        "projectedTotal": {
+          "inr": 150000,
+          "provenance": "computed"
+        },
+        "gap": {
+          "inr": 0,
+          "provenance": "computed"
+        },
+        "headroom": {
+          "inr": 0,
+          "provenance": "computed"
+        },
+        "status": "within-budget",
+        "overAllocated": []
+      },
+      "projection": {
+        "guestsNow": 30,
+        "budget": {
+          "inr": 150000,
+          "provenance": "your-number"
+        },
+        "order": ["venue", "catering", "decor", "photo", "music", "invites", "contingency"],
+        "lines": {
+          "venue": {
+            "category": "venue",
+            "allocation": {
+              "inr": 28000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 28000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "catering": {
+            "category": "catering",
+            "allocation": {
+              "inr": 70000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 70000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "decor": {
+            "category": "decor",
+            "allocation": {
+              "inr": 12000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 12000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "photo": {
+            "category": "photo",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "music": {
+            "category": "music",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "invites": {
+            "category": "invites",
+            "allocation": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 8000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          },
+          "contingency": {
+            "category": "contingency",
+            "allocation": {
+              "inr": 16000,
+              "provenance": "your-split"
+            },
+            "projected": {
+              "inr": 16000,
+              "provenance": "your-split"
+            },
+            "source": "allocation",
+            "held": {
+              "booked": false,
+              "quoted": false,
+              "levered": false
+            },
+            "note": null,
+            "overAllocationBy": null
+          }
+        },
+        "projectedTotal": {
+          "inr": 150000,
+          "provenance": "computed"
+        },
+        "gap": {
+          "inr": 0,
+          "provenance": "computed"
+        },
+        "headroom": {
+          "inr": 0,
+          "provenance": "computed"
+        },
+        "status": "within-budget",
+        "overAllocated": []
+      },
+      "applied": [],
+      "skipped": [],
+      "options": [],
+      "moves": [],
+      "cheapest": {}
+    },
+    "quotes": [],
+    "comparisons": [],
+    "bookings": [],
+    "schedule": {
+      "today": "2026-10-26",
+      "eventDate": "2026-12-19",
+      "daysToEvent": 54,
+      "shortNotice": false,
+      "tasks": [
+        {
+          "id": "book-venue",
+          "category": "venue",
+          "en": "Book the venue",
+          "hi": "वेन्यू बुक करें",
+          "books": "venue",
+          "fasterApplied": false,
+          "dependsOn": [],
+          "durationDays": 3,
+          "earliestStart": "2026-10-26",
+          "earliestFinish": "2026-10-29",
+          "latestStart": "2026-12-01",
+          "latestFinish": "2026-12-04",
+          "slackDays": 36,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": true,
+          "bindingPredecessor": null
+        },
+        {
+          "id": "book-caterer",
+          "category": "catering",
+          "en": "Book the caterer",
+          "hi": "केटरर बुक करें",
+          "books": "catering",
+          "fasterApplied": false,
+          "dependsOn": ["book-venue"],
+          "durationDays": 3,
+          "earliestStart": "2026-10-29",
+          "earliestFinish": "2026-11-01",
+          "latestStart": "2026-12-04",
+          "latestFinish": "2026-12-07",
+          "slackDays": 36,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "book-venue"
+        },
+        {
+          "id": "book-decorator",
+          "category": "decor",
+          "en": "Book the decorator",
+          "hi": "डेकोरेटर बुक करें",
+          "books": "decor",
+          "fasterApplied": false,
+          "dependsOn": ["book-venue"],
+          "durationDays": 3,
+          "earliestStart": "2026-10-29",
+          "earliestFinish": "2026-11-01",
+          "latestStart": "2026-12-06",
+          "latestFinish": "2026-12-09",
+          "slackDays": 38,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "book-venue"
+        },
+        {
+          "id": "decor-sign-off",
+          "category": "decor",
+          "en": "Sign off the decor plan",
+          "hi": "सजावट का प्लान फ़ाइनल करें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["book-decorator"],
+          "durationDays": 2,
+          "earliestStart": "2026-11-01",
+          "earliestFinish": "2026-11-03",
+          "latestStart": "2026-12-12",
+          "latestFinish": "2026-12-14",
+          "slackDays": 41,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "book-decorator"
+        },
+        {
+          "id": "final-walkthrough",
+          "category": "venue",
+          "en": "Final walkthrough at the venue",
+          "hi": "वेन्यू पर आख़िरी जाँच",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["book-caterer", "decor-sign-off"],
+          "durationDays": 1,
+          "earliestStart": "2026-11-03",
+          "earliestFinish": "2026-11-04",
+          "latestStart": "2026-12-16",
+          "latestFinish": "2026-12-17",
+          "slackDays": 43,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "decor-sign-off"
+        },
+        {
+          "id": "finalise-guest-list",
+          "category": "invites",
+          "en": "Finalise the guest list",
+          "hi": "मेहमानों की सूची पक्की करें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": [],
+          "durationDays": 3,
+          "earliestStart": "2026-10-26",
+          "earliestFinish": "2026-10-29",
+          "latestStart": "2026-12-02",
+          "latestFinish": "2026-12-05",
+          "slackDays": 37,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": null
+        },
+        {
+          "id": "print-invitations",
+          "category": "invites",
+          "en": "Print the invitation cards",
+          "hi": "न्योते के कार्ड छपवाएँ",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["finalise-guest-list"],
+          "durationDays": 4,
+          "earliestStart": "2026-10-29",
+          "earliestFinish": "2026-11-02",
+          "latestStart": "2026-12-05",
+          "latestFinish": "2026-12-09",
+          "slackDays": 37,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "finalise-guest-list"
+        },
+        {
+          "id": "send-invitations",
+          "category": "invites",
+          "en": "Send the invitations",
+          "hi": "न्योते भेजें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["print-invitations"],
+          "durationDays": 2,
+          "earliestStart": "2026-11-02",
+          "earliestFinish": "2026-11-04",
+          "latestStart": "2026-12-10",
+          "latestFinish": "2026-12-12",
+          "slackDays": 38,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "print-invitations"
+        },
+        {
+          "id": "book-dhol-or-band",
+          "category": "music",
+          "en": "Book the music: band, dhol or DJ",
+          "hi": "बैंड, ढोल या DJ बुक करें",
+          "books": "music",
+          "fasterApplied": false,
+          "dependsOn": [],
+          "durationDays": 2,
+          "earliestStart": "2026-10-26",
+          "earliestFinish": "2026-10-28",
+          "latestStart": "2026-12-03",
+          "latestFinish": "2026-12-05",
+          "slackDays": 38,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": null
+        },
+        {
+          "id": "book-photographer",
+          "category": "photo",
+          "en": "Book the photographer",
+          "hi": "फ़ोटोग्राफ़र बुक करें",
+          "books": "photo",
+          "fasterApplied": false,
+          "dependsOn": [],
+          "durationDays": 2,
+          "earliestStart": "2026-10-26",
+          "earliestFinish": "2026-10-28",
+          "latestStart": "2026-12-03",
+          "latestFinish": "2026-12-05",
+          "slackDays": 38,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": null
+        },
+        {
+          "id": "menu-tasting",
+          "category": "catering",
+          "en": "Menu tasting with the caterer",
+          "hi": "केटरर के साथ खाना चखें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["book-caterer"],
+          "durationDays": 1,
+          "earliestStart": "2026-11-01",
+          "earliestFinish": "2026-11-02",
+          "latestStart": "2026-12-13",
+          "latestFinish": "2026-12-14",
+          "slackDays": 42,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "book-caterer"
+        },
+        {
+          "id": "return-gifts",
+          "category": "invites",
+          "en": "Buy the return gifts",
+          "hi": "रिटर्न गिफ़्ट ख़रीदें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": [],
+          "durationDays": 3,
+          "earliestStart": "2026-10-26",
+          "earliestFinish": "2026-10-29",
+          "latestStart": "2026-12-11",
+          "latestFinish": "2026-12-14",
+          "slackDays": 46,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": null
+        },
+        {
+          "id": "final-headcount",
+          "category": "catering",
+          "en": "Give the final headcount to the caterer",
+          "hi": "केटरर को मेहमानों की आख़िरी गिनती दें",
+          "books": null,
+          "fasterApplied": false,
+          "dependsOn": ["book-caterer", "send-invitations"],
+          "durationDays": 1,
+          "earliestStart": "2026-11-04",
+          "earliestFinish": "2026-11-05",
+          "latestStart": "2026-12-15",
+          "latestFinish": "2026-12-16",
+          "slackDays": 41,
+          "done": false,
+          "doneOn": null,
+          "notBefore": null,
+          "status": "onTrack",
+          "presentation": {
+            "status": "onTrack",
+            "wordKey": "taskStatus.onTrack",
+            "word": "On track",
+            "iconKey": "circle"
+          },
+          "onCriticalPath": false,
+          "bindingPredecessor": "send-invitations"
+        }
+      ],
+      "criticalPath": ["book-venue"]
+    },
+    "delayEffects": [],
+    "leverIds": [],
+    "agreements": []
+  },
+  "revision": null,
+  "reconfirmations": [],
+  "vendors": [],
+  "ledger": [
+    {
+      "version": 1,
+      "kind": "briefConfirmed",
+      "en": "Brief confirmed: Rs 1,50,000, 30 guests, 19 Dec 2026 (entered by form)",
+      "hi": "ब्रीफ़ पक्का: Rs 1,50,000, 30 मेहमान, 19 दिसंबर 2026 (फ़ॉर्म से भरा)",
+      "sources": [],
+      "readBy": {
+        "source": "form",
+        "model": null,
+        "matched": 0,
+        "total": 0
+      }
+    }
+  ],
+  "messageFacts": {
+    "occasion": "anniversary",
+    "now": {
+      "budgetInr": 150000,
+      "guests": 30,
+      "eventDate": "2026-12-19",
+      "projectedInr": 150000
+    },
+    "before": null,
+    "daysToEvent": 54,
+    "levers": [],
+    "atRisk": [],
+    "vendors": [],
+    "unclearQuotes": [],
+    "diet": [],
+    "venueLimits": []
+  },
+  "banners": [
+    {
+      "kind": "small-celebration-profile"
+    }
+  ]
+}

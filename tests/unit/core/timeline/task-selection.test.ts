@@ -160,3 +160,44 @@ describe('the faster alternative', () => {
     expect(resolveTask(row, true)).toEqual(resolveTask(row, false));
   });
 });
+
+// D40: the small-celebration profile reads its own day counts; a wedding reads the file's.
+describe('the day counts each profile reads', () => {
+  const all: TaskNeeds = {
+    functions: { haldi: 'yes', mehndi: 'yes', sangeet: 'yes' },
+    mustHaves: ['dhol', 'mehndiArtist', 'liveCounter', 'choreographer'],
+    needs: ['wheelchair'],
+  };
+
+  it('gives a wedding every template exactly as the data file has it', () => {
+    for (const row of selectTasks(tasksFile.tasks, all, 'wedding').active) {
+      expect(row).toBe(templateOf(row.id));
+    }
+  });
+
+  it("gives a small celebration each task's celebration lead time and duration", () => {
+    const chosen = selectTasks(tasksFile.tasks, all, 'celebration').active;
+    expect(chosen.length).toBeGreaterThan(10);
+    for (const row of chosen) {
+      const timing = templateOf(row.id).celebration;
+      if (timing === null) throw new Error(`${row.id} has no celebration timing`);
+      expect(resolveTask(row, false)).toMatchObject({
+        latestFinishDaysBefore: timing.latestFinishDaysBefore,
+        durationDays: timing.durationDays,
+      });
+    }
+    expect(templateOf('book-venue').latestFinishDaysBefore).toBe(100);
+    expect(resolveTask(chosen[0] ?? templateOf('book-venue'), false).latestFinishDaysBefore).toBe(
+      14,
+    );
+  });
+
+  it("uses the e-invite's celebration day counts when the lever applies to a celebration", () => {
+    const row = selectTasks(tasksFile.tasks, all, 'celebration').active.find(
+      (candidate) => candidate.id === 'print-invitations',
+    );
+    const timing = templateOf('print-invitations').fasterAlternative?.celebration;
+    if (row === undefined || !timing) throw new Error('print-invitations fixture');
+    expect(resolveTask(row, true)).toMatchObject({ ...timing, fasterApplied: true });
+  });
+});

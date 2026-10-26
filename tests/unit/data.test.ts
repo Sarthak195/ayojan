@@ -140,7 +140,9 @@ describe('referential-integrity', () => {
 
   it('has en and hi on every row, with the Hindi in Devanagari', () => {
     expect(allRows.length).toBeGreaterThan(60);
-    for (const row of allRows) {
+    // A task's celebration timing (D40) is two numbers and a basis; its words are the task's.
+    const timings = new Set<unknown>(tasks.tasks.map((task) => task.celebration));
+    for (const row of allRows.filter((candidate) => !timings.has(candidate))) {
       expect(typeof row.en === 'string' && row.en.length > 0, JSON.stringify(row)).toBe(true);
       expect(typeof row.hi === 'string' && /[ऀ-ॿ]/.test(row.hi)).toBe(true);
     }
@@ -211,6 +213,40 @@ function loadWith(fileName: string, mutate: Mutation): () => unknown {
 // The planted faults of the test plan's invalid-data list, built from the committed files so
 // each stays a copy of a valid file with exactly one fault, however the data evolves.
 const plantedFaults: readonly [string, string, Mutation, RegExp][] = [
+  [
+    'celebration-timing-missing',
+    'tasks.yaml',
+    (d) => {
+      byId(d, 'tasks', 'book-venue').celebration = null;
+    },
+    /row tasks\[0\] \(book-venue\): celebration is missing/,
+  ],
+  [
+    'celebration-timing-on-a-wedding-only-task',
+    'tasks.yaml',
+    (d) => {
+      byId(d, 'tasks', 'mandap-design').celebration = byId(d, 'tasks', 'book-venue').celebration;
+    },
+    /\(mandap-design\): A wedding-only task must have celebration: null/,
+  ],
+  [
+    'celebration-lead-longer-than-the-wedding',
+    'tasks.yaml',
+    (d) => {
+      const row = byId(d, 'tasks', 'final-headcount');
+      row.celebration = { ...(row.celebration as object), latestFinishDaysBefore: 30 };
+    },
+    /\(final-headcount\): celebration\.latestFinishDaysBefore is longer than the wedding's/,
+  ],
+  [
+    'celebration-faster-alternative-missing',
+    'tasks.yaml',
+    (d) => {
+      const row = byId(d, 'tasks', 'print-invitations');
+      row.fasterAlternative = { ...(row.fasterAlternative as object), celebration: null };
+    },
+    /\(print-invitations\): fasterAlternative\.celebration is missing/,
+  ],
   [
     'tasks-cycle',
     'tasks.yaml',

@@ -8,6 +8,7 @@ import type { VendorQuestionsFile } from '@/schemas/data/vendor-questions';
 import { Category, FunctionName, Occasion, Priority } from '@/schemas/readings/vocabulary';
 
 import { rowLabel, type DataProblem } from './data-problem';
+import { leadTimeProblems } from './lead-times';
 
 // Checks within one file that a schema cannot express: uniqueness, references between rows,
 // cycles and one row per closed-enum value. Each problem names its file and row.
@@ -161,7 +162,7 @@ export function taskProblems(file: TasksFile): DataProblem[] {
       message: `Dependency cycle among: ${cycle.join(', ')}.`,
     });
   }
-  return problems;
+  return [...problems, ...leadTimeProblems(file)];
 }
 
 export function leverProblems(file: LeversFile): DataProblem[] {

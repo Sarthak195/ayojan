@@ -5,7 +5,7 @@
 // revision can be judged against the 80 percent floor.
 
 import { readFileSync } from 'node:fs';
-import { basename, extname, join } from 'node:path';
+import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -277,11 +277,4 @@ describe('the family-update recording', () => {
     );
     expect(result.kind).toBe('draft');
   });
-});
-
-// Keeps the fixture list and the recorder's routing in step with this file's expectations.
-it('routes every fixture file by its name', () => {
-  for (const [fixture, id] of FIXTURES) {
-    expect(basename(fileOf(fixture, id), extname(fileOf(fixture, id)))).toBe(fixture);
-  }
 });

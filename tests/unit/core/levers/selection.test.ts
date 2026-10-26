@@ -255,6 +255,13 @@ describe('previewSelection refusals', () => {
     });
   });
 
+  it('refuses a zero budget as a typed reason instead of listing levers', () => {
+    expect(refusal({ ...overBudget(), budgetNowInr: 0 }, { selected: [] })).toEqual({
+      kind: 'budget',
+      reason: 'budget-out-of-range',
+    });
+  });
+
   it('turns the food lever offered again after a priority revision to standard (D13)', () => {
     const standard = priorities({ decor: 'save' });
     const result = preview(overBudget(), { selected: ['simpler-menu'], priorities: standard });

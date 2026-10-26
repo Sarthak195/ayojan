@@ -38,9 +38,12 @@ describe('POST /[lang]/read/brief', () => {
     const { deps } = readDeps({ reading: HINGLISH_READING });
     const response = await read(post('/en/read/brief', { brief: HINGLISH_TEXT }), BRIEF, deps);
     const target = location(response);
-    expect(target).not.toContain('?');
+    // The sealed token is random base64url and can spell a short word by chance, so the shape
+    // check proves it is the only variable part and the words are sought in the rest.
+    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    const fixedParts = target.replace(/\/p\/[A-Za-z0-9_-]+\//, '/p/<token>/');
     for (const word of ['shaadi', 'lakh', 'Indore', 'budget', '200', 'Dhol']) {
-      expect(target.toLowerCase()).not.toContain(word.toLowerCase());
+      expect(fixedParts.toLowerCase()).not.toContain(word.toLowerCase());
     }
   });
 

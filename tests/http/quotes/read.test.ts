@@ -77,13 +77,16 @@ describe('POST /[lang]/read/quote', () => {
       response = await read(post('/en/read/quote', { token, quote: CATERER_A_TEXT }), QUOTE, deps);
     });
     const target = response === undefined ? '' : location(response);
-    expect(target).not.toContain('?');
+    // The sealed token is random base64url, so it can spell a short word like "gst" by chance;
+    // the shape check proves it is the only variable part, and the words are sought elsewhere.
+    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    const fixedParts = target.replace(/\/p\/[A-Za-z0-9_-]+\//, '/p/<token>/');
     // Only the structured log lines: the test runner may write its own output meanwhile.
     const logLines = stdout.split('\n').filter((line) => line.startsWith('{"severity"'));
     expect(logLines.length).toBeGreaterThan(0);
     const logged = `${logLines.join('\n')}\n${JSON.stringify(deps.logger)}`;
     for (const word of PASTED_WORDS) {
-      expect(target.toLowerCase()).not.toContain(word.toLowerCase());
+      expect(fixedParts.toLowerCase()).not.toContain(word.toLowerCase());
       expect(logged.toLowerCase()).not.toContain(word.toLowerCase());
     }
   });

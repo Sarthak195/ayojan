@@ -192,7 +192,8 @@ function taskRows(before: PlanVersion, after: PlanVersion, data: PlanData): Diff
   const rows: DiffRow[] = [];
   for (const task of after.schedule.tasks) {
     const earlier = before.schedule.tasks.find((candidate) => candidate.id === task.id);
-    if (earlier === undefined) continue;
+    // A task finished in both versions asks nothing more of the family, so it gets no row.
+    if (earlier === undefined || (earlier.done && task.done)) continue;
     const same =
       earlier.latestFinish === task.latestFinish &&
       earlier.slackDays === task.slackDays &&

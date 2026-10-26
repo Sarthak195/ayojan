@@ -85,8 +85,9 @@ dynamic rendering), so the decision follows Next's own bundled guide on Content 
 - [`tests/unit/i18n/path.test.ts`](../../tests/unit/i18n/path.test.ts) covers language detection and
   the switch link, and [`format.test.ts`](../../tests/unit/core/rupees/format.test.ts) covers
   grouping, words and rounding.
-- Manual check, 26 Oct 2026: on the deployed service, the plan page loaded under the live policy
-  with no policy violation and no hydration error in the browser console. There is no automated
+- Manual check, 26 Oct 2026: on the deployed service, the revision page loaded under the live policy,
+  its running-total island hydrated and responded to a click, and the browser console showed no
+  policy violation and no hydration error. There is no automated
   browser test for this.
 
 ## Rejected alternative

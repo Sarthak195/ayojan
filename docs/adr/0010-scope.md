@@ -96,7 +96,7 @@ model drafts a short WhatsApp update for the family in English or Hindi, as at m
   and [`tests/unit/server/pipeline/draft-family-update.test.ts`](../../tests/unit/server/pipeline/draft-family-update.test.ts)
   cover rejected numbers, missing questions, empty drafts, caching and the template fallback.
 - [`tests/golden/replay.test.ts`](../../tests/golden/replay.test.ts) replays the recorded Hindi draft
-  and asserts it is accepted, with every number checked against the facts.
+  through the real draft check and asserts it is accepted.
 - [`tests/unit/core/messages/templates.test.ts`](../../tests/unit/core/messages/templates.test.ts)
   covers the templates.
 - [`tests/security/injection.test.ts`](../../tests/security/injection.test.ts) shows a planted quote

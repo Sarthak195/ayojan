@@ -76,7 +76,7 @@ export const en: CheckDictionary = {
   },
   notOne: {
     occasion: (quote) => `We read "${quote}", which is not one occasion we know.`,
-    budget: (quote) => `We read "${quote}", which is not an exact amount.`,
+    budget: (quote) => `We read "${quote}", but could not take one exact amount from it.`,
     guests: (quote) => `We read "${quote}", which is not one guest count.`,
     eventDate: (quote) => `We read "${quote}", which is not one date.`,
     venueCapacity: (quote) => `We read "${quote}", which is not one number.`,
@@ -139,7 +139,7 @@ export const hi: CheckDictionary = {
   },
   notOne: {
     occasion: (quote) => `हमने "${quote}" पढ़ा, जो हमारे जाने-पहचाने मौकों में से कोई नहीं है।`,
-    budget: (quote) => `हमने "${quote}" पढ़ा, जो कोई पक्की रक़म नहीं है।`,
+    budget: (quote) => `हमने "${quote}" पढ़ा, पर इससे कोई एक पक्की रक़म नहीं निकाल सके।`,
     guests: (quote) => `हमने "${quote}" पढ़ा, जो मेहमानों की कोई एक गिनती नहीं है।`,
     eventDate: (quote) => `हमने "${quote}" पढ़ा, जो कोई एक तारीख़ नहीं है।`,
     venueCapacity: (quote) => `हमने "${quote}" पढ़ा, जो कोई एक संख्या नहीं है।`,

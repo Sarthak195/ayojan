@@ -21,10 +21,10 @@ describe('the budget question for words that are not an exact amount', () => {
     'explains "%s"',
     (quote) => {
       expect(questionText(BUDGET_ASKED, unclear(quote), 'en')).toBe(
-        `We read "${quote}", which is not an exact amount. Please fill this in. We do not guess it.`,
+        `We read "${quote}", but could not take one exact amount from it. Please fill this in. We do not guess it.`,
       );
       expect(questionText(BUDGET_ASKED, unclear(quote), 'hi')).toContain(
-        `हमने "${quote}" पढ़ा, जो कोई पक्की रक़म नहीं है।`,
+        `हमने "${quote}" पढ़ा, पर इससे कोई एक पक्की रक़म नहीं निकाल सके।`,
       );
     },
   );

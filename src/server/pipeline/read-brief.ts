@@ -2,6 +2,7 @@ import 'server-only';
 
 import type { IsoDate } from '@/core/calendar/day-number';
 import { resolveDayMonth } from '@/core/calendar/relative-date';
+import { parseAmount } from '@/core/rupees/parse';
 import { BUDGET_MAX_INR, BUDGET_MIN_INR, type FunctionAnswer } from '@/schemas/plan/brief';
 import { toShortText } from '@/schemas/plan/short-text';
 import { BriefReading } from '@/schemas/readings/brief-reading';
@@ -28,6 +29,18 @@ const VENUE_CAPACITY = whole(1, 10_000);
 const BUDGET = whole(BUDGET_MIN_INR, BUDGET_MAX_INR);
 
 type DateReading = BriefReading['date'];
+
+/**
+ * A budget the model quoted as given but left without a number ("budget dedh lakh") is read
+ * from the quote by the parser the form field uses, so the page never asks for words code can
+ * read itself. The quote is still verified, and a range or an approximate figure the model
+ * called unclear stays a question.
+ */
+function budgetAmount(budget: BriefReading['budget']): number | null {
+  if (budget.amountInr !== null || budget.presence !== 'present') return budget.amountInr;
+  const parsed = parseAmount(budget.quote);
+  return parsed.kind === 'amount' ? parsed.inr : null;
+}
 
 /**
  * Code picks the year (the model never sees today). A date that resolves to a question, such
@@ -140,7 +153,8 @@ function readNotes(reading: BriefReading, verdicts: Verdicts): string[] {
 }
 
 function buildBrief(reading: BriefReading, verdicts: Verdicts, today: IsoDate): PendingValues {
-  const { occasion, budget, guests, venueCapacity } = reading;
+  const { occasion, guests, venueCapacity } = reading;
+  const budget = { ...reading.budget, amountInr: budgetAmount(reading.budget) };
   const occasionVerdict = verdicts.check(
     'occasion',
     { presence: presenceOf(occasion.value), quote: occasion.quote },

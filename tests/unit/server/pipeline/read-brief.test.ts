@@ -103,6 +103,26 @@ describe('readBrief turns doubtful values into questions, never defaults', () =>
     expect(verdictOf(pending, 'budget')?.reason).toBe('number-not-in-quote');
   });
 
+  it('reads a quoted budget the model left without a number, as the form field would', async () => {
+    const pending = await readReading(
+      'Anniversary dinner, budget dedh lakh, 5 December 2026.',
+      briefReading({ budget: { presence: 'present', amountInr: null, quote: 'budget dedh lakh' } }),
+    );
+    expect(pending.values.budgetInr).toBe(150_000);
+    expect(verdictOf(pending, 'budget')).toMatchObject({ status: 'verified', reason: null });
+  });
+
+  it('still asks for a budget the model called unclear, even when its words hold one figure', async () => {
+    const pending = await readReading(
+      'budget dhai lakh ke aas paas',
+      briefReading({
+        budget: { presence: 'unclear', amountInr: null, quote: 'dhai lakh ke aas paas' },
+      }),
+    );
+    expect(pending.values.budgetInr).toBeNull();
+    expect(verdictOf(pending, 'budget')?.status).toBe('unclear');
+  });
+
   it('keeps 0 guests the user wrote as an out-of-bounds question (FR-4)', async () => {
     const pending = await readReading(
       'budget 5 lakh, 0 log, 10 March 2027',

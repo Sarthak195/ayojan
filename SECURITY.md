@@ -72,7 +72,8 @@ Other statuses:
 
 Fixed headers are set for every path in `next.config.ts`: `X-Content-Type-Options: nosniff`,
 `Referrer-Policy: same-origin`, `X-Frame-Options: DENY`, and a `Permissions-Policy` that lists
-only features it refuses (empty allowlists). `poweredByHeader` is off. The headers also appear
+only features it refuses (empty allowlists): `camera`, `microphone`, `geolocation`, `payment` and
+`usb`. The deployed revision predates the `usb` entry. `poweredByHeader` is off. The headers also appear
 on the 404 pages the proxy answers itself.
 
 The policy cannot be fixed because its nonce changes on every response, so `src/proxy.ts`
@@ -137,8 +138,9 @@ The plan is `{ schema, ops, pending? }`: inputs and confirmed steps, never compu
 - `src/server/config/key-pool.ts` and `src/server/state/seal-key.ts` read the environment on
   each call, so `next build` needs no secret. Errors name the variable and never its value.
   Key pool entries are referred to by index in `/api/health` and in logs.
-- `.env*` is ignored by git except `.env.example`, which holds no value. `.dockerignore`
-  excludes `.env*` because `next build` would otherwise copy one into the standalone output.
+- `.env*` is ignored by git except `.env.example`, which holds no value. `.dockerignore` and
+  `.gcloudignore` exclude `.env*` because `next build` would otherwise copy one into the
+  standalone output.
   The `Dockerfile` takes no build argument and passes no key to the build.
 - Server modules import `server-only`, and ESLint stops `src/core` importing anything from
   `src/server`, the SDK or the framework.

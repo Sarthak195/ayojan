@@ -64,13 +64,13 @@ generated file and its log entry.
 Budget weights, tasks, trade-offs, functions and vendor questions are data. Most changes to them
 need no code. [ADR 0003](docs/adr/0003-planning-knowledge-as-data.md) explains why.
 
-| File                                                       | What a row is                                                                                                                  |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [`data/budget-weights.yaml`](data/budget-weights.yaml)     | A category's weight, its growth with guests and its floor, in the wedding or the celebration profile; the priority multipliers |
-| [`data/tasks.yaml`](data/tasks.yaml)                       | A task: its category, dependencies, lead time and duration in days, what activates it, what it books                           |
-| [`data/levers.yaml`](data/levers.yaml)                     | A trade-off offered when a plan is over budget                                                                                 |
-| [`data/functions.yaml`](data/functions.yaml)               | A wedding function and the tasks it adds                                                                                       |
-| [`data/vendor-questions.yaml`](data/vendor-questions.yaml) | A question to ask a vendor, and what in the plan raises it                                                                     |
+| File                                                       | What a row is                                                                                                                                         |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`data/budget-weights.yaml`](data/budget-weights.yaml)     | A category's weight, its growth with guests and its floor, in the wedding or the celebration profile; the priority multipliers                        |
+| [`data/tasks.yaml`](data/tasks.yaml)                       | A task: its category, dependencies, lead time and duration in days (and a shorter pair for the celebration profile), what activates it, what it books |
+| [`data/levers.yaml`](data/levers.yaml)                     | A trade-off offered when a plan is over budget                                                                                                        |
+| [`data/functions.yaml`](data/functions.yaml)               | A wedding function and the tasks it adds                                                                                                              |
+| [`data/vendor-questions.yaml`](data/vendor-questions.yaml) | A question to ask a vendor, and what in the plan raises it                                                                                            |
 
 Each file starts with comments that explain its fields. To change a row, or to add one by copying a
 row of the same kind:
@@ -89,7 +89,9 @@ row of the same kind:
 4. **Validate.** Run `npm run validate`. It checks the schema, duplicate keys, unique ids, that every
    dependency exists and does not form a cycle, one row per category, priority and occasion where
    that is required, and the references between files (a function's tasks must equal the tasks that
-   name it). Each problem names the file and the row.
+   name it). A task the small-celebration profile keeps must carry a `celebration` block whose day
+   counts are no longer than the wedding's, and a wedding-only task must not. Each problem names
+   the file and the row.
 5. **Regenerate the ids if any id changed.** Adding, renaming or removing a task, lever or vendor
    question changes `src/schemas/generated/ids.ts`. Run `npm run generate:ids` and commit the file
    with the data. `npm run validate` and CI fail when the file is out of date.

@@ -16,7 +16,7 @@ Every step is a plain HTML form that POSTs to a route handler, which answers wit
 a page that is a pure render of the new link.
 
 - **Seven POST route handlers.** `confirm`, `enter/[kind]`, `levers`, `messages`, `read/[kind]`,
-  `task` and `undo`, each a `route.ts` under [`src/app/[lang]`](../../src/app/%5Blang%5D). No file
+  `task` and `undo`, each a `route.ts` under `src/app/[lang]` ([`src/app`](../../src/app)). No file
   in `src` contains `'use server'`.
 - **One runner, one order of checks.** [`runStep`](../../src/server/http/post-step.ts) handles the
   language (an unknown one is a 404 page), then the rate limit before a body byte is read (429 with

@@ -74,8 +74,10 @@ What each call does, and why it is built that way:
   functions, spending priorities per category, must-haves, guest needs, diet and venue limits, and
   up to three "other" must-haves and needs kept as quotes. A date comes back as the day, month and
   optional year as written, never as a computed date, and a vague date such as "Feb end mein" is
-  unclear, so the app asks. Fallback: the form twin (`/[lang]/form`), with the reason in the
-  banner.
+  unclear, so the app asks. If the model marks the budget as given but returns no amount, code
+  parses the amount from the budget's own quote ("budget dedh lakh" is Rs 1,50,000) before it
+  would become a question (`src/server/pipeline/read-brief.ts`). Fallback: the form twin
+  (`/[lang]/form`), with the reason in the banner.
 - **Quote reader (v1).** Reads category, pricing basis, rate, minimum guarantee, guests covered,
   tax treatment, up to four inclusions and four extras, and advance percent. The schema has no
   field for confirmation, availability or ranking, so a quote that asks to be marked confirmed has
@@ -109,7 +111,8 @@ The server may answer with a newer model than the one requested (the same probe 
 `interaction.model`, never the requested id. If the API sends no model id, the requested id is
 recorded with an `-unconfirmed` suffix. The recorded id is kept in the reading's provenance
 (`ReadBy.model` in `src/schemas/plan/brief.ts`) and, for the committed recordings, in
-`answeredBy`.
+`answeredBy`. The check page names it under the source label ("Answered by the model ...",
+`src/app/[lang]/p/[token]/check/read-source.tsx`); a reading entered by form shows no model.
 
 Keys come from `GEMINI_API_KEY` and any `GEMINI_API_KEY_*` variables, each split on commas and
 whitespace and de-duplicated (`src/server/config/key-pool.ts`). The deployed service has seven keys,
@@ -245,7 +248,9 @@ reader on a deploy that has none.
   runs on free-tier keys, and the real ceiling on model calls is the three Cloud Run instances times
   the per-instance budget, together with the Gemini quota itself.
 - Latency is observed, not benchmarked. On 26 Oct 2026 one Hinglish brief read on the deployed
-  service took 5.2 s, and a read of a pasted quote took 12.8 s. An earlier probe of the three ladder
+  service took 5.2 s, and a read of a pasted quote took 12.8 s. The same day, a dozen reads from a
+  local production server with real keys took 6 to 39 s, and one of twelve first tries ran out of
+  time and fell back to the form. An earlier probe of the three ladder
   models with one short brief answered in 4.9 s (`gemini-3.1-flash-lite`), 5.2 s
   (`gemini-3.5-flash-lite`) and 9.5 s (`gemini-3.5-flash`).
 - The cache and counters are per instance. A request that lands on another instance, or after a
@@ -253,6 +258,7 @@ reader on a deploy that has none.
   so on a miss the messages page shows the template again with the "Write it with AI" button.
 - Text the user submits to a reader is sent to the Gemini Developer API. The server keeps no
   database: the plan, with the short quotes behind each value, lives in an encrypted link, and the
-  logs hold counts, ids and model ids, never the text.
+  app's log lines hold routes, status codes, durations, prompt ids, reason codes and counts, never
+  the text.
 - The recordings are replies from one recording session per fixture. They show that the grounding
   code handles real replies. They do not measure how often the model gets a reading right.

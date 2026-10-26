@@ -18,7 +18,8 @@ loads them, and every rupee on screen comes from the user.
 - **What the files hold.** [`budget-weights.yaml`](../../data/budget-weights.yaml) (two profiles,
   `wedding` and `celebration`, category weights, how much of each category grows with guests,
   floors, priority multipliers), [`tasks.yaml`](../../data/tasks.yaml) (tasks with dependencies,
-  durations and lead times in days, what activates them, which category a task books),
+  durations and lead times in days, a shorter pair of day counts for the small-celebration
+  profile, what activates them, which category a task books),
   [`levers.yaml`](../../data/levers.yaml) (trade-offs), [`functions.yaml`](../../data/functions.yaml)
   (wedding functions) and [`vendor-questions.yaml`](../../data/vendor-questions.yaml). Occasions map
   to a profile in the data: the wedding uses the wedding profile and every other occasion uses the
@@ -34,8 +35,10 @@ loads them, and every rupee on screen comes from the user.
   reasoning, and a `reviewed` field. No row cites an outside source, survey or link, because none
   was fetched and verified; the schema rejects such words
   ([`planning-row.ts`](../../src/schemas/data/planning-row.ts)). The `reviewed` field records a
-  review: at HEAD every row carries a note that it was reviewed with AI assistance at the author's
-  request on 26 Oct 2026, which is not a domain expert's sign-off.
+  review: every original row carries a note that it was reviewed with AI assistance at the author's
+  request on 26 Oct 2026, which is not a domain expert's sign-off. The small-celebration lead
+  times in `tasks.yaml`, added later the same day, have an empty `reviewed` field: nobody has
+  reviewed them.
 - **The split is frozen at the brief.** [`frozen-split.ts`](../../src/core/budget/frozen-split.ts)
   computes allocations once, from the brief's budget, guest count and priorities. A later change of
   budget, guests or date shows up as a gap and as trade-offs. Only "Move money" shifts rupees, as

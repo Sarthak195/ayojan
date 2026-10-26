@@ -15,7 +15,7 @@ hurts after the first plan exists: **absorbing a family's changes without starti
 
 **The persona.** Neha, 29, a QA engineer in Pune, is coordinating her brother's wedding in Indore for her parents. The budget is about Rs 8 lakh, there are about 200 guests, and the wedding is four months away. Decisions arrive in the family WhatsApp group in Hinglish ("Mausi ki side se 50 log aur", "budget thoda kam karo"). Vendor quotes arrive as WhatsApp texts, each in its own shape: a rate per plate with a minimum, a lump sum, "GST extra" with no rate. She keeps a spreadsheet and rebuilds it after every message. Her Nani uses a wheelchair. Her parents read more easily in Hindi.
 
-**A general planner, with the wedding as the worked case.** The form twin and the check page have an occasion picker: wedding, birthday, anniversary, puja, community event or other celebration ([`src/schemas/readings/vocabulary.ts`](src/schemas/readings/vocabulary.ts)). A wedding uses the wedding budget profile. The other five use the celebration profile, which has its own category labels and weights ([`data/budget-weights.yaml`](data/budget-weights.yaml)). Wedding-only tasks (mandap design, a mehndi artist) are dropped from a celebration plan by a flag in [`data/tasks.yaml`](data/tasks.yaml). The app tells the user when the celebration profile is in use, and its numbers are planning assumptions.
+**A general planner, with the wedding as the worked case.** The form twin and the check page have an occasion picker: wedding, birthday, anniversary, puja, community event or other celebration ([`src/schemas/readings/vocabulary.ts`](src/schemas/readings/vocabulary.ts)). A wedding uses the wedding budget profile. The other five use the celebration profile, which has its own category labels and weights ([`data/budget-weights.yaml`](data/budget-weights.yaml)). Three wedding-only tasks (the mandap design, the haldi and the sangeet) are dropped from a celebration plan by a flag in [`data/tasks.yaml`](data/tasks.yaml), and every other task has a second, shorter pair of day counts for the celebration profile, because a birthday is planned weeks ahead, not months. The app tells the user when the celebration profile is in use, and its numbers are planning assumptions.
 
 **Who is it for, what is stressful, how does GenAI help?**
 
@@ -32,7 +32,7 @@ The capabilities below are quoted from the Challenge 5 explainer session (Hack2s
 | --- | --- | --- |
 | **E1 Intake by practical questions.** "ask a few practical questions like what's the occasion, what's your budget, how many people" [15:22-15:29]; "a plan that reflects the user situation" [15:55] | [`src/server/pipeline/read-brief.ts`](src/server/pipeline/read-brief.ts), [`src/core/brief/questions.ts`](src/core/brief/questions.ts), [`src/schemas/readings/brief-reading.ts`](src/schemas/readings/brief-reading.ts) | One text box, or a form with the same fields. Occasion, budget, guests, date, venue capacity, functions, a priority per category ("invest more", "standard", "save"), must-haves, guest needs, diet and venue limits are read. A value the model cannot quote, or that is vague ("Feb end mein"), becomes a question with no default. |
 | **E2 Budget allocation and scenarios.** "categorize the major expenses" [16:19-16:22]; "if the guest count increases, it could help them identify which cost" [16:53-17:00]; "We don't want an AI inventing prices and presenting them as a confirmed cost" [17:27-17:35] | [`src/core/budget/allocation.ts`](src/core/budget/allocation.ts), [`projection.ts`](src/core/budget/projection.ts), [`reallocation.ts`](src/core/budget/reallocation.ts), [`src/core/money/money.ts`](src/core/money/money.ts) | The user's own budget is split into seven categories by weights in `data/`. No market price exists anywhere in the code. Every rupee amount is a `Money` value with a provenance label (your number, your split, from a quote, computed, planning assumption), so an unlabelled amount does not type-check. A guest change moves only the per-guest share of each category. "Move money" shows what spending more on one category does to the others. |
-| **E3 Timeline.** "turn a vague goal like, 'Help me to organize my wedding.' into a very structured sequence of tasks" [18:20-18:26]; "the venue booking is delayed, the assistant can help identify which other tasks might need your attention" [18:57-19:01] | [`src/core/timeline/schedule.ts`](src/core/timeline/schedule.ts), [`status.ts`](src/core/timeline/status.ts), [`task-selection.ts`](src/core/timeline/task-selection.ts), [`data/tasks.yaml`](data/tasks.yaml) | 20 task templates with dependencies and a latest finish measured back from the event date. Code orders them, computes slack and the critical path, and labels each Done, Late, At risk, Due this week or On track (a word and an icon, never colour alone). Marking a task done or delaying it moves its dependants and lists them with the reason. |
+| **E3 Timeline.** "turn a vague goal like, 'Help me to organize my wedding.' into a very structured sequence of tasks" [18:20-18:26]; "the venue booking is delayed, the assistant can help identify which other tasks might need your attention" [18:57-19:01] | [`src/core/timeline/schedule.ts`](src/core/timeline/schedule.ts), [`status.ts`](src/core/timeline/status.ts), [`task-selection.ts`](src/core/timeline/task-selection.ts), [`data/tasks.yaml`](data/tasks.yaml) | 20 task templates with dependencies and a latest finish measured back from the event date (with shorter lead times for the celebration profile). Code orders them, computes slack and the critical path, and labels each Done, Late, At risk, Due this week or On track (a word and an icon, never colour alone). Marking a task done or delaying it moves its dependants and lists them with the reason. |
 | **E4 Over-budget trade-offs.** "help the family understand the trade-offs and choose what matters them the most" [20:04-20:09]; "help users make informed choices, not impose the AI's ideas of the perfect event" [21:11-21:19] | [`src/core/levers/lever-options.ts`](src/core/levers/lever-options.ts), [`selection.ts`](src/core/levers/selection.ts), [`data/levers.yaml`](data/levers.yaml) | Seven levers, each with its saving computed for the current plan, a consequence sentence and a provenance label. Nothing is pre-selected and nothing is cut for the user. A lever that would cut a category the user marked "invest more" is shown refused, with its saving, and can be shown anyway unless that category is already booked. A lever that conflicts with a must-have is disabled with the reason. A running line shows the effect of the ticked boxes. |
 | **E5 Vendor coordination.** "help users define what they need from each vendor, and prepare questions to ask them, organize the quotation" [22:11-22:23]; "the AI shouldn't here claim that a vendor is available or the price is confirmed" [22:58-23:06] | [`src/server/pipeline/read-quote.ts`](src/server/pipeline/read-quote.ts), [`src/core/quotes/comparison.ts`](src/core/quotes/comparison.ts), [`comparable-total.ts`](src/core/quotes/comparable-total.ts), [`break-even.ts`](src/core/quotes/break-even.ts), [`vendor-questions.ts`](src/core/quotes/vendor-questions.ts) | A pasted WhatsApp quote is read into a schema that has no field for confirmation, availability or ranking. Code prices each quote at the plan's current guest count and compares it with the category's split. Tax is never assumed. A lump sum above its guest cap is never scaled, and becomes "re-quote needed". The comparison shows what is included, how many guests are covered, extra charges and what still needs asking. Every column reads "Unconfirmed until you book". Questions to ask each vendor come from templates in [`data/vendor-questions.yaml`](data/vendor-questions.yaml), and a message per vendor is rendered from the plan ([`src/core/messages/vendor-messages.ts`](src/core/messages/vendor-messages.ts)). |
 | **E6 Personalised ideas.** "It should always ask, listen, and adapt" [25:23-25:27]; "the practical limitations of the venue, too" [24:31-24:33] | [`src/schemas/readings/vocabulary.ts`](src/schemas/readings/vocabulary.ts), [`src/core/timeline/task-selection.ts`](src/core/timeline/task-selection.ts), [`src/core/quotes/vendor-questions.ts`](src/core/quotes/vendor-questions.ts) | Met by asking, not by generating concepts. Guest needs (elderly, children, wheelchair), diet, venue limits and must-haves change which tasks are on the plan, which levers are allowed and which questions go to vendors. Anything else the user names is kept as a verbatim note, shown as noted and never used in a decision. Theme or idea generation is deliberately not built (see [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md)). |
@@ -117,7 +117,7 @@ The canonical account is [`docs/GENAI_SERVICES.md`](docs/GENAI_SERVICES.md). If 
 | `change`       | Read a change message                      | `ChangeReading`     | [`src/server/prompts/change.ts`](src/server/prompts/change.ts)               |
 | `familyUpdate` | Draft a family WhatsApp update, on request | `FamilyUpdateDraft` | [`src/server/prompts/family-update.ts`](src/server/prompts/family-update.ts) |
 
-**How a call is made.** `client.interactions.create` from `@google/genai`, pinned to exactly 2.31.0 ([`src/server/genai/interactions.ts`](src/server/genai/interactions.ts)). Reasoning is set with `generation_config.thinking_level` (always `low`); `temperature` is typed as `never`. The stable system prompt goes first, the untrusted text sits inside a delimiter, and the instruction comes last. Schemas are kept shallow. Every call sets `timeout_ms`, and the SDK's own retries are off. The answering model is the id the API reports in `interaction.model`, shown on the page, not the id that was requested; a reply with no id is shown as the requested id marked unconfirmed.
+**How a call is made.** `client.interactions.create` from `@google/genai`, pinned to exactly 2.31.0 ([`src/server/genai/interactions.ts`](src/server/genai/interactions.ts)). Reasoning is set with `generation_config.thinking_level` (always `low`); `temperature` is typed as `never`. The stable system prompt goes first, the untrusted text sits inside a delimiter, and the instruction comes last. Schemas are kept shallow. Every call sets `timeout_ms`, and the SDK's own retries are off. The answering model is the id the API reports in `interaction.model`, shown on the check page, not the id that was requested; a reply with no id is shown as the requested id marked unconfirmed.
 
 **The ladder** ([`src/server/genai/gateway.ts`](src/server/genai/gateway.ts)). One action has a 40 second budget, against a 60 second Cloud Run timeout:
 
@@ -180,14 +180,14 @@ A call is not started with less than 6 s left. The gateway tries the configured 
 
 `PURE_CORE_IMPORTS` lists `node:*`, `fs`, `path`, `crypto`, `react`, `react-dom`, `next`, `@google/genai`, `yaml`, `pino`, `server-only`, and the app's own `@/server/*`, `@/app/*` and `@/components/*`. So a decision can be tested with no network and no mocks, and the same input always gives the same plan.
 
-| Layer      | Path                                                     | Role                                                                                                                                       |
-| ---------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Decisions  | [`src/core`](src/core)                                   | Budget, schedule, quotes, levers, plan fold, grounding, number parsing and formatting, message checks. Pure.                               |
-| Vocabulary | [`src/schemas`](src/schemas)                             | Zod schemas for the model's replies, forms, operations and the sealed state.                                                               |
-| Knowledge  | [`data`](data)                                           | Budget weights, tasks, levers, vendor questions, functions: YAML, validated by `npm run validate`. Each row has a basis and a review note. |
-| Server     | [`src/server`](src/server)                               | The gateway and prompts, the reading pipelines, the sealed state, HTTP guards, rate limiting, logging.                                     |
-| Pages      | [`src/app`](src/app), [`src/components`](src/components) | Server-rendered routes and components, and the two client islands.                                                                         |
-| Language   | [`src/i18n`](src/i18n)                                   | English and Hindi text.                                                                                                                    |
+| Layer      | Path                                                     | Role                                                                                                                                        |
+| ---------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Decisions  | [`src/core`](src/core)                                   | Budget, schedule, quotes, levers, plan fold, grounding, number parsing and formatting, message checks. Pure.                                |
+| Vocabulary | [`src/schemas`](src/schemas)                             | Zod schemas for the model's replies, forms, operations and the sealed state.                                                                |
+| Knowledge  | [`data`](data)                                           | Budget weights, tasks, levers, vendor questions, functions: YAML, validated by `npm run validate`. Each row has a basis and a review field. |
+| Server     | [`src/server`](src/server)                               | The gateway and prompts, the reading pipelines, the sealed state, HTTP guards, rate limiting, logging.                                      |
+| Pages      | [`src/app`](src/app), [`src/components`](src/components) | Server-rendered routes and components, and the two client islands.                                                                          |
+| Language   | [`src/i18n`](src/i18n)                                   | English and Hindi text.                                                                                                                     |
 
 ## Evaluator map
 
@@ -206,7 +206,7 @@ A call is not started with less than 6 s left. The gateway tries the configured 
 
 ## Assumptions
 
-- **Planning numbers are assumptions, and are labelled as such.** The budget weights, per-guest scaling shares, task lead times and lever percentages are chosen by the author, not drawn from market data. Each row in `data/` carries a `basis` sentence and a `reviewed` note (an AI-assisted review at the author's request, not a professional planner's sign-off). On screen they carry the "planning assumption" label.
+- **Planning numbers are assumptions, and are labelled as such.** The budget weights, per-guest scaling shares, task lead times and lever percentages are chosen by the author, not drawn from market data. Each row in `data/` carries a `basis` sentence and a `reviewed` field. The original rows record an AI-assisted review at the author's request, not a professional planner's sign-off. The celebration lead times were added later and their `reviewed` field is empty: they are unreviewed planning assumptions. On screen they carry the "planning assumption" label.
 - **No market prices.** The only rupee figures are the user's own (budget, bookings, quotes they paste) and amounts computed from them.
 - **The split is frozen when the brief is confirmed.** A later change of budget, guests or priorities shows up as a gap against the original split, and the user decides how to close it. Only "Move money" shifts rupees between categories ([`src/core/budget/frozen-split.ts`](src/core/budget/frozen-split.ts)).
 - **One headcount** applies to every function of the event.
@@ -244,19 +244,19 @@ npm run dev              # http://localhost:3000
 
 ## Testing
 
-On 26 Oct 2026, `npx vitest run` ended with:
+On 26 Oct 2026, `npx vitest run` at commit `6a71328` ended with:
 
 ```
- Test Files  109 passed (109)
-      Tests  2359 passed (2359)
-   Duration  52.31s
+ Test Files  116 passed (116)
+      Tests  2402 passed (2402)
+   Duration  33.83s
 ```
 
 The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network call throw. What the main groups prove:
 
 - **Pure core** ([`tests/unit/core`](tests/unit/core)): table-driven tests of the Indian-number parser, rupee formatting, quote matching, the budget split, scheduling, comparison, levers, the fold and the message checks.
 - **Golden replay** ([`tests/golden/replay.test.ts`](tests/golden/replay.test.ts)): the 16 model recordings in [`golden/llm`](golden/llm), one per fixture text in [`fixtures`](fixtures), are replayed through the real pipeline, schema and quote checks by a fake gateway. It proves that the code around the model behaves on real model output (a vague date becomes a question, an injected quote has nowhere to land, a draft with a stray number is rejected) without spending quota. It does not test the model.
-- **The change test and the over-budget case** ([`tests/golden/change-test.test.ts`](tests/golden/change-test.test.ts), [`over-budget.test.ts`](tests/golden/over-budget.test.ts)): each plan version is compared whole with a JSON file in [`tests/golden/plans`](tests/golden/plans).
+- **The change test, the over-budget case and a celebration** ([`tests/golden/change-test.test.ts`](tests/golden/change-test.test.ts), [`over-budget.test.ts`](tests/golden/over-budget.test.ts), [`celebration.test.ts`](tests/golden/celebration.test.ts)): each plan version is compared whole with a JSON file in [`tests/golden/plans`](tests/golden/plans).
 - **Injection** ([`tests/security/injection.test.ts`](tests/security/injection.test.ts)): what the model can say about a planted quote, what the plan does with it, and what a planted instruction in a brief can reach. The answer is that it cannot change a total, a ranking or a status.
 - **HTTP** ([`tests/http`](tests/http)): each route is driven with real form posts, including the paths that never call a model.
 - **Accessibility** ([`tests/a11y/axe.test.ts`](tests/a11y/axe.test.ts)): every page and every problem page, in both languages, rendered in the real page shell and checked with axe-core.
@@ -264,20 +264,21 @@ The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network cal
 
 ## Performance, measured
 
-Page weight comes from [`scripts/measure-pages.mjs`](scripts/measure-pages.mjs), run on 26 Oct 2026 against a local production build with no model key (every page is reached through the form twin, so no model call is made):
+Page weight comes from [`scripts/measure-pages.mjs`](scripts/measure-pages.mjs), run on 26 Oct 2026 against a fresh standalone production build of commit `6a71328`, served locally with no model key (every page is reached through the form twin, so no model call is made):
 
 ```sh
-node scripts/measure-pages.mjs http://127.0.0.1:3200
+node scripts/measure-pages.mjs http://127.0.0.1:3600
 ```
 
 | Page          | HTML raw  | HTML gzip |
 | ------------- | --------- | --------- |
-| Start (`/en`) | 15.0 KiB  | 3.7 KiB   |
-| Form          | 56.1 KiB  | 6.5 KiB   |
-| Plan          | 195.9 KiB | 15.1 KiB  |
-| Quotes        | 47.1 KiB  | 6.5 KiB   |
-| Revision      | 17.5 KiB  | 3.7 KiB   |
-| Messages      | 18.6 KiB  | 4.0 KiB   |
+| Start (`/en`) | 15.3 KiB  | 3.8 KiB   |
+| Form          | 56.3 KiB  | 6.6 KiB   |
+| Check         | 68.3 KiB  | 8.1 KiB   |
+| Plan          | 196.6 KiB | 15.4 KiB  |
+| Quotes        | 47.4 KiB  | 6.7 KiB   |
+| Revision      | 17.7 KiB  | 3.8 KiB   |
+| Messages      | 18.9 KiB  | 4.1 KiB   |
 
 - Every page except the damaged-link 404 loads the same five scripts: 445.3 KiB raw, 131.9 KiB gzip. That is the React and Next runtime. The loop does not need them, so the claim is that **no client JavaScript is needed**, not that the JavaScript is small. The revision page loads one extra chunk of 0.8 KiB and the messages page one of 0.7 KiB. The damaged-link 404 ships no script. The 110 KiB `noModule` polyfill is for old browsers only and is not counted.
 - Most of the plan page's raw size is inline framework payload that repeats the page content. It gzips well, and the server sends gzip.
@@ -308,7 +309,7 @@ What Ayojan deliberately does not do: it gives no market prices, names or recomm
 ## Repo map
 
 ```
-README.md  AGENTS.md  SECURITY.md  LICENSE
+README.md  AGENTS.md  SECURITY.md  CONTRIBUTING.md  LICENSE
 eslint.config.mjs        the purity boundary for src/core
 next.config.ts           standalone build, fixed security headers
 Dockerfile               the Cloud Run image
@@ -317,6 +318,7 @@ data/                    planning knowledge as YAML (weights, tasks, levers, que
 golden/llm/              committed model recordings, one per fixture and prompt
 fixtures/                the input texts the recordings were made from
 docs/                    accessibility, data handling, deployment, GenAI services, limitations, prompt evolution
+docs/adr/                decision records 0001 to 0010
 scripts/                 data validation, id generation, golden recorder, repo guards, page measurement
 src/proxy.ts             nonce CSP, language and damaged-link handling
 src/core/                pure decisions
@@ -326,6 +328,8 @@ src/app/, src/components/  routes (en and hi), pages, the two client islands
 src/i18n/                English and Hindi text
 tests/                   unit, http, golden, security, a11y
 ```
+
+How to change the planning data or a prompt, and get the change through the checks, is in [`CONTRIBUTING.md`](CONTRIBUTING.md). Why the design is the way it is, with the alternatives that were rejected, is in the [decision records](docs/adr).
 
 ## Built with
 

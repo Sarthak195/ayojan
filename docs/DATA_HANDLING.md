@@ -101,12 +101,14 @@ Logging. The logger (`src/server/observability/logger.ts`) accepts only a fixed 
 and checks each one's shape; a field that is not on the list, or does not fit its shape, is
 dropped and counted, never written.
 
-Fields that can appear: the route template (such as `/[lang]/read/[kind]`, never the real
+Fields the logger accepts: the route template (such as `/[lang]/read/[kind]`, never the real
 path), HTTP status, duration in milliseconds, the kind of step, the reading source (such as ai,
 ai-cached, example or form), the prompt id, a short reason code, the model that answered, the key index,
 the attempt number, whether the cache hit, counts of verified and claimed values, the token's
 length (not the token), byte and item counts, a retry delay, a keyed hash of the client, and
-the class name of an error.
+the class name of an error. The app's own log calls use fewer: the route, status and duration of
+each step, the prompt id, reading source, reason code and verified and claimed counts of a
+reading, and the class name of an error.
 
 **Never written:** the text you typed or pasted, quotes from it, rupee amounts, plan links or
 tokens, raw IP addresses, API keys, the seal key, or error messages (they can quote input). The

@@ -120,11 +120,11 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - System fonts only, which include Devanagari on current phones. No web fonts, no raster
   images, no third-party scripts, styles or hosts. Icons are small inline SVG paths.
 - The layout is built for a 360 px screen first.
-- Page weight on the wire is small. The plan page is 15.1 KiB of gzip HTML, and every page
+- Page weight on the wire is small. The plan page is 15.4 KiB of gzip HTML, and every page
   carries about 132 KiB of gzip JavaScript, which is the React and Next runtime. The damaged-link
   page ships none. These come from
   [scripts/measure-pages.mjs](../scripts/measure-pages.mjs) run against a local production
-  build on 26 October 2026.
+  build of commit `6a71328` on 26 October 2026.
 
 ## How it is tested
 
@@ -158,7 +158,7 @@ Gemini key (so no model call), unless a line says otherwise.
 | 360 px width (emulated 360 by 740, device scale 2, mobile)                                          | All 22 views have a document width of 360 px, equal to the window, and nothing sticks out of the viewport except inside the table scroll regions. Money, comparison and diff tables scroll 512 px inside 326 px.                                                                                                                                                                                                        |
 | Keyboard                                                                                            | On the plan page a real Tab put focus on the skip link first, and Enter moved focus to `main`. The plan page has 120 focus stops, none with a positive `tabindex`, in document order. The revision page has 21 stops in a sensible order (skip link, home, language, seven lever checkboxes each with its "Why this number?" summary, Recalculate, Apply, Undo, back to the plan). Every control showed the focus ring. |
 | No JavaScript                                                                                       | Every step was run as a plain HTTP form and every 303 followed by hand: start, form, brief to plan v1, mark a task done with an amount, add a quote, change guests and budget, apply levers, undo, and the messages page. All worked.                                                                                                                                                                                   |
-| Hydration on the live site (revision `ayojan-00001-jxf`, no model call)                             | With the live Content Security Policy in place, the revision page of an over-budget plan loaded all its scripts, hydrated the running-total line, and updated it on two checkbox ticks (404,000 over budget, minus 57,750 saved, read 3,46,250 over budget). The only console message was a 404 for `/favicon.ico`: no policy violation and no hydration error.                                                         |
+| Hydration on the live site (revision `ayojan-00001-jxf`, no model call)                             | With the live Content Security Policy in place, the revision page of an over-budget plan loaded all its scripts, hydrated the running-total line, and updated it on two checkbox ticks (404,000 over budget, minus 57,750 saved, read 3,46,250 over budget). The only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, not yet deployed): no policy violation and no hydration error.                  |
 
 Screenshots were reviewed for the start page, form, plan, quotes, revision levers, messages, the
 Hindi plan and the revision diff table at 360 px. The check page and the long plan page were too
@@ -176,7 +176,7 @@ tall to judge from a screenshot and were judged from the numbers above.
 
 ## Known gaps
 
-These are open as of 26 October 2026.
+These are open as of 26 October 2026, unless marked fixed.
 
 - **No hand test with a screen reader.** Nobody ran NVDA, JAWS, VoiceOver or TalkBack over the
   app. The semantics are checked by axe and Lighthouse and by reading the markup, which finds
@@ -203,12 +203,14 @@ These are open as of 26 October 2026.
   had the automated axe test, but not these browser runs.
 - ~~Table captions ran off the right edge at 360 px until the region was scrolled.~~ **Fixed**
   in `31a0528` (caption pinned to the region's left edge).
-- **Small defects found and not yet fixed:**
-  - On the Hindi plan page the "left in the budget" label is shown with a doubled colon.
-  - The browser asks for `/favicon.ico` and gets a 404, which is the one console error on every
-    first visit.
-  - Without JavaScript, typing grouped digits such as `1,80,000` in the "amount booked" field
-    answers with a "could not be read" page. The hint says "digits only", but many users type
+- Small defects found on 26 October 2026, all fixed the same day (in the code, and live after
+  the next deploy):
+  - ~~On the Hindi plan page the "left in the budget" label is shown with a doubled colon.~~
+    **Fixed** in `5abb5f9`.
+  - ~~The browser asks for `/favicon.ico` and gets a 404, which is the one console error on every
+    first visit.~~ **Fixed** in `f51ab58` (a small text SVG icon).
+  - ~~Without JavaScript, typing grouped digits such as `1,80,000` in the "amount booked" field
+    answers with a "could not be read" page.~~ **Fixed** in `adb3338`: whole-number fields accept
     lakh grouping.
 - **Reading level is a design aim, not a measurement.** Strings are short and avoid internal
   terms, but no readability score is computed or tested.

@@ -28,7 +28,8 @@ reads "Planning assumption chosen by the author", and no row names a survey, rep
 as its source, because none was fetched and checked. The `reviewed` note on the 73 reviewed rows
 reads "AI-assisted review at the author's request": it is a review made with an AI assistant,
 and no wedding planner, caterer or other person from the trade is recorded as having checked
-the proportions. The pages label the figures the same way ("Planning assumption", "Using the
+the proportions. The 17 small-celebration lead-time blocks in [tasks.yaml](../data/tasks.yaml)
+were added later and have an empty `reviewed` field: nobody has reviewed them. The pages label the figures the same way ("Planning assumption", "Using the
 small-celebration profile: planning assumptions, check them"). The savings shown for the
 percentage trade-offs in [levers.yaml](../data/levers.yaml) (for example a simpler decor line
 saving 30 percent of the decor amount) are guesses at what a vendor might agree to, and the
@@ -71,9 +72,17 @@ category, because the reading schemas are closed lists.
 There are two budget profiles, one for weddings and one for birthdays, anniversaries, pujas,
 community events and "other". The wedding profile knows five functions (haldi, mehndi,
 sangeet, wedding, reception). The task list has 20 tasks and the question list 19 vendor
-questions; a few tasks are dropped for the small-celebration profile. Ayojan knows nothing
+questions. The small-celebration profile drops three wedding-only tasks (the mandap, the haldi
+and the sangeet) and gives every other task its own shorter lead time and duration. Ayojan knows nothing
 about festival or auspicious dates, venue availability or weather: it only knows the date the
 user gives.
+
+The small-celebration task list is still close to a wedding's. A five-guest puja at home still
+gets printed cards, a menu tasting, a final walkthrough at the venue and a music booking, and
+saying "ghar pe" (at home) or "no DJ" changes neither the venue share nor the music task; the
+words are kept as a note. With under about 18 days' notice, the venue and caterer chain of a
+celebration still shows Late, because the remaining days are fewer than the lead times, and a
+finish-by date that has already passed is shown as a date, with no "start now" wording.
 
 ### The reader asks instead of guessing
 
@@ -90,6 +99,14 @@ the text the user wrote; otherwise it is shown as unverified (never silently dro
 trusted). The cost is real: a user who has only a rough figure must still type one, and a
 correctly read brief can still come back with several questions. A quote longer than 160
 characters makes that one field unverified and the rest of the reading continues.
+
+One narrow exception: when the model marks a budget as given but returns no amount, code reads
+the amount from the quoted words with the same parser as the form ("budget dedh lakh" becomes
+Rs 1,50,000), and the quote is still checked against the text
+([read-brief.ts](../src/server/pipeline/read-brief.ts)). The guest count has no such step, so
+"do sau log" is still asked about. The line "N of M values matched your words" counts only
+verified values: a quote that was found but whose number is out of range or not written in it
+gets its own badge ("In your words, but needs your answer"), and still counts as not matched.
 
 ### Hindi and Hinglish
 
@@ -110,6 +127,9 @@ of about 15 Hindi number words ("do lakh", "dedh lakh"). Any other number word, 
   category or one that is booked, quoted, a must-have, or touched by a chosen trade-off.
 - **Nothing is chosen for the family.** Trade-offs are offered with their consequences and
   applied only when the user ticks them.
+- **A new plan reads "Within budget" before anything is priced.** At version 1 the projected
+  cost is the user's own split, which adds up to the budget, so the headline says little until a
+  booking or a quote arrives. The tables label the figures; the headline sentence does not.
 - **Quotes are compared with each other only.** Quotes in the same category are put on one
   basis using the user's guest count and ordered by total before any tax whose rate is unknown
   ([ranking.ts](../src/core/quotes/ranking.ts)). That order is arithmetic on the user's own
@@ -154,6 +174,10 @@ the keys and a reset at midnight Pacific time ([exhaustion.ts](../src/server/gen
 and none of these has been measured. When a model refuses or times out, the app tries the next
 model on the ladder, and when all fail it says so, naming the reason, and offers the plain form,
 which does everything except the reading. A read can take up to 40 seconds before it gives up.
+Latency varies with Google's side: on 26 Oct 2026, a dozen reads from a local production server
+with real keys took between 6 and 39 seconds, and one of twelve first tries ran out of time and
+fell back to the form with the reason shown. A single read on the deployed service took 5.2
+seconds. These are observations, not benchmarks.
 
 To keep some capacity for people typing their own text, the example texts are served from
 their recorded readings (labelled as recorded) once a model and key pair is above 80 percent of
@@ -206,7 +230,7 @@ template again with the "Write it with AI" button.
   page and the copy button). The server sends gzip, not brotli. Measured with
   [measure-pages.mjs](../scripts/measure-pages.mjs) on 26 Oct 2026.
 - **The model can change under the code.** The app records which model answered
-  (`interaction.model`) and does not assume it is the one it asked for. The recorded readings in
+  (`interaction.model`), names it on the check page, and does not assume it is the one it asked for. The recorded readings in
   `golden/llm/` are from one date, and tests run on them offline, so a later change in the
   model's behaviour would show up only on the live service.
 - **Accessibility is tool-checked, not certified.** No conformance level is claimed; see

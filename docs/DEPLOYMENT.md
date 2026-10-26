@@ -22,9 +22,11 @@ setting below was read back from the running service with `gcloud run services d
 | Secrets                       | `GEMINI_API_KEY` from Secret Manager secret `gemini-api-key`, and `STATE_SEAL_KEY` from `state-seal-key`, both at version `latest` and both mounted as environment variables, with no plain-text value on the service |
 | Image                         | built by Cloud Build from the [Dockerfile](../Dockerfile), stored in the `cloud-run-source-deploy` Artifact Registry repository in `asia-south1`                                                                      |
 
-Commits made after `f694edb` (Hindi wording, an accessibility fix to table captions, extra
-tests and a measuring script) are not in the live revision until the next deploy.
-`git diff --stat f694edb HEAD` lists them.
+Commits made after `f694edb` are not in the live revision until the next deploy. They include
+Hindi wording, the table caption fix, the small-celebration lead times, the slack wording, the
+`usb=()` entry in the Permissions-Policy, the answering model on the check page, grouped digits in
+amount fields, the page icon, extra tests and a measuring script. `git log --oneline f694edb..HEAD`
+lists them.
 
 ## The container image
 
@@ -71,8 +73,11 @@ Why a git archive and not `--source .`:
 
 - The archive holds tracked files only. The working tree of this repository also holds an
   untracked local `.env`, private planning notes, `node_modules` and build output, and none of
-  them can enter the upload, whatever the ignore files say. The repository has no
-  `.gcloudignore`, so the upload would otherwise be whatever gcloud derives from `.gitignore`.
+  them can enter the upload, whatever the ignore files say. The repository also has a
+  [.gcloudignore](../.gcloudignore) that mirrors `.dockerignore` (except that it keeps the
+  `Dockerfile`, which Cloud Build reads from the upload), so a `--source .` deploy would leave the
+  same files out; the archive does not depend on getting that list right. The live revision was
+  deployed before the `.gcloudignore` was added.
 - The tree that is built is exactly the commit that was tested. An edit that was never
   committed cannot reach production.
 - It is checkable: `git archive HEAD | tar -t` lists no `.env` and no `.planning` path (run on
@@ -160,15 +165,15 @@ traffic on the new revision. Then read one sample brief by hand in a signed-out 
 
 What was checked against the live revision on 26 Oct 2026:
 
-| Check                                                                            | Result                                                                                                                                                                 |
-| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/health`                                                                    | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts                                                                                                            |
-| One Hinglish brief typed into the live reader                                    | answered in 5.2 s and matched 5 of 5 values; confirming it gave plan v1 (one request, an observation and not a benchmark)                                              |
-| One vendor quote with an instruction planted in it                               | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                      |
-| Security headers on the start, plan, quotes, 404 and 405 responses               | present on every one: the nonce-based Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; no `X-Powered-By` |
-| Browser load of a revision page with the live policy                             | no policy violation and no hydration error; the only console message was a 404 for `/favicon.ico`, and the running-total island updated without a submit               |
-| Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                   |
-| 90 parallel POSTs to `/en/undo`, each with a different made-up `X-Forwarded-For` | 63 answered 415 and 27 answered 429, so the limiter keys on the address Google's front end appends, not on what the caller writes                                      |
+| Check                                                                            | Result                                                                                                                                                                                          |
+| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/health`                                                                    | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts                                                                                                                                     |
+| One Hinglish brief typed into the live reader                                    | answered in 5.2 s and matched 5 of 5 values; confirming it gave plan v1 (one request, an observation and not a benchmark)                                                                       |
+| One vendor quote with an instruction planted in it                               | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                                               |
+| Security headers on the start, plan, quotes, 404 and 405 responses               | present on every one: the nonce-based Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; no `X-Powered-By`                          |
+| Browser load of a revision page with the live policy                             | no policy violation and no hydration error; the only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, not yet deployed), and the running-total island updated without a submit |
+| Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                                            |
+| 90 parallel POSTs to `/en/undo`, each with a different made-up `X-Forwarded-For` | 63 answered 415 and 27 answered 429, so the limiter keys on the address Google's front end appends, not on what the caller writes                                                               |
 
 ## Rollback
 

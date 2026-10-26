@@ -2,7 +2,8 @@
 
 This log records every prompt change at the time it is made, in the same commit as the change: the
 version before, the version after, why, and the evidence. It is never reconstructed afterwards, so an
-entry exists only for a change that really happened.
+entry exists only for a change that really happened. Entries are not edited later: where an early entry says a
+recording is pending, the "First recordings" entry below records it.
 
 ## Call-site registry
 

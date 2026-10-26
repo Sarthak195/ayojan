@@ -95,6 +95,20 @@ function listValue(head: string, item: string, draft: BriefDraft, lang: Lang): S
   return null;
 }
 
+// "Not found in your words" only when the words were not found. A quote that was found but
+// whose value is out of range ("0 guests") or whose number it does not spell ("do sau log")
+// says so, because the person can see their own words right above the badge.
+export function badgeOf(verdict: FieldVerdict, lang: Lang): string {
+  const words = dictionaryFor(lang).check;
+  if (verdict.status === 'unverified' && verdict.reason === 'out-of-bounds') {
+    return words.foundBut.outOfBounds;
+  }
+  if (verdict.status === 'unverified' && verdict.reason === 'number-not-in-quote') {
+    return words.foundBut.numberNotInQuote;
+  }
+  return words.status[verdict.status];
+}
+
 function shownFor(verdict: FieldVerdict, pending: PendingReading, lang: Lang): Shown {
   return pending.kind === 'brief'
     ? briefValue(verdict.field, pending.values, lang)
@@ -112,7 +126,6 @@ export function ReadList({
   readonly pending: PendingReading;
   readonly lang: Lang;
 }): ReactElement {
-  const words = dictionaryFor(lang).check;
   return (
     <ul className="mt-2 divide-y divide-line">
       {pending.fields.map((verdict) => {
@@ -132,7 +145,7 @@ export function ReadList({
             )}
             <p className="mt-1 inline-flex items-center gap-1 text-sm">
               <Icon name={STATUS_ICON[verdict.status]} />
-              <span>{words.status[verdict.status]}</span>
+              <span>{badgeOf(verdict, lang)}</span>
             </p>
           </li>
         );

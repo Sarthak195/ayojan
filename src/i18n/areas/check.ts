@@ -20,6 +20,8 @@ export interface CheckDictionary {
   readonly summaryReady: string;
   readonly readHeading: string;
   readonly status: Readonly<Record<Status, string>>;
+  /** An unverified value whose words were found: the badge must not say they were not. */
+  readonly foundBut: { readonly outOfBounds: string; readonly numberNotInQuote: string };
   readonly answersHeading: string;
   readonly questionMark: string;
   readonly question: Readonly<Record<QuestionReason, (given: string, upper: string) => string>>;
@@ -61,6 +63,10 @@ export const en: CheckDictionary = {
     unverified: 'Not found in your words',
     unclear: 'Not clear',
     absent: 'Not mentioned',
+  },
+  foundBut: {
+    outOfBounds: 'In your words, but needs your answer',
+    numberNotInQuote: 'In your words, but this number is not',
   },
   answersHeading: 'Your answers',
   questionMark: 'Question',
@@ -124,6 +130,10 @@ export const hi: CheckDictionary = {
     unverified: 'आपके शब्दों में नहीं मिला',
     unclear: 'साफ़ नहीं',
     absent: 'ज़िक्र नहीं',
+  },
+  foundBut: {
+    outOfBounds: 'आपके शब्दों में है, पर आपका जवाब चाहिए',
+    numberNotInQuote: 'शब्द आपके हैं, पर यह संख्या उनमें नहीं है',
   },
   answersHeading: 'आपके जवाब',
   questionMark: 'सवाल',

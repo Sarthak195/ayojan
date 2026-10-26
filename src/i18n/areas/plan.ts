@@ -95,7 +95,7 @@ export const hi: PlanDictionary = {
   readByAi: (matched, total) =>
     `AI ने पढ़ा: ${String(total)} में से ${String(matched)} मान आपके शब्दों से मिले।`,
   readByExample: (matched, total) =>
-    `उदाहरण की पढ़ाई: ${String(total)} में से ${String(matched)} मान उदाहरण के शब्दों से मिले।`,
+    `उदाहरण का पढ़ा हुआ नतीजा: ${String(total)} में से ${String(matched)} मान उदाहरण के शब्दों से मिले।`,
   enteredByForm: 'फ़ॉर्म से भरा।',
   statusSummary: (version, step) => `योजना v${String(version)} तैयार है। आख़िरी क़दम: ${step}।`,
   keepLink: 'इस पेज का लिंक ही आपकी योजना है। इसे बुकमार्क करें या परिवार से साझा करें।',
@@ -104,9 +104,9 @@ export const hi: PlanDictionary = {
   budget: 'बजट',
   guests: 'मेहमान',
   date: 'तारीख़',
-  venue: 'जगह में कितने लोग',
+  venue: 'वेन्यू में कितने लोग',
   venueUnknown: 'अभी नहीं बताया',
-  venueFromBooking: 'जगह की बुकिंग से',
+  venueFromBooking: 'वेन्यू की बुकिंग से',
   projected: 'अनुमानित ख़र्च',
   overBy: 'बजट से ज़्यादा:',
   leftOver: 'बजट में बचा:',

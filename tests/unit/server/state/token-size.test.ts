@@ -23,9 +23,9 @@ function uncappedLength(state: StateToken): { json: number; sealed: number } {
   return { json: json.length, sealed: sealed.length };
 }
 
-// Measured on 26 Oct 2026 (M2) and recorded in .planning/03 section 8 with the decision in
-// D38: no op count makes the schema maximum fit in 4,000 characters, so the codec's length
-// check is the guarantee and these pins catch any schema change that grows a link.
+// Measured on 26 Oct 2026 (M2), decision D39: no op count makes the schema maximum fit in
+// 4,000 characters, so the codec's length check is the guarantee, and these pins catch any
+// schema change that grows a link.
 describe('worst-case token size', () => {
   it('builds states the schema accepts, with display quotes at the byte limit', () => {
     const states = [worstCaseState(), worstCaseState(MAX_OPS, 'syllables'), specWorstState()];

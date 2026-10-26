@@ -4,6 +4,20 @@ import type { LadderModel } from './interactions';
 
 /** D17 working value: about 20 requests a day per model per project, one project per key. */
 export const ASSUMED_DAILY_ALLOWANCE = 20;
+/** D17 working value: at least 6 distinct projects among the keys, until measured. */
+export const ASSUMED_PROJECTS = 6;
+/** The models on the ladder (D16), each with its own allowance per project. */
+export const LADDER_MODEL_COUNT = 3;
+/** Cloud Run runs at most 3 instances, and each keeps its own counters. */
+export const ASSUMED_MAX_INSTANCES = 3;
+/**
+ * D18 b: the one per-instance daily model-action budget, an instance's share of the assumed
+ * pool (6 x 3 x 20 = 360 calls a day, over 3 instances). The rate limiter refuses at the door
+ * with it and the gateway stops starting ladders with it, so the two can never disagree.
+ */
+export const INSTANCE_DAILY_ACTIONS = Math.ceil(
+  (ASSUMED_PROJECTS * LADDER_MODEL_COUNT * ASSUMED_DAILY_ALLOWANCE) / ASSUMED_MAX_INSTANCES,
+);
 /** D18: above this share of a pair's allowance, example texts stop spending live calls. */
 export const RESERVE_SHARE = 0.8;
 

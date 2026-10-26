@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { INSTANCE_DAILY_ACTIONS } from '@/server/genai/exhaustion';
 import {
   DEFAULT_LIMITS,
   createRateLimiter,
@@ -58,6 +59,10 @@ describe('createRateLimiter, model actions', () => {
     expect(limiter.check('model', 'b').allowed).toBe(true);
     clock.advance((UNTIL_QUOTA_DAY - 200) * 1000);
     expect(limiter.check('model', 'a').allowed).toBe(true);
+  });
+
+  it('uses the same instance budget as the gateway', () => {
+    expect(DEFAULT_LIMITS.instanceDailyModelActions).toBe(INSTANCE_DAILY_ACTIONS);
   });
 
   it('stops the whole instance at its daily budget, whoever asks', () => {

@@ -14,6 +14,7 @@ import {
   ASSUMED_DAILY_ALLOWANCE,
   exhaustionMemory,
   HOUR_MS,
+  INSTANCE_DAILY_ACTIONS,
   MINUTE_MS,
   RESERVE_SHARE,
   type ExhaustionMemory,
@@ -51,8 +52,6 @@ const RATE_LIMIT_COOL_MS = HOUR_MS;
 const KEY_COOL_MS = 6 * HOUR_MS;
 const RETIRED_COOL_MS = 6 * HOUR_MS;
 const OVERLOAD_COOL_MS = 3 * MINUTE_MS;
-/** Cloud Run runs at most 3 instances, and each keeps its own counters. */
-const ASSUMED_MAX_INSTANCES = 3;
 
 export interface GatewayDeps {
   readonly keys: () => readonly string[];
@@ -69,14 +68,6 @@ export interface GatewayDeps {
 type LadderOutcome =
   | { readonly kind: 'answer'; readonly reply: InteractionReply }
   | { readonly kind: 'none'; readonly reason: UnavailableReason };
-
-/**
- * D18 b: an instance's share of the assumed pool, so one script on one instance cannot spend
- * what the other instances need.
- */
-export function defaultActionBudget(keyCount: number, allowance: number): number {
-  return Math.ceil((keyCount * LADDER.length * allowance) / ASSUMED_MAX_INSTANCES);
-}
 
 async function runLadder<T>(
   request: ExtractionRequest<T>,
@@ -183,7 +174,7 @@ export function createGateway(deps: GatewayDeps): LlmGateway {
       const { cache, memory, now } = deps;
       const keys = deps.keys();
       const allowance = deps.allowance ?? ASSUMED_DAILY_ALLOWANCE;
-      const budget = deps.dailyActionBudget ?? defaultActionBudget(keys.length, allowance);
+      const budget = deps.dailyActionBudget ?? INSTANCE_DAILY_ACTIONS;
       const cacheKey = readingCacheKey({
         promptId: request.prompt.id,
         promptVersion: request.prompt.version,

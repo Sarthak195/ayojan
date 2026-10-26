@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { GatewayBugError } from '@/server/genai/classify';
-import { ACTION_BUDGET_MS, MIN_CALL_START_MS } from '@/server/genai/gateway';
+import { INSTANCE_DAILY_ACTIONS, LADDER_MODEL_COUNT } from '@/server/genai/exhaustion';
+import { ACTION_BUDGET_MS, LADDER, MIN_CALL_START_MS } from '@/server/genai/gateway';
 
 import {
   answer,
@@ -198,5 +199,18 @@ describe('when nothing answers', () => {
       reason: 'quota',
     });
     expect(calls).toHaveLength(1);
+  });
+
+  it('defaults to the one shared instance budget, derived from the D17 working value', async () => {
+    expect(INSTANCE_DAILY_ACTIONS).toBe(120);
+    expect(LADDER).toHaveLength(LADDER_MODEL_COUNT);
+
+    const { gateway, memory } = harness(() => answer(LITE));
+    for (let spent = 0; spent < INSTANCE_DAILY_ACTIONS - 1; spent += 1) memory.countAction(T0);
+    expect(await gateway.extract(brief('last one'))).toMatchObject({ kind: 'reading' });
+    expect(await gateway.extract(brief('one too many'))).toEqual({
+      kind: 'unavailable',
+      reason: 'quota',
+    });
   });
 });

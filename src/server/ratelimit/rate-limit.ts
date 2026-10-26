@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { INSTANCE_DAILY_ACTIONS } from '../genai/exhaustion';
 import { quotaDayKey, secondsUntilNextQuotaDay, systemNow, type Now } from '../config/clock';
 import {
   createBucketTable,
@@ -44,11 +45,10 @@ export const DEFAULT_LIMITS: RateLimits = {
   model: { capacity: 3, refillPerMinute: 6 },
   step: { capacity: 60, refillPerMinute: 60 },
   clientDailyModelActions: 20,
-  // No figure is set in the plan, so this follows the D17 working pool: about 6 projects x 3
-  // models x 20 calls is 360 a day, split across at most 3 instances. A read can fall down
-  // the ladder and spend more than one call, so this bounds actions, not calls; the gateway's
-  // per (model, key) counters and the 80 percent reserve (D18) do the call-level accounting.
-  instanceDailyModelActions: 120,
+  // One budget shared with the gateway (see INSTANCE_DAILY_ACTIONS). A read can fall down the
+  // ladder and spend more than one call, so it bounds actions, not calls; the gateway's per
+  // (model, key) counters and the 80 percent reserve (D18) do the call-level accounting.
+  instanceDailyModelActions: INSTANCE_DAILY_ACTIONS,
   maxTrackedClients: 10_000,
 };
 

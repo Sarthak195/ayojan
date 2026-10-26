@@ -101,8 +101,8 @@ describe('day numbers', () => {
   it('round-trips every day from 1970-01-01 to 2100-12-31', () => {
     const first = toDayNumber(iso('1970-01-01'));
     const last = toDayNumber(iso('2100-12-31'));
-    let previous = first - 1;
-    for (let value = first; value <= last; value += 1) {
+    let previous: number = first - 1;
+    for (let value: number = first; value <= last; value += 1) {
       const date = fromDayNumber(value);
       expect(date.ok).toBe(true);
       if (!date.ok) return;

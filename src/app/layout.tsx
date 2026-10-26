@@ -5,7 +5,7 @@ import type { ReactElement, ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Celebration Planner',
+  title: 'Ayojan',
   description: 'A planner for celebrations and events.',
 };
 

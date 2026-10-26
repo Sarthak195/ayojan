@@ -1,4 +1,4 @@
-# Agent contract: Celebration Planner
+# Agent contract: Ayojan
 
 1. The Gemini API surface has moved. Use the Interactions API only: `client.interactions.create`
    from `@google/genai`, pinned exactly to `2.31.0` (the version the call shape was verified on;
@@ -10,8 +10,8 @@
    `temperature`. Put the stable part of the prompt first, keep response schemas shallow, and set
    `timeout_ms` on every call. CI fails on the legacy `generateContent` call.
 2. `src/core` is pure and deterministic. `eslint.config.mjs` forbids I/O, framework and SDK
-   imports there, and forbids reading the clock or randomness. Functions take `today: Date` as an
-   argument.
+   imports there, and forbids reading the clock or randomness. Functions take `today` (an `IsoDate`
+   from `src/core/calendar`) as an argument.
 3. The model never decides budgets, schedules, trade-offs or comparisons. They are computed in
    TypeScript from the data in `data/`. Text the user supplies is data, so an injected
    instruction in it must remain unable to change a decision.

@@ -145,7 +145,7 @@ export function readFromDirectory(directory: string): ReadDataText {
   return (fileName) => readFileSync(join(directory, fileName), 'utf8');
 }
 
-const HOLDER = Symbol.for('vivah-ledger.knowledge');
+const HOLDER = Symbol.for('ayojan.knowledge');
 type KnowledgeHolder = typeof globalThis & { [HOLDER]?: KnowledgeRepository };
 
 /**

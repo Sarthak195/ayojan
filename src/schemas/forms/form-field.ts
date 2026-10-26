@@ -32,10 +32,7 @@ export function optionalChoice<E extends z.ZodType<string>>(
 }
 
 /** A repeated field (checkboxes): absent is empty, one value is a list of one. */
-export function listOf<T extends z.ZodType>(
-  item: T,
-  max: number,
-): z.ZodPreprocess<z.ZodArray<T>> {
+export function listOf<T extends z.ZodType>(item: T, max: number): z.ZodPreprocess<z.ZodArray<T>> {
   return z.preprocess(
     (value: unknown) => (value === undefined ? [] : typeof value === 'string' ? [value] : value),
     z.array(item).max(max),

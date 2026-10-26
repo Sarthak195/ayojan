@@ -153,7 +153,12 @@ describe('comparableTotal and the extras the plan requires', () => {
     const result = amountOf(CATERER_A, 200, LIVE_COUNTER_NEEDED);
     expect(result.total.inr).toBe(275_000);
     expect(result.extras).toEqual([
-      { key: 'liveCounter', label: 'Live chaat counter', amount: expect.anything(), counted: true },
+      {
+        key: 'liveCounter',
+        label: 'Live chaat counter',
+        amount: { inr: 15_000, provenance: 'from-quote' },
+        counted: true,
+      },
     ]);
     expect(result.gaps).not.toContain('liveCounter');
   });

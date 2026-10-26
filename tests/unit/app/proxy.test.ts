@@ -1,7 +1,12 @@
 import { NextRequest } from 'next/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { proxy } from '@/proxy';
+
+import { BRIEF_STATE, SEAL_KEY, seal } from '../server/http/step-support';
+
+// The proxy opens plan links with the process key, so the test seals with the same one.
+const TOKEN = seal(BRIEF_STATE);
 
 // NextResponse.next({ request: { headers } }) carries each overridden request header to the
 // app as `x-middleware-request-<name>`, which is what the root layout ends up reading.
@@ -10,10 +15,24 @@ function forwarded(response: Response, name: string): string | null {
 }
 
 describe('proxy', () => {
+  beforeEach(() => {
+    vi.stubEnv('STATE_SEAL_KEY', SEAL_KEY.toString('base64'));
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('passes the path language and the path to the layout', () => {
-    const response = proxy(new NextRequest('http://localhost/hi/p/abc/quotes'));
+    const response = proxy(new NextRequest(`http://localhost/hi/p/${TOKEN}/quotes`));
     expect(forwarded(response, 'x-lang')).toBe('hi');
-    expect(forwarded(response, 'x-pathname')).toBe('/hi/p/abc/quotes');
+    expect(forwarded(response, 'x-pathname')).toBe(`/hi/p/${TOKEN}/quotes`);
+  });
+
+  it('answers a damaged plan link itself, with the policy and no forwarding', () => {
+    const response = proxy(new NextRequest('http://localhost/hi/p/abc/quotes'));
+    expect(response.status).toBe(404);
+    expect(response.headers.get('content-security-policy')).toContain("'nonce-");
+    expect(forwarded(response, 'x-lang')).toBeNull();
   });
 
   it('overwrites a language header the client sent', () => {

@@ -134,11 +134,12 @@ describe('referential-integrity', () => {
     }
   });
 
-  it("states every basis as the author's assumption, never a source, and leaves reviewed empty", () => {
+  it("states every basis as the author's assumption, never a source, with a reviewed field to sign", () => {
     for (const row of allRows) {
       expect(String(row.basis).startsWith(BASIS_PREFIX)).toBe(true);
       expect(String(row.basis)).not.toMatch(/https?:|www\.|survey|report|study|according to/i);
-      expect(row.reviewed).toBe('');
+      // Empty until the user signs the row off; a sign-off must not turn CI red.
+      expect(typeof row.reviewed).toBe('string');
     }
   });
 });

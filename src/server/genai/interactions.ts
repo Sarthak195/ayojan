@@ -109,7 +109,7 @@ const OPEN = '<user_text>';
 const CLOSE = '</user_text>';
 // A pasted closing tag would otherwise end the data block early and let the rest of the paste
 // sit where instructions go. Neutralised in place, so every other character is still quotable.
-const DELIMITER_TAG = /<(\/?)user_text>/gi;
+const DELIMITER_TAG = /<\/?user_text>/gi;
 
 export function delimitUserText(text: string): string {
   return `${OPEN}\n${text.replace(DELIMITER_TAG, (tag) => `(${tag.slice(1, -1)})`)}\n${CLOSE}`;

@@ -131,7 +131,8 @@ no quota, and it is sent with `Cache-Control: no-store`. It reports:
 - `data`: counts of tasks, levers and vendor questions read from `data/`.
 - `readingCache`: entries and bytes held by this instance.
 - `quota`: this instance's counts for the current quota day, by model and key index, plus how
-  many model and key pairs, keys and models are cooling down after a refusal.
+  many model and key pairs and how many keys are cooling down after a refusal, and which models
+  are.
 - `problems`: the named reasons for a 503.
 
 Seen on 26 Oct 2026, about 18:00 IST, on revision `ayojan-00001-jxf`:
@@ -163,7 +164,7 @@ What was checked against the live revision on 26 Oct 2026:
 | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/api/health`                                                                    | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts                                                                                                            |
 | One Hinglish brief typed into the live reader                                    | answered in 5.2 s and matched 5 of 5 values; confirming it gave plan v1 (one request, an observation and not a benchmark)                                              |
-| One brief with an instruction planted inside a pasted quote                      | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                      |
+| One vendor quote with an instruction planted in it                               | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                      |
 | Security headers on the start, plan, quotes, 404 and 405 responses               | present on every one: the nonce-based Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; no `X-Powered-By` |
 | Browser load of a revision page with the live policy                             | no policy violation and no hydration error; the only console message was a 404 for `/favicon.ico`, and the running-total island updated without a submit               |
 | Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                   |
@@ -180,8 +181,8 @@ gcloud run services update-traffic ayojan --region asia-south1 --to-revisions RE
 
 Pinning traffic to a named revision stops later deploys from receiving traffic by themselves.
 To return to the newest revision, run `gcloud run services update-traffic ayojan --region
-asia-south1 --to-latest`. Plan links keep opening across revisions, because they depend only
-on the seal key, which a rollback does not change.
+asia-south1 --to-latest`. Plan links keep opening across revisions while the state schema version
+is unchanged and the seal key is the same, which a rollback does not change.
 
 ## Still unverified
 
@@ -196,7 +197,9 @@ on the seal key, which a rollback does not change.
 - **The client address on direct `run.app` traffic** is taken to be the entry Google's front end
   appends to `X-Forwarded-For`, from Google's documented behaviour and the made-up-header test
   above. It was only tried from one network.
-- **Adding a secret version while instances are warm** has not been tried (see Secrets).
+- **Adding a secret version while instances are running** was not done as part of this deploy
+  (both versions of `gemini-api-key` predate the revision), and its effect on a warm instance
+  was not observed (see Secrets).
 - **The size of the source upload** was not recorded.
 - **A billing budget or alert** was not inspected. A budget alerts and never caps spending.
 - **A tagged revision without the Gemini secret** (for showing the form fallback on the real

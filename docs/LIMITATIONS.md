@@ -16,8 +16,10 @@ only rupee figures in a plan are the ones the user typed (budget, vendor quotes,
 and arithmetic on them. The budget split in
 [budget-weights.yaml](../data/budget-weights.yaml) is a set of proportions of the user's own
 budget, and the file header says so ("proportions of the user's own budget, never prices").
-A quote that does not say whether tax is included is compared with the tax shown as "rate not
-stated" and the row stays "Unconfirmed until you book"; it is never filled in.
+A quote that says tax is extra without giving the rate is shown as "rate not stated", and a
+quote that is silent or unclear about tax is treated as tax unsettled
+([tax.ts](../src/core/quotes/tax.ts)). No rate is ever filled in, and a vendor row stays
+"Unconfirmed until you book".
 
 ### The proportions are the author's assumptions
 
@@ -30,7 +32,7 @@ the proportions. The pages label the figures the same way ("Planning assumption"
 small-celebration profile: planning assumptions, check them"). The savings shown for the
 percentage trade-offs in [levers.yaml](../data/levers.yaml) (for example a simpler decor line
 saving 30 percent of the decor amount) are guesses at what a vendor might agree to, and the
-page tells the user to ask their vendor. Two of the seven trade-offs are exact arithmetic
+pages label them "Planning assumption: about N percent". Two of the seven trade-offs are exact arithmetic
 instead: halving the contingency and raising the budget.
 
 ### It books and pays for nothing, and sends nothing
@@ -67,7 +69,7 @@ no number or task is computed from it. The model has no way to add a
 category, because the reading schemas are closed lists.
 
 There are two budget profiles, one for weddings and one for birthdays, anniversaries, pujas,
-community events and "other". The weddings profile knows five functions (haldi, mehndi,
+community events and "other". The wedding profile knows five functions (haldi, mehndi,
 sangeet, wedding, reception). The task list has 20 tasks and the question list 19 vendor
 questions; a few tasks are dropped for the small-celebration profile. Ayojan knows nothing
 about festival or auspicious dates, venue availability or weather: it only knows the date the
@@ -75,10 +77,14 @@ user gives.
 
 ### The reader asks instead of guessing
 
-A date without a year, an "end of February", a budget range ("5 to 6 lakh"), a budget given per
+A vague date such as "end of February", a budget range ("5 to 6 lakh"), a budget given per
 person, or a guest range are read as unclear: the check page shows the field as a question and
 the user answers it ([guardrails.ts](../src/server/prompts/shared/guardrails.ts),
-[brief.ts](../src/server/prompts/brief.ts)). A year is never worked out from today's date. A
+[brief.ts](../src/server/prompts/brief.ts)). The model is told never to work out a year, a
+weekday or a date. When a day and month arrive without a year (for example "26/2"), the
+program, not the model, takes the next such date after today
+([date-answer.ts](../src/core/brief/date-answer.ts)), and the check page shows the resulting
+date for the user to confirm; a date that is today or earlier is asked about again. A
 value only counts if the quote the model gives for it is found, character for character, in
 the text the user wrote; otherwise it is shown as unverified (never silently dropped, never
 trusted). The cost is real: a user who has only a rough figure must still type one, and a
@@ -113,7 +119,8 @@ of about 15 Hindi number words ("do lakh", "dedh lakh"). Any other number word, 
 
 ## Hard limits in the code
 
-A step that would cross one of these is refused with a plain page, and the plan is unchanged.
+A step that would cross one of these is refused with a plain page and the plan is unchanged. A
+brief value outside its range becomes a question on the check page.
 
 | Limit                     | Value                                                    | Where                                                                                              |
 | ------------------------- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |

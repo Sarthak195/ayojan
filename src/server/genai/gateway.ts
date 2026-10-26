@@ -24,8 +24,10 @@ import {
   callOptions,
   toGeminiSchema,
   type InteractionReply,
+  type InteractionRequest,
   type InteractionsClient,
   type LadderModel,
+  type RequestParts,
 } from './interactions';
 import { readingCache, readingCacheKey, type ReadingCache } from './reading-cache';
 import { validateReply } from './validate-reply';
@@ -73,6 +75,16 @@ type LadderOutcome =
     }
   | { readonly kind: 'none'; readonly reason: UnavailableReason };
 
+// A request that cannot be shaped is our bug on every rung, so it becomes the error the read
+// pipeline turns into the form, before any call or quota is counted, never a 500.
+function shapedRequest(parts: RequestParts): InteractionRequest {
+  try {
+    return buildInteractionRequest(parts);
+  } catch {
+    throw new GatewayBugError('bad-request', 'the request could not be shaped');
+  }
+}
+
 async function runLadder<T>(
   request: ExtractionRequest<T>,
   keys: readonly string[],
@@ -109,17 +121,17 @@ async function runLadder<T>(
       const remaining = deadline - now();
       if (remaining < MIN_CALL_START_MS) return { kind: 'none', reason: 'timeout' };
 
-      if (calls === 0) memory.countAction(now());
-      calls += 1;
-      memory.countCall(rung.model, keyIndex, now());
-      memory.markTried(rung.model, keyIndex);
-      const shaped = buildInteractionRequest({
+      const shaped = shapedRequest({
         model: rung.model,
         system: request.prompt.system,
         text: request.text,
         instruction: request.prompt.instruction(),
         schema,
       });
+      if (calls === 0) memory.countAction(now());
+      calls += 1;
+      memory.countCall(rung.model, keyIndex, now());
+      memory.markTried(rung.model, keyIndex);
       try {
         const reply = await deps
           .clientFor(apiKey)

@@ -117,7 +117,7 @@ export const hi: FormDictionary = {
   budgetLabel: 'कुल बजट (Rs)',
   guestsLabel: 'मेहमान',
   dateLabel: 'कार्यक्रम की तारीख़',
-  capacityLabel: 'जगह में कितने लोग आ सकते हैं',
+  capacityLabel: 'वेन्यू में कितने लोग आ सकते हैं',
   numberHint: 'अंक या शब्द, जैसे 8 लाख या डेढ़ लाख।',
   functionsLegend: 'कौन-कौन से फ़ंक्शन होंगे?',
   functionsHint: 'ये शादी के फ़ंक्शन हैं। किसी और मौके के लिए इन्हें "पता नहीं" पर छोड़ दें।',
@@ -131,7 +131,7 @@ export const hi: FormDictionary = {
   functionAnswers: { yes: 'हाँ', no: 'नहीं', unsure: 'पता नहीं' },
   prioritiesLegend: 'कहाँ ज़्यादा और कहाँ कम ख़र्च करें',
   categories: {
-    venue: 'जगह',
+    venue: 'वेन्यू',
     catering: 'खाना और कैटरिंग',
     decor: 'सजावट',
     photo: 'फ़ोटो और वीडियो',
@@ -156,7 +156,7 @@ export const hi: FormDictionary = {
   needs: { elderly: 'बुज़ुर्ग मेहमान', children: 'बच्चे', wheelchair: 'व्हीलचेयर वाले' },
   dietLegend: 'खाना',
   diet: { vegOnly: 'सिर्फ़ शाकाहारी', jain: 'जैन खाना', noAlcohol: 'शराब नहीं' },
-  venueLimitsLegend: 'जगह की पाबंदियाँ',
+  venueLimitsLegend: 'वेन्यू की पाबंदियाँ',
   venueLimits: { indoorOnly: 'सिर्फ़ अंदर', musicCurfew: 'संगीत पर समय की रोक' },
   submit: 'योजना बनाइए',
 };

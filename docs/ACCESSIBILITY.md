@@ -158,7 +158,7 @@ Gemini key (so no model call), unless a line says otherwise.
 | 360 px width (emulated 360 by 740, device scale 2, mobile)                                          | All 22 views have a document width of 360 px, equal to the window, and nothing sticks out of the viewport except inside the table scroll regions. Money, comparison and diff tables scroll 512 px inside 326 px.                                                                                                                                                                                                        |
 | Keyboard                                                                                            | On the plan page a real Tab put focus on the skip link first, and Enter moved focus to `main`. The plan page has 120 focus stops, none with a positive `tabindex`, in document order. The revision page has 21 stops in a sensible order (skip link, home, language, seven lever checkboxes each with its "Why this number?" summary, Recalculate, Apply, Undo, back to the plan). Every control showed the focus ring. |
 | No JavaScript                                                                                       | Every step was run as a plain HTTP form and every 303 followed by hand: start, form, brief to plan v1, mark a task done with an amount, add a quote, change guests and budget, apply levers, undo, and the messages page. All worked.                                                                                                                                                                                   |
-| Hydration on the live site (revision `ayojan-00001-jxf`, no model call)                             | With the live Content Security Policy in place, the revision page of an over-budget plan loaded all its scripts, hydrated the running-total line, and updated it on two checkbox ticks (404,000 over budget, minus 57,750 saved, read 3,46,250 over budget). The only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, not yet deployed): no policy violation and no hydration error.                  |
+| Hydration on the live site (revision `ayojan-00001-jxf`, no model call)                             | With the live Content Security Policy in place, the revision page of an over-budget plan loaded all its scripts, hydrated the running-total line, and updated it on two checkbox ticks (404,000 over budget, minus 57,750 saved, read 3,46,250 over budget). The only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, live since `ayojan-00002-7hr`): no policy violation and no hydration error.     |
 
 Screenshots were reviewed for the start page, form, plan, quotes, revision levers, messages, the
 Hindi plan and the revision diff table at 360 px. The check page and the long plan page were too
@@ -196,15 +196,15 @@ These are open as of 26 October 2026, unless marked fixed.
 - **Not tested on real devices.** The 360 px results are Chrome device emulation. No real low-end
   Android phone, no throttled network, and no Windows high-contrast or forced-colours mode.
   Lighthouse was run in desktop mode.
-- **Not verified in a build: the table caption pin.** Chrome showed the clipped caption at 360 px
-  and the fix was checked by injecting the same style into the page. The shipped CSS was not
-  re-measured after the change.
 - **The numbers in the Lighthouse and 360 px rows are for commit `f694edb`.** Later commits have
   had the automated axe test, but not these browser runs.
 - ~~Table captions ran off the right edge at 360 px until the region was scrolled.~~ **Fixed**
-  in `31a0528` (caption pinned to the region's left edge).
-- Small defects found on 26 October 2026, all fixed the same day (in the code, and live after
-  the next deploy):
+  in `31a0528` (caption pinned to the region's left edge). Re-measured on the live revision
+  `ayojan-00002-7hr` in Chromium at 360 px: with the plan page's money table scrolled 120 px, the
+  caption stayed at 17 to 337 px. The quotes and revision tables use the same component but were
+  not re-measured.
+- Small defects found on 26 October 2026, all fixed the same day and live since revision
+  `ayojan-00002-7hr`:
   - ~~On the Hindi plan page the "left in the budget" label is shown with a doubled colon.~~
     **Fixed** in `5abb5f9`.
   - ~~The browser asks for `/favicon.ico` and gets a 404, which is the one console error on every

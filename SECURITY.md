@@ -73,7 +73,7 @@ Other statuses:
 Fixed headers are set for every path in `next.config.ts`: `X-Content-Type-Options: nosniff`,
 `Referrer-Policy: same-origin`, `X-Frame-Options: DENY`, and a `Permissions-Policy` that lists
 only features it refuses (empty allowlists): `camera`, `microphone`, `geolocation`, `payment` and
-`usb`. The deployed revision predates the `usb` entry. `poweredByHeader` is off. The headers also appear
+`usb`. The live service has sent the `usb` entry since revision `ayojan-00002-7hr` (26 Oct 2026). `poweredByHeader` is off. The headers also appear
 on the 404 pages the proxy answers itself.
 
 The policy cannot be fixed because its nonce changes on every response, so `src/proxy.ts`

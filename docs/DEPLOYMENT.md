@@ -11,8 +11,8 @@ setting below was read back from the running service with `gcloud run services d
 | Fact (as read on 26 Oct 2026) | Value                                                                                                                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                      |
-| Revision serving traffic      | `ayojan-00001-jxf`, the only revision, at 100 percent of traffic                                                                                                                                                      |
-| Source of that revision       | commit `f694edb` on `main`                                                                                                                                                                                            |
+| Revision serving traffic      | `ayojan-00002-7hr` at 100 percent of traffic; the first revision, `ayojan-00001-jxf`, is kept for rollback                                                                                                            |
+| Source of that revision       | commit `a9184fe` on `main`                                                                                                                                                                                            |
 | Request timeout               | 60 seconds                                                                                                                                                                                                            |
 | Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 3                                                                                                                              |
 | Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                          |
@@ -22,11 +22,12 @@ setting below was read back from the running service with `gcloud run services d
 | Secrets                       | `GEMINI_API_KEY` from Secret Manager secret `gemini-api-key`, and `STATE_SEAL_KEY` from `state-seal-key`, both at version `latest` and both mounted as environment variables, with no plain-text value on the service |
 | Image                         | built by Cloud Build from the [Dockerfile](../Dockerfile), stored in the `cloud-run-source-deploy` Artifact Registry repository in `asia-south1`                                                                      |
 
-Commits made after `f694edb` are not in the live revision until the next deploy. They include
-Hindi wording, the table caption fix, the small-celebration lead times, the slack wording, the
-`usb=()` entry in the Permissions-Policy, the answering model on the check page, grouped digits in
-amount fields, the page icon, extra tests and a measuring script. `git log --oneline f694edb..HEAD`
-lists them.
+The second revision was built from `a9184fe` on 26 Oct 2026 at about 20:15 IST. Over the first
+it adds Hindi wording, the table caption fix, the small-celebration lead times, the slack wording,
+the `usb=()` entry in the Permissions-Policy, the answering model on the check page, grouped digits
+in amount fields and the page icon; `git log --oneline f694edb..a9184fe` lists every commit. The
+image leaves out Markdown files and `docs/` (see `.dockerignore`), so a later commit that changes
+only those needs no deploy.
 
 ## The container image
 
@@ -67,7 +68,8 @@ gcloud run deploy ayojan --source "$DEPLOY_DIR" --region asia-south1 \
 
 For the first deploy, on 26 Oct 2026, the directory was the archive of `f694edb`. gcloud
 reported "Building using Dockerfile", created the revision `ayojan-00001-jxf`, and routed 100
-percent of traffic to it.
+percent of traffic to it. The second deploy, the same evening, used the archive of `a9184fe`
+and created `ayojan-00002-7hr`, which took all traffic.
 
 Why a git archive and not `--source .`:
 
@@ -76,12 +78,12 @@ Why a git archive and not `--source .`:
   them can enter the upload, whatever the ignore files say. The repository also has a
   [.gcloudignore](../.gcloudignore) that mirrors `.dockerignore` (except that it keeps the
   `Dockerfile`, which Cloud Build reads from the upload), so a `--source .` deploy would leave the
-  same files out; the archive does not depend on getting that list right. The live revision was
-  deployed before the `.gcloudignore` was added.
+  same files out; the archive does not depend on getting that list right. The first revision was
+  deployed before the `.gcloudignore` was added; the second was built from a tree that has it.
 - The tree that is built is exactly the commit that was tested. An edit that was never
   committed cannot reach production.
 - It is checkable: `git archive HEAD | tar -t` lists no `.env` and no `.planning` path (run on
-  26 Oct 2026 against `f694edb`, with 0 matches). `.env.example`, which has an empty value, is
+  26 Oct 2026 against `f694edb` and `a9184fe`, with 0 matches each). `.env.example`, which has an empty value, is
   the only env file in it.
 
 The flags, and why:
@@ -142,6 +144,8 @@ no quota, and it is sent with `Cache-Control: no-store`. It reports:
 
 Seen on 26 Oct 2026, about 18:00 IST, on revision `ayojan-00001-jxf`:
 `{"status":"ok","ai":"available","keys":7,"sealKey":"loaded","data":{"tasks":20,"levers":7,"questions":19},...,"problems":[]}`.
+Seen again at about 20:15 IST on `ayojan-00002-7hr`, right after the second deploy: the same
+status and counts, an empty reading cache and no model action yet on that instance.
 
 The endpoint is public and unauthenticated, so anyone can see how many keys are configured and
 how much model capacity this instance has used. It holds no key material and no user text.
@@ -163,17 +167,28 @@ The first must answer `"status":"ok"` with the expected counts (20 tasks, 7 leve
 questions), the second must show timeout 60, a maximum of 3 instances and 100 percent of
 traffic on the new revision. Then read one sample brief by hand in a signed-out browser.
 
-What was checked against the live revision on 26 Oct 2026:
+What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026:
 
-| Check                                                                            | Result                                                                                                                                                                                          |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/health`                                                                    | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts                                                                                                                                     |
-| One Hinglish brief typed into the live reader                                    | answered in 5.2 s and matched 5 of 5 values; confirming it gave plan v1 (one request, an observation and not a benchmark)                                                                       |
-| One vendor quote with an instruction planted in it                               | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                                               |
-| Security headers on the start, plan, quotes, 404 and 405 responses               | present on every one: the nonce-based Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; no `X-Powered-By`                          |
-| Browser load of a revision page with the live policy                             | no policy violation and no hydration error; the only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, not yet deployed), and the running-total island updated without a submit |
-| Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                                            |
-| 90 parallel POSTs to `/en/undo`, each with a different made-up `X-Forwarded-For` | 63 answered 415 and 27 answered 429, so the limiter keys on the address Google's front end appends, not on what the caller writes                                                               |
+| Check                                                                            | Result                                                                                                                                                                                                       |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/api/health`                                                                    | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts                                                                                                                                                  |
+| One Hinglish brief typed into the live reader                                    | answered in 5.2 s and matched 5 of 5 values; confirming it gave plan v1 (one request, an observation and not a benchmark)                                                                                    |
+| One vendor quote with an instruction planted in it                               | read in 12.8 s; only values found in the user's own words were kept, and no vendor was marked booked or confirmed                                                                                            |
+| Security headers on the start, plan, quotes, 404 and 405 responses               | present on every one: the nonce-based Content-Security-Policy, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`; no `X-Powered-By`                                       |
+| Browser load of a revision page with the live policy                             | no policy violation and no hydration error; the only console message was a 404 for `/favicon.ico` (fixed in `f51ab58`, live since `ayojan-00002-7hr`), and the running-total island updated without a submit |
+| Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                                                         |
+| 90 parallel POSTs to `/en/undo`, each with a different made-up `X-Forwarded-For` | 63 answered 415 and 27 answered 429, so the limiter keys on the address Google's front end appends, not on what the caller writes                                                                            |
+
+What was checked against `ayojan-00002-7hr` the same evening:
+
+| Check                                                                                       | Result                                                                                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/health`                                                                               | 200, `ok`, 7 keys, seal key loaded, 20 / 7 / 19 data counts, empty reading cache                                                                                                                                                                                                                |
+| One Hinglish birthday brief, written for this check and not taken from a fixture            | answered in 28.4 s by `gemini-3.1-flash-lite`, the second rung of the ladder, which the check page named; 7 of 7 values matched; "budget dedh lakh rupaye" became Rs 1,50,000; confirming it gave a plan with 14 tasks On track and none Late (one request, an observation and not a benchmark) |
+| A wedding entered through the form, with no model call                                      | 303 to a plan with no task Late                                                                                                                                                                                                                                                                 |
+| A plan link made on `ayojan-00001-jxf` (the anniversary from the first check)               | still opens, with 200; with the new lead times it shows 13 tasks On track and none Late, where the first revision showed every task Late                                                                                                                                                        |
+| Headers and icon                                                                            | `Permissions-Policy` includes `usb=()`; pages link `/icon.svg`, which answers 200                                                                                                                                                                                                               |
+| Plan page at 360 px in Chromium (Playwright, mobile emulation), money table scrolled 120 px | the caption stayed in view (17 to 337 px), the page stayed 360 px wide, and the console showed no error                                                                                                                                                                                         |
 
 ## Rollback
 

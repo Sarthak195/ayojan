@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 
-import { PlanBanners } from '@/components/banner/banners';
+import { PlanBanners, type AiUnavailableReason } from '@/components/banner/banners';
 import { StatusSummary } from '@/components/layout/status-summary';
 import type { LedgerRow } from '@/core/plan/ledger';
 import type { PlanView } from '@/core/plan/plan-view';
@@ -9,6 +9,9 @@ import type { Lang } from '@/i18n/lang';
 import type { BudgetWeightsFile } from '@/schemas/data/budget-weights';
 
 import { dateWords } from '../../../_brief/words';
+import { categoryLabels } from '../_change/category-labels';
+import { ChangeBox } from '../_change/change-box';
+import { UndoForm } from '../_change/undo-form';
 import { Headline } from './headline';
 import { LedgerSection } from './ledger-section';
 import { MoneySection } from './money-section';
@@ -21,6 +24,8 @@ export interface PlanPageViewProps {
   readonly weights: BudgetWeightsFile;
   /** The task the latest op delayed, so the status line can name the dependants it moved. */
   readonly latestDelay?: string | null;
+  /** Why the change reader was unavailable, from the 303's closed `?why=`; opens the change form. */
+  readonly changeUnavailable?: AiUnavailableReason | null;
 }
 
 // How the latest version was made (spec 7, FR-41): read by AI with its count, an example
@@ -44,6 +49,7 @@ export function PlanPageView({
   view,
   weights,
   latestDelay = null,
+  changeUnavailable = null,
 }: PlanPageViewProps): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.plan;
@@ -105,7 +111,14 @@ export function PlanPageView({
           </ul>
         </section>
       )}
+      <ChangeBox
+        lang={lang}
+        token={token}
+        labelOf={categoryLabels(weights, current.profile, lang)}
+        unavailable={changeUnavailable}
+      />
       <LedgerSection ledger={view.ledger} lang={lang} />
+      {view.ledger.length > 1 ? <UndoForm lang={lang} token={token} id="undo-plan" /> : null}
       <section id="next" aria-labelledby="next-heading" className="mt-8">
         <h2 id="next-heading" className="text-xl font-semibold">
           {words.nextHeading}

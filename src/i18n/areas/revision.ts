@@ -34,9 +34,10 @@ export interface RevisionDictionary {
   readonly cheaper: (vendor: string) => string;
   readonly noQuote: string;
   readonly movedTo: (category: string) => string;
-  readonly fromHeadroom: (amount: string) => string;
-  readonly fromGiver: (amount: string, category: string) => string;
-  readonly shortfall: (amount: string) => string;
+  /** Each follows an amount with its own provenance label, so they hold no number. */
+  readonly fromHeadroom: string;
+  readonly fromGiver: (category: string) => string;
+  readonly shortfall: string;
   readonly reason: {
     readonly guestsChanged: (percent: number) => string;
     readonly budgetChanged: string;
@@ -112,9 +113,9 @@ export const en: RevisionDictionary = {
   cheaper: (vendor) => `${vendor} cheaper`,
   noQuote: 'No quote',
   movedTo: (category) => `Money moved to ${category}`,
-  fromHeadroom: (amount) => `${amount} from money not yet planned`,
-  fromGiver: (amount, category) => `${amount} from ${category}`,
-  shortfall: (amount) => `${amount} could not be found, so it shows as over budget`,
+  fromHeadroom: 'from money not yet planned',
+  fromGiver: (category) => `from ${category}`,
+  shortfall: 'could not be found, so it shows as over budget',
   reason: {
     guestsChanged: (percent) =>
       percent > 0
@@ -200,9 +201,9 @@ export const hi: RevisionDictionary = {
   cheaper: (vendor) => `${vendor} सस्ता`,
   noQuote: 'कोई कोटेशन नहीं',
   movedTo: (category) => `${category} में पैसा डाला`,
-  fromHeadroom: (amount) => `${amount} उस पैसे से जो अभी तय नहीं था`,
-  fromGiver: (amount, category) => `${amount} ${category} से`,
-  shortfall: (amount) => `${amount} कहीं से नहीं मिले, इसलिए बजट से ज़्यादा दिखते हैं`,
+  fromHeadroom: 'उस पैसे से जो अभी तय नहीं था',
+  fromGiver: (category) => `${category} से`,
+  shortfall: 'कहीं से नहीं मिले, इसलिए बजट से ज़्यादा दिखते हैं',
   reason: {
     guestsChanged: (percent) =>
       percent > 0

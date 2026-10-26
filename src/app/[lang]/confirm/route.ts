@@ -10,6 +10,7 @@ import {
 } from '@/server/http/post-step';
 
 import { checkAgain, planFromBrief } from '../_brief/brief-steps';
+import { confirmChangeWork } from '../p/[token]/_change/change-steps';
 import { confirmQuote } from '../p/[token]/quotes/_quote/quote-steps';
 import { briefAnswersOf, ConfirmForm } from './confirm-form';
 
@@ -39,8 +40,9 @@ function confirmWork(form: ConfirmForm, context: StepContext): StepOutcome {
   }
 
   if (pending.kind === 'quote') return confirmQuote(form, pending, context);
-  // A brief starts a plan; a change reading is confirmed on its own page.
-  if (pending.kind !== 'brief' || state.ops.length > 0) {
+  if (pending.kind === 'change') return confirmChangeWork(form, opened.plan, pending, lang);
+  // A brief starts a plan, so one posted against a plan that already has steps is refused.
+  if (state.ops.length > 0) {
     return { kind: 'problem', problem: 'cannot-apply' };
   }
   const resolution = resolveBrief(

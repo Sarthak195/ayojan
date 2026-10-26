@@ -3,11 +3,13 @@ import 'server-only';
 import { resolveFormBrief } from '@/core/brief/confirm-brief';
 import { isLang } from '@/i18n/lang';
 import { BriefForm } from '@/schemas/forms/brief-form';
+import { ChangeForm } from '@/schemas/forms/change-form';
 import { defaultStepDeps, runStep, type StepDeps } from '@/server/http/post-step';
 import { problemResponse } from '@/server/http/problem-page';
 import { formReadBy } from '@/server/pipeline/reading-outcome';
 
 import { checkAgain, planFromBrief } from '../../_brief/brief-steps';
+import { enterChangeWork } from '../../p/[token]/_change/change-steps';
 import { enterQuoteStep } from '../../p/[token]/quotes/_quote/quote-steps';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +26,10 @@ export async function POST(
 ): Promise<Response> {
   const { lang, kind } = await context.params;
   if (kind === 'quote') return runStep(request, Promise.resolve({ lang }), enterQuoteStep(), deps);
+  if (kind === 'change') {
+    const step = { route: '/[lang]/enter/[kind]', rateClass: 'step', schema: ChangeForm } as const;
+    return runStep(request, Promise.resolve({ lang }), { ...step, work: enterChangeWork }, deps);
+  }
   if (kind !== 'brief') {
     return problemResponse({ lang: isLang(lang) ? lang : 'en', problem: 'not-found' });
   }

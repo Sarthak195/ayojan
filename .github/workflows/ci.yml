@@ -33,6 +33,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Validate the planning data
+        run: npm run validate
+
       - name: Test
         run: npm run test
 

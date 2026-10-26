@@ -20,7 +20,9 @@
     "check:size": "node scripts/check-file-size.mjs",
     "check:api": "node scripts/check-forbidden-apis.mjs",
     "check:repo": "node scripts/check-repo-size.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run check:size && npm run check:api && npm run check:repo"
+    "generate:ids": "tsx --conditions=react-server scripts/generate-ids.ts",
+    "validate": "tsx --conditions=react-server scripts/validate-data.ts",
+    "verify": "npm run typecheck && npm run lint && npm run validate && npm run test && npm run check:size && npm run check:api && npm run check:repo"
   },
   "dependencies": {
     "@google/genai": "2.31.0",

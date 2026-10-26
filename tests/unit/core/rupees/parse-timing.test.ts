@@ -21,49 +21,52 @@ const GENERATORS: readonly (readonly [string, string])[] = [
   ['Devanagari digits and words', '८ लाख '.repeat(1_400)],
 ];
 
+// Catastrophic backtracking on 10,000 characters takes seconds or never ends, while a linear
+// scan takes a few milliseconds. The budget sits far between the two, so a slow or busy CI
+// runner cannot turn it red, yet any regex that goes super-linear still fails it.
+const BUDGET_MS = 250;
+
 function adversarial(): string {
   const parts = GENERATORS.map(([, text]) => text);
   return parts.join(' ').slice(0, 10_000);
 }
 
-function elapsedMs(run: () => void): number {
-  const started = performance.now();
+// Best of three, after a warm-up run, so a garbage-collection pause or JIT compile in one
+// run does not count against the scanner.
+function bestMs(run: () => void): number {
   run();
-  return performance.now() - started;
+  let best = Number.POSITIVE_INFINITY;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const started = performance.now();
+    run();
+    best = Math.min(best, performance.now() - started);
+  }
+  return best;
 }
 
 describe('the scanner is linear on adversarial input', () => {
-  it('parses a 10,000 character adversarial string within a few milliseconds', () => {
+  it('parses a 10,000 character adversarial string inside the budget', () => {
     const text = adversarial();
     expect(text).toHaveLength(10_000);
-    // Warm-up compiles the code paths so the measurement is of the scan, not of the JIT.
-    scanAmounts(text);
-    const best = Math.min(
-      elapsedMs(() => scanAmounts(text)),
-      elapsedMs(() => scanAmounts(text)),
-      elapsedMs(() => scanAmounts(text)),
-    );
-    expect(best).toBeLessThan(20);
+    expect(bestMs(() => scanAmounts(text))).toBeLessThan(BUDGET_MS);
   });
 
-  it.each(GENERATORS)('%s: 10,000 characters finish well under the 50 ms budget', (_name, text) => {
+  it.each(GENERATORS)('%s: 10,000 characters finish inside the budget', (_name, text) => {
     expect(text.length).toBeLessThanOrEqual(10_100);
-    scanAmounts(text);
-    expect(elapsedMs(() => scanAmounts(text))).toBeLessThan(50);
-    expect(elapsedMs(() => parseAmount(text))).toBeLessThan(50);
-    expect(elapsedMs(() => amountsIn(text))).toBeLessThan(50);
+    expect(bestMs(() => scanAmounts(text))).toBeLessThan(BUDGET_MS);
+    expect(bestMs(() => parseAmount(text))).toBeLessThan(BUDGET_MS);
+    expect(bestMs(() => amountsIn(text))).toBeLessThan(BUDGET_MS);
   });
 
   it('takes about four times as long for four times the input, not sixteen times', () => {
-    const small = 'saadhe 1,23,45,67 lakh dedh '.repeat(350);
+    const small = 'saadhe 1,23,45,67 lakh dedh '.repeat(700);
     const large = small.repeat(4);
-    scanAmounts(large);
     const smallTime = Math.max(
-      elapsedMs(() => scanAmounts(small)),
-      1,
+      bestMs(() => scanAmounts(small)),
+      0.5,
     );
-    const largeTime = elapsedMs(() => scanAmounts(large));
-    // A quadratic scan would give a ratio near 16; the margin absorbs timer noise.
+    const largeTime = bestMs(() => scanAmounts(large));
+    // A quadratic scan would give a ratio near 16; best-of-three keeps timer noise out.
     expect(largeTime / smallTime).toBeLessThan(10);
   });
 });

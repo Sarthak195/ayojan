@@ -1,0 +1,22 @@
+# Rebuilt inside the image; a host node_modules carries binaries for the wrong platform.
+node_modules
+.next
+
+# History and CI configuration are not build inputs.
+.git
+.github
+
+# `next build` copies any .env it finds into .next/standalone/.env, which the runner stage
+# would ship. Keys must never enter the build context.
+.env
+.env.*
+
+# Not needed to build or run.
+tests
+coverage
+.planning
+docs
+*.md
+
+# Docker reads the Dockerfile separately; excluding it keeps comment edits from busting the cache.
+Dockerfile

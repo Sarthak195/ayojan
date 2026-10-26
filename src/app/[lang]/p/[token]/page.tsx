@@ -16,12 +16,14 @@ export default async function PlanPage({
   if (page.view === null) {
     redirect(locationOf({ to: 'check', lang: page.lang, token: page.token }));
   }
+  const last = page.state.ops.at(-1);
   return (
     <PlanPageView
       lang={page.lang}
       token={page.token}
       view={page.view}
       weights={page.data.budgetWeights}
+      latestDelay={last?.kind === 'taskDelayed' ? last.taskId : null}
     />
   );
 }

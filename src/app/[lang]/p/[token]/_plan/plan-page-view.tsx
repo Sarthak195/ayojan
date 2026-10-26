@@ -12,13 +12,15 @@ import { dateWords } from '../../../_brief/words';
 import { Headline } from './headline';
 import { LedgerSection } from './ledger-section';
 import { MoneySection } from './money-section';
-import { TasksSection } from './tasks-section';
+import { movedSummary, TasksSection } from './tasks-section';
 
 export interface PlanPageViewProps {
   readonly lang: Lang;
   readonly token: string;
   readonly view: PlanView;
   readonly weights: BudgetWeightsFile;
+  /** The task the latest op delayed, so the status line can name the dependants it moved. */
+  readonly latestDelay?: string | null;
 }
 
 // How the latest version was made (spec 7, FR-41): read by AI with its count, an example
@@ -36,13 +38,23 @@ function readLine(row: LedgerRow | undefined, lang: Lang): string | null {
 const SECTIONS = ['money', 'tasks', 'ledger', 'next'] as const;
 
 /** The plan (spec 6.4): everything on it is derived from the ops in the link. */
-export function PlanPageView({ lang, token, view, weights }: PlanPageViewProps): ReactElement {
+export function PlanPageView({
+  lang,
+  token,
+  view,
+  weights,
+  latestDelay = null,
+}: PlanPageViewProps): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.plan;
   const { current } = view;
   const latest = view.ledger[0];
   const read = readLine(latest, lang);
   const base = `/${lang}/p/${token}`;
+  const moved =
+    latestDelay === null
+      ? ''
+      : ` ${movedSummary(current.schedule, current.delayEffects, latestDelay, lang)}`;
   const jump: Readonly<Record<(typeof SECTIONS)[number], string>> = {
     money: words.moneyHeading,
     tasks: words.tasksHeading,
@@ -61,6 +73,7 @@ export function PlanPageView({ lang, token, view, weights }: PlanPageViewProps):
       {read === null ? null : <p className="mt-2">{read}</p>}
       <StatusSummary>
         {words.statusSummary(current.version, latest === undefined ? '' : latest[lang])}
+        {moved}
       </StatusSummary>
       <p className="text-sm text-muted">{words.keepLink}</p>
       <PlanBanners banners={view.banners} lang={lang} />
@@ -74,7 +87,12 @@ export function PlanPageView({ lang, token, view, weights }: PlanPageViewProps):
       </nav>
       <Headline headline={current.headline} lang={lang} />
       <MoneySection current={current} weights={weights} lang={lang} />
-      <TasksSection schedule={current.schedule} lang={lang} />
+      <TasksSection
+        schedule={current.schedule}
+        delayEffects={current.delayEffects}
+        lang={lang}
+        token={token}
+      />
       {current.brief.notes.length === 0 ? null : (
         <section aria-labelledby="noted-heading" className="mt-8">
           <h2 id="noted-heading" className="text-xl font-semibold">

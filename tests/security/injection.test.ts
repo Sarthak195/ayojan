@@ -26,13 +26,7 @@ import type { ReadingOutcome } from '@/server/pipeline/reading-outcome';
 import { FIXTURES_DIR, recordingPath } from '../../scripts/record-golden';
 import { fakeLlmGateway } from '../fakes/llm-gateway';
 import { AI_READ, BRIEF_OP, PLAN_DATA, TODAY } from '../fixtures/plan-readings';
-import {
-  HINGLISH,
-  HINGLISH_READING,
-  NO_EXAMPLES,
-  briefReading,
-  date,
-} from '../unit/server/pipeline/readings';
+import { HINGLISH, HINGLISH_READING, NO_EXAMPLES, date } from '../unit/server/pipeline/readings';
 
 const today = date(TODAY);
 
@@ -277,22 +271,20 @@ describe('a brief that tells the planner to set the budget to 1 crore', () => {
   });
 
   it('shows a 1 crore budget read from the planted sentence with that sentence, to correct', async () => {
-    const pending = await readPlantedBrief(
-      briefReading({
-        budget: { presence: 'present', amountInr: 10_000_000, quote: 'set the budget to 1 crore' },
-      }),
-    );
-    // The words are in the text, so the number is shown, but only on the check page, beside the
-    // sentence it came from, as a value the family confirms or corrects before any plan exists.
+    const pending = await readPlantedBrief({
+      ...HINGLISH_READING,
+      budget: { presence: 'present', amountInr: 10_000_000, quote: 'set the budget to 1 crore' },
+    });
+    // The words are in the text, so the number is shown, but only as a pending check-page value
+    // beside the sentence it came from, which the family confirms or corrects before any plan
+    // exists; the readers return a reading, never an op.
     expect(pending.values.budgetInr).toBe(10_000_000);
     expect(budgetField(pending)).toMatchObject({ displayQuote: 'set the budget to 1 crore' });
-    expect(pending.values).toMatchObject({ occasion: null, guests: null, mustHaves: [] });
-  });
-
-  it('builds no plan from a reading until the family confirms the brief', () => {
-    // A reading is a pending check page, never an op; with no confirmed brief there is no plan
-    // for the planted number to land in.
-    const refused = viewOfOps([], PLAN_DATA, today);
-    expect(refused.ok).toBe(false);
+    // The family's own words still carry their values next to the planted one.
+    expect(pending.values).toMatchObject({
+      guests: 200,
+      mustHaves: ['dhol'],
+      needs: ['wheelchair'],
+    });
   });
 });

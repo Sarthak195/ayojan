@@ -78,3 +78,38 @@ entry exists only for a change that really happened.
   "every statement comes from a fact".
 - Evidence: prompt tests only; the draft recording is pending, and gate G4 (Wed 28 Oct 12:00 IST)
   decides whether this prompt ships.
+
+## Attempt 1 recordings (26 Oct 2026)
+
+### brief, quote and change v1: recorded, no revision
+
+- Change: none. The 15 attempt-1 fixtures (D33) were recorded once with `npm run record:golden`,
+  every one answered by `gemini-3.5-flash-lite` on the first rung.
+- Why no revision: `tests/golden/replay.test.ts` replays each recording through the real read
+  pipeline, and every fixture verifies all of its claims, above the 80 percent floor.
+- Evidence (N of M verified): brief-hinglish 12 of 12 (the vague "Feb end mein" is unclear, so it
+  is asked and not counted), brief-english 12 of 12, brief-hindi 8 of 8, brief-birthday 4 of 4,
+  quote-caterer-a 8 of 8, quote-caterer-b 6 of 6, quote-injection 2 of 2 (only basis and rate;
+  category unclear), quote-over-cap 5 of 5, quote-over-budget-venue 5 of 5,
+  quote-over-budget-caterer 5 of 5, quote-over-budget-photo 4 of 4, change-explainer-sentence 3 of
+  3, change-vague-budget 1 of 1, change-date-conflict 2 of 2, change-reallocate-hinglish 1 of 1.
+
+### familyUpdate v1 to v2 (26 Oct 2026)
+
+- Before (v1): the prompt asked for a greeting, what changed, what needs attention and a closing
+  line, and never mentioned the vendors' `questionIds`.
+- After (v2): one system rule says `vendors[].questionIds` are what the family will ask each vendor
+  again because the plan changed, and that the attention lines name every such topic once with the
+  topic word the request gives. The request (`instruction(language)`) lists those words per
+  language, taken from `topicWords` in `src/core/messages/required-mentions.ts`, the same table the
+  draft check uses (Hindi: तारीख, मेहमान, क्षमता, क़ीमत; English: date, guest, capacity, quote).
+- Why: the draft check (D07) also requires every re-confirmation question to be mentioned, and
+  the v1 draft failed it. It said the date changed and named the two at-risk tasks, but never
+  mentioned the guest count or the venue's capacity, so the family would have got the template.
+  A paraphrase such as "लोग" for guests also fails a topic-word check, so the request names the
+  exact words rather than describing them.
+- Evidence: `family-update-facts` (Hindi, the change-test facts). v1 recording: 4 lines, numbers
+  fine, rejected as `missing-questions` (guest-count-reconfirmation and venue-capacity missing), so
+  0 of 1 drafts accepted. v2 re-record (one call, `--only family-update-facts`): 6 lines naming the
+  date, the guests and the capacity per vendor, accepted with "numbers checked against your plan:
+  4 of 4". Asserted in `tests/golden/replay.test.ts`.

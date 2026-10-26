@@ -5,6 +5,7 @@ import CheckPage from '@/app/[lang]/p/[token]/check/page';
 import QuotesPage from '@/app/[lang]/p/[token]/quotes/page';
 import { POST as read } from '@/app/[lang]/read/[kind]/route';
 
+import { expectReadButtonHint } from '../hint-assert';
 import { context, digestOf, post, SEAL_KEY, tokenOf } from '../support';
 import {
   CATERER_A,
@@ -97,6 +98,13 @@ describe('GET /[lang]/p/[token]/quotes', () => {
     expect(html).toMatch(/<details id="quote-form" class/);
     expect(html).toContain('No quotes yet.');
   });
+
+  it.each(['en', 'hi'] as const)(
+    'points the read button at a hint that holds the privacy line (%s)',
+    async (lang) => {
+      expectReadButtonHint(await quotesHtml(planToken(), {}, lang), lang, 'quote-read-hint');
+    },
+  );
 
   it('fills the box with the committed sample when opened from a sample link', async () => {
     const html = await quotesHtml(planToken(), { sample: 'a' });

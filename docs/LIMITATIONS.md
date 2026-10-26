@@ -163,14 +163,14 @@ starting a new plan is the way out. The measurement is
 
 ## The running service
 
-### Model quota is shared, free-tier and assumed
+### Model quota is shared, treated as free-tier and assumed
 
-Ayojan is treated as a free-tier Gemini client, and its pages tell users so. On 26 Oct 2026 the
+Ayojan is treated as a free-tier Gemini client, and from commit `8ab00a3` (live after the next deploy) its read pages tell users so. On 26 Oct 2026 the
 Cloud Run project had billing enabled but the Gemini API was not enabled in it, so none of the 7
 working keys can come from that billed project; the projects the keys do come from were not
 inspected. No paid key was added: a paid last step on the model ladder was offered and declined,
 so none was built. Text a user submits for reading goes to Gemini under
-the free tier's terms, which are Google's and not this project's (see
+Google's terms, not this project's, and is treated as unpaid use (see
 [DATA_HANDLING.md](DATA_HANDLING.md)). The daily allowance is not read from Google: the code
 assumes about 20 requests per model per project per day, at least 6 distinct projects behind
 the keys and a reset at midnight Pacific time ([exhaustion.ts](../src/server/genai/exhaustion.ts)),

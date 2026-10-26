@@ -1,6 +1,6 @@
 // Records what the real model reads from each fixture into golden/llm/<fixture>.<promptId>.json,
-// the replies the offline tests replay (requirements 4.4). Every call spends shared free-tier
-// quota, so the script refuses any flag it does not know (a typo must never record everything),
+// the replies the offline tests replay (requirements 4.4). Every call spends shared Gemini quota
+// (treated as free-tier), so the script refuses any flag it does not know (a typo must never record everything),
 // records only fixtures that have no recording yet unless one is named with --only, and stops at
 // the first failure. Run: npm run record:golden [-- --dry-run | -- --only <fixture>]
 

@@ -9,6 +9,7 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { openPlan } from '@/server/view/plan-page';
 
+import { expectReadButtonHint } from './hint-assert';
 import { context, DATA, deps, digestOf, HINGLISH_FORM, post, sources, tokenOf } from './support';
 
 async function planHtml(lang: Lang): Promise<string> {
@@ -50,6 +51,15 @@ describe('GET /[lang] (start page)', () => {
     expect(html).toMatch(/<textarea[^>]*name="brief"[^>]*><\/textarea>/);
   });
 
+  it.each(['en', 'hi'] as const)(
+    'points the read and example buttons at hints that hold the privacy line (%s)',
+    async (lang) => {
+      const html = renderToStaticMarkup(await StartPage({ params: Promise.resolve({ lang }) }));
+      expectReadButtonHint(html, lang, 'read-hint');
+      expectReadButtonHint(html, lang, 'example-hint');
+    },
+  );
+
   it('is a 404 for an unknown language', async () => {
     const digest = await digestOf(() => StartPage({ params: Promise.resolve({ lang: 'fr' }) }));
     expect(digest).toBe('NEXT_HTTP_ERROR_FALLBACK;404');
@@ -57,6 +67,13 @@ describe('GET /[lang] (start page)', () => {
 });
 
 describe('GET /[lang]/p/[token] (plan page)', () => {
+  it.each(['en', 'hi'] as const)(
+    'points the change box button at a hint that holds the privacy line (%s)',
+    async (lang) => {
+      expectReadButtonHint(await planHtml(lang), lang, 'change-reading-hint');
+    },
+  );
+
   it('has one h1 naming the version, the occasion and the date', async () => {
     const html = await planHtml('en');
     expect(html.match(/<h1/g)).toHaveLength(1);

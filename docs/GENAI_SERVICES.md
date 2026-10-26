@@ -246,8 +246,8 @@ reader on a deploy that has none.
 
 - The quota numbers in section 6 are working assumptions, not measurements. The service is
   treated as a free-tier client: no key comes from the billed Cloud Run project and no paid key was
-  added (see [DATA_HANDLING.md](DATA_HANDLING.md)). The real ceiling on model calls is the three Cloud Run instances times
-  the per-instance budget, together with the Gemini quota itself.
+  added (see [DATA_HANDLING.md](DATA_HANDLING.md)). The real ceiling on model calls is the three
+  Cloud Run instances times the per-instance budget, together with the Gemini quota itself.
 - Latency is observed, not benchmarked. On 26 Oct 2026 one Hinglish brief read on the deployed
   service took 5.2 s, and a read of a pasted quote took 12.8 s. The same day, a dozen reads from a
   local production server with real keys took 6 to 39 s, and one of twelve first tries ran out of

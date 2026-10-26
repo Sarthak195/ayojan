@@ -74,6 +74,14 @@ describe('dictionaries', () => {
     );
   });
 
+  it('keeps the owner-approved Hindi privacy line word for word (D41)', () => {
+    const hi = dictionaryFor('hi');
+    expect(hi.common.privacyHint).toBe(
+      'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर करने में इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न लिखें।',
+    );
+    expect(hi.common.privacyHint.endsWith('।')).toBe(true);
+  });
+
   it('writes Hindi in Devanagari, not English left untranslated', () => {
     const hi = dictionaryFor('hi');
     expect(hi.common.privacyFooter).toMatch(/[ऀ-ॿ]/);

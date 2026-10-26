@@ -145,7 +145,7 @@ To change an existing prompt:
    npm run record:golden -- --only brief-hinglish
    ```
 
-   Recording spends shared free-tier quota, so name each fixture with `--only` and do not loop. The
+   Recording spends shared Gemini quota (treated as free-tier), so name each fixture with `--only` and do not loop. The
    script records only fixtures that have no recording unless `--only` names one, stops at the first
    failure, refuses any flag it does not know, and refuses to write a recording that contains a key.
    Fixture texts are in [`fixtures`](fixtures); a file name starts with the prompt's prefix

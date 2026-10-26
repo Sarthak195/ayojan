@@ -16,6 +16,11 @@
 //                                                                                     matches
 // Divergence: the spec words the running line "still Rs 51,900 over"; the lever module's
 // sentence reads "now Rs 51,900 over budget" (one wording for over, under and on budget).
+//
+// Re-pinned after the 2026-10-26 data review: only labels moved (venue Hindi to "वेन्यू", the
+// music task renamed to band, dhol or DJ, the e-invite and lever wording) and final-walkthrough
+// gained decor-sign-off in dependsOn; mandap still binds the walkthrough, so no date or rupee
+// value changed.
 
 import { describe, expect, it } from 'vitest';
 

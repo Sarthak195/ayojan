@@ -545,7 +545,7 @@
           "effect": "percentOfCategory",
           "label": {
             "en": "Leaner photo and video",
-            "hi": "कम फ़ोटो और वीडियो"
+            "hi": "छोटा फ़ोटो-वीडियो पैकेज"
           },
           "consequence": {
             "en": "One camera crew instead of two, and no drone or long film.",
@@ -601,8 +601,8 @@
             "hi": "छोटा बैंड"
           },
           "consequence": {
-            "en": "A smaller group for the baraat, with fewer players and hours.",
-            "hi": "बारात के लिए छोटी टोली, कम बजाने वाले और कम घंटे।"
+            "en": "A smaller band or DJ booking, with fewer players and hours.",
+            "hi": "छोटा बैंड या DJ, कम बजाने वाले और कम घंटे।"
           },
           "basis": "Planning assumption chosen by the author: halving players and hours roughly halves a band booking.",
           "category": "music",
@@ -630,7 +630,7 @@
           },
           "consequence": {
             "en": "Less money held back for surprises on the day.",
-            "hi": "शादी के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।"
+            "hi": "आयोजन के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।"
           },
           "basis": "Planning assumption chosen by the author: half the reserve is the most that can be spent while still keeping some cover.",
           "category": "contingency",
@@ -658,7 +658,7 @@
           },
           "consequence": {
             "en": "The family spends more than first planned.",
-            "hi": "परिवार पहले सोचे गए से ज़्यादा ख़र्च करेगा।"
+            "hi": "परिवार पहले सोचे गए बजट से ज़्यादा ख़र्च करेगा।"
           },
           "basis": "Planning assumption chosen by the author: raising the budget by exactly the gap is always an honest option to show.",
           "category": null,
@@ -698,7 +698,7 @@
           "id": "book-venue",
           "category": "venue",
           "en": "Book the venue",
-          "hi": "शादी की जगह बुक करें",
+          "hi": "वेन्यू बुक करें",
           "books": "venue",
           "fasterApplied": false,
           "dependsOn": [],
@@ -833,10 +833,10 @@
           "id": "final-walkthrough",
           "category": "venue",
           "en": "Final walkthrough at the venue",
-          "hi": "शादी की जगह पर आख़िरी जाँच",
+          "hi": "वेन्यू पर आख़िरी जाँच",
           "books": null,
           "fasterApplied": false,
-          "dependsOn": ["book-caterer", "mandap-design"],
+          "dependsOn": ["book-caterer", "decor-sign-off", "mandap-design"],
           "durationDays": 1,
           "earliestStart": "2026-12-04",
           "earliestFinish": "2026-12-05",
@@ -887,7 +887,7 @@
           "id": "print-invitations",
           "category": "invites",
           "en": "Print the invitation cards",
-          "hi": "शादी के कार्ड छपवाएँ",
+          "hi": "न्योते के कार्ड छपवाएँ",
           "books": null,
           "fasterApplied": false,
           "dependsOn": ["finalise-guest-list"],
@@ -940,8 +940,8 @@
         {
           "id": "book-dhol-or-band",
           "category": "music",
-          "en": "Book the dhol or band",
-          "hi": "ढोल या बैंड बुक करें",
+          "en": "Book the music: band, dhol or DJ",
+          "hi": "बैंड, ढोल या DJ बुक करें",
           "books": "music",
           "fasterApplied": false,
           "dependsOn": [],
@@ -968,7 +968,7 @@
           "id": "book-mehndi-artist",
           "category": "decor",
           "en": "Book the mehndi artist",
-          "hi": "मेहंदी वाली बुक करें",
+          "hi": "मेहंदी आर्टिस्ट बुक करें",
           "books": null,
           "fasterApplied": false,
           "dependsOn": [],
@@ -995,7 +995,7 @@
           "id": "confirm-step-free-access",
           "category": "venue",
           "en": "Confirm step-free access at the venue",
-          "hi": "शादी की जगह पर बिना सीढ़ी का रास्ता पक्का करें",
+          "hi": "वेन्यू पर बिना सीढ़ी का रास्ता पक्का करें",
           "books": null,
           "fasterApplied": false,
           "dependsOn": ["book-venue"],
@@ -1209,7 +1209,7 @@
       },
       "label": {
         "en": "Venue (booked)",
-        "hi": "शादी की जगह (बुक किया)"
+        "hi": "वेन्यू (बुक किया)"
       },
       "questions": [
         {
@@ -1240,7 +1240,7 @@
       "version": 2,
       "kind": "taskDone",
       "en": "Book the venue marked done, booked at Rs 1,80,000, for 220 guests",
-      "hi": "शादी की जगह बुक करें पूरा हुआ, Rs 1,80,000 में बुक, 220 मेहमानों के लिए",
+      "hi": "वेन्यू बुक करें पूरा हुआ, Rs 1,80,000 में बुक, 220 मेहमानों के लिए",
       "sources": [],
       "readBy": null
     },
@@ -1274,7 +1274,7 @@
       {
         "label": {
           "en": "Venue (booked)",
-          "hi": "शादी की जगह (बुक किया)"
+          "hi": "वेन्यू (बुक किया)"
         },
         "category": "venue",
         "questionIds": ["step-free-access"],

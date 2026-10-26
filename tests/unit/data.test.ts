@@ -1,3 +1,5 @@
+// Data change pinned here: the 2026-10-26 review stamped every reviewed field, so the sign-off
+// test swaps whatever stamp the first row carries instead of an empty string.
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -172,7 +174,7 @@ describe('no-absolute-rupees', () => {
 
   it('allows a sign-off date in reviewed, so signing a row off cannot break boot', () => {
     expect(absoluteRupeeProblems('tasks.yaml', "    reviewed: 'SK 2026-10-27'")).toEqual([]);
-    const signed = realText('functions.yaml').replace("reviewed: ''", "reviewed: 'SK 2026-10-27'");
+    const signed = realText('functions.yaml').replace(/reviewed: .*/, "reviewed: 'SK 2026-10-27'");
     const repository = createKnowledgeRepository((name) =>
       name === 'functions.yaml' ? signed : realText(name),
     );

@@ -41,6 +41,11 @@
 //      over budget, because decor's lower allocation also lowers its guest-scaled projection
 //      (x 1.05 at 250 guests). The shortfall is what Move money could not find; the gap is what
 //      the plan header shows as over budget.
+//
+// Re-pinned after the 2026-10-26 data review: only labels moved (venue Hindi to "वेन्यू", the
+// music task renamed to band, dhol or DJ, the e-invite and lever wording) and final-walkthrough
+// gained decor-sign-off in dependsOn; mandap still binds the walkthrough, so no date or rupee
+// value changed.
 
 import { describe, expect, it } from 'vitest';
 

@@ -415,7 +415,7 @@
       "effect": "percentOfCategory",
       "label": {
         "en": "Leaner photo and video",
-        "hi": "कम फ़ोटो और वीडियो"
+        "hi": "छोटा फ़ोटो-वीडियो पैकेज"
       },
       "consequence": {
         "en": "One camera crew instead of two, and no drone or long film.",
@@ -471,8 +471,8 @@
         "hi": "छोटा बैंड"
       },
       "consequence": {
-        "en": "A smaller group for the baraat, with fewer players and hours.",
-        "hi": "बारात के लिए छोटी टोली, कम बजाने वाले और कम घंटे।"
+        "en": "A smaller band or DJ booking, with fewer players and hours.",
+        "hi": "छोटा बैंड या DJ, कम बजाने वाले और कम घंटे।"
       },
       "basis": "Planning assumption chosen by the author: halving players and hours roughly halves a band booking.",
       "category": "music",
@@ -500,7 +500,7 @@
       },
       "consequence": {
         "en": "Less money held back for surprises on the day.",
-        "hi": "शादी के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।"
+        "hi": "आयोजन के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।"
       },
       "basis": "Planning assumption chosen by the author: half the reserve is the most that can be spent while still keeping some cover.",
       "category": "contingency",
@@ -528,7 +528,7 @@
       },
       "consequence": {
         "en": "The family spends more than first planned.",
-        "hi": "परिवार पहले सोचे गए से ज़्यादा ख़र्च करेगा।"
+        "hi": "परिवार पहले सोचे गए बजट से ज़्यादा ख़र्च करेगा।"
       },
       "basis": "Planning assumption chosen by the author: raising the budget by exactly the gap is always an honest option to show.",
       "category": null,

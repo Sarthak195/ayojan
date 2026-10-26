@@ -1,3 +1,5 @@
+// Data change pinned here: the 2026-10-26 review added decor-sign-off to final-walkthrough's
+// dependsOn, so in the celebration profile the walkthrough now waits on decor, not the caterer.
 import { describe, expect, it } from 'vitest';
 
 import { daysBetween } from '@/core/calendar/day-number';
@@ -379,8 +381,11 @@ describe('a dependency on a template that is not in the plan', () => {
     expect(plan.tasks.some((task) => task.id === 'mandap-design')).toBe(false);
     const walkthrough = taskIn(plan, 'final-walkthrough');
     expect(templateOf('final-walkthrough').dependsOn).toContain('mandap-design');
-    expect(walkthrough.dependsOn).toEqual(['book-caterer']);
-    expect(walkthrough.earliestStart).toBe(taskIn(plan, 'book-caterer').earliestFinish);
+    // Decor sign-off (venue 10 days, decorator 10, sign-off 7) finishes on day 27, after the
+    // caterer on day 20, so it is the predecessor that sets the visit.
+    expect(walkthrough.dependsOn).toEqual(['book-caterer', 'decor-sign-off']);
+    expect(walkthrough.bindingPredecessor).toBe('decor-sign-off');
+    expect(walkthrough.earliestStart).toBe(taskIn(plan, 'decor-sign-off').earliestFinish);
   });
 });
 

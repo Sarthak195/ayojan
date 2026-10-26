@@ -1,3 +1,5 @@
+// Data changes pinned here (2026-10-26 review): book-dhol-or-band is always on, so dhol no
+// longer adds it; book-mehndi-artist is no longer wedding-only, so a celebration keeps it.
 import { describe, expect, it } from 'vitest';
 
 import { resolveTask, selectTasks } from '@/core/timeline/task-selection';
@@ -28,7 +30,6 @@ describe('which templates are active', () => {
       'sangeet-programme',
     ],
     ['a haldi function', { ...NOTHING_EXTRA, functions: { haldi: 'yes' } }, 'haldi-arrangements'],
-    ['dhol as a must-have', { ...NOTHING_EXTRA, mustHaves: ['dhol'] }, 'book-dhol-or-band'],
     ['a live counter', { ...NOTHING_EXTRA, mustHaves: ['liveCounter'] }, 'confirm-live-counter'],
     ['a choreographer', { ...NOTHING_EXTRA, mustHaves: ['choreographer'] }, 'book-choreographer'],
     [
@@ -40,6 +41,12 @@ describe('which templates are active', () => {
   ])('adds %s', (_label, needs, taskId) => {
     expect(idsFor(NOTHING_EXTRA)).not.toContain(taskId);
     expect(idsFor(needs)).toContain(taskId);
+  });
+
+  it('books music for every plan and still ties the dhol must-have to that task', () => {
+    expect(idsFor(NOTHING_EXTRA)).toContain('book-dhol-or-band');
+    const music = templateOf('book-dhol-or-band');
+    expect(music.activatedBy).toContainEqual({ when: 'mustHave', mustHave: 'dhol' });
   });
 
   it.each<['no' | 'unsure']>([['no'], ['unsure']])(
@@ -99,6 +106,7 @@ describe('the small-celebration profile', () => {
   it('keeps the templates that are not wedding-only, including a dhol for a birthday', () => {
     const chosen = idsFor(everything, 'celebration');
     expect(chosen).toContain('book-dhol-or-band');
+    expect(chosen).toContain('book-mehndi-artist');
     expect(chosen).toContain('book-venue');
     expect(chosen).toEqual(
       tasksFile.tasks

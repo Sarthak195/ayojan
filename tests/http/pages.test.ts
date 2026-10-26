@@ -82,6 +82,14 @@ describe('GET /[lang]/p/[token] (plan page)', () => {
     },
   );
 
+  it('names each category in the page language in Why these numbers, with no doubled colon', async () => {
+    const html = await planHtml('hi');
+    const why = /<details[\s\S]*?ये आँकड़े क्यों\?[\s\S]*?<\/details>/.exec(html)?.[0] ?? '';
+    expect(why).toContain('<span lang="hi" class="font-medium">खाना-पीना</span>');
+    expect(why).not.toContain('>Catering<');
+    expect(html).not.toContain('::');
+  });
+
   it('shows the timeline with a status word and an icon for every task', async () => {
     const html = await planHtml('en');
     const tasks = /<section id="tasks"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';

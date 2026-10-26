@@ -65,12 +65,16 @@ export function MoneySection({
           <summary className="inline-flex min-h-11 cursor-pointer items-center font-medium">
             {words.whyHeading}
           </summary>
-          {/* The basis is the author's stated assumption, written once in English (D37). */}
+          {/* The basis is the author's stated assumption, written once in English (D37); the
+              category keeps the page's own name, so it matches the table above. */}
           <ul lang="en" className="mt-2 list-disc space-y-1 pl-6 text-sm">
             <li>{profile.basis}</li>
             {profile.categories.map((row) => (
               <li key={row.category}>
-                <span className="font-medium">{row.en}:</span> {row.basis}
+                <span lang={lang} className="font-medium">
+                  {row[lang]}
+                </span>
+                : {row.basis}
               </li>
             ))}
           </ul>

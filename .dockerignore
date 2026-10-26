@@ -20,3 +20,6 @@ docs
 
 # Docker reads the Dockerfile separately; excluding it keeps comment edits from busting the cache.
 Dockerfile
+
+# Incremental type-check state from the host describes the host tree, not the image.
+*.tsbuildinfo

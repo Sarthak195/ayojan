@@ -30,6 +30,12 @@ ENV HOSTNAME=0.0.0.0
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 COPY --from=builder --chown=node:node /app/public ./public
+# Read at runtime through process.cwd(), which the standalone tracer does not follow, so they
+# are copied by name: the planning data, the sample texts, and their recorded readings (D18).
+# The rest of golden/, tests/ and scripts/ never reach the image.
+COPY --from=builder --chown=node:node /app/data ./data
+COPY --from=builder --chown=node:node /app/fixtures ./fixtures
+COPY --from=builder --chown=node:node /app/golden/llm ./golden/llm
 
 USER node
 EXPOSE 8080

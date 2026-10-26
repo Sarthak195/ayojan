@@ -1,0 +1,20 @@
+{
+  "fixture": "quote-over-budget-venue",
+  "promptId": "quote",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "category": { "value": "venue", "quote": "Venue for the wedding day" },
+    "basis": { "value": "lumpSum", "quote": "lump sum" },
+    "rateInr": { "amountInr": 250000, "quote": "Rs 2,50,000" },
+    "minimumGuests": { "presence": "absent", "count": null, "quote": "" },
+    "guestsCovered": { "presence": "present", "count": 250, "quote": "up to 250 guests" },
+    "tax": { "value": "included", "ratePercent": null, "quote": "GST included" },
+    "inclusions": [],
+    "extras": [],
+    "advancePercent": { "presence": "absent", "percent": null, "quote": "" }
+  }
+}

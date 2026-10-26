@@ -1,0 +1,24 @@
+{
+  "fixture": "brief-birthday",
+  "promptId": "brief",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "occasion": { "value": "birthday", "quote": "Papa ka 60th birthday" },
+    "budget": { "presence": "present", "amountInr": 200000, "quote": "2 lakh" },
+    "guests": { "presence": "present", "count": 80, "quote": "80 log" },
+    "venueCapacity": { "presence": "absent", "count": null, "quote": "" },
+    "date": { "presence": "present", "day": 12, "month": 12, "year": null, "quote": "12 Dec" },
+    "functions": [],
+    "priorities": [],
+    "mustHaves": [],
+    "guestNeeds": [],
+    "diet": [],
+    "venueLimits": [],
+    "otherMustHaves": [],
+    "otherNeeds": []
+  }
+}

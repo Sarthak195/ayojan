@@ -1,0 +1,22 @@
+{
+  "fixture": "quote-caterer-a",
+  "promptId": "quote",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "category": { "value": "catering", "quote": "veg menu: 1300/plate veg" },
+    "basis": { "value": "perPlate", "quote": "1300/plate" },
+    "rateInr": { "amountInr": 1300, "quote": "1300/plate" },
+    "minimumGuests": { "presence": "present", "count": 200, "quote": "min 200 plate" },
+    "guestsCovered": { "presence": "absent", "count": null, "quote": "" },
+    "tax": { "value": "extraRateUnstated", "ratePercent": null, "quote": "GST extra" },
+    "inclusions": [{ "label": "2 sweet incl", "amountInr": null, "quote": "2 sweet incl" }],
+    "extras": [
+      { "label": "live chaat counter", "amountInr": 15000, "quote": "live chaat counter 15k alag" }
+    ],
+    "advancePercent": { "presence": "present", "percent": 30, "quote": "advance 30%" }
+  }
+}

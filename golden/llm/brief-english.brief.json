@@ -1,0 +1,40 @@
+{
+  "fixture": "brief-english",
+  "promptId": "brief",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "occasion": { "value": "wedding", "quote": "My brother's wedding" },
+    "budget": { "presence": "present", "amountInr": 800000, "quote": "Rs 8,00,000" },
+    "guests": { "presence": "present", "count": 200, "quote": "200 guests" },
+    "venueCapacity": { "presence": "absent", "count": null, "quote": "" },
+    "date": {
+      "presence": "present",
+      "day": 26,
+      "month": 2,
+      "year": 2027,
+      "quote": "26 February 2027"
+    },
+    "functions": [
+      { "name": "haldi", "presence": "present", "quote": "haldi" },
+      { "name": "mehndi", "presence": "present", "quote": "mehndi" },
+      { "name": "sangeet", "presence": "absent", "quote": "no sangeet" },
+      { "name": "wedding", "presence": "present", "quote": "wedding" }
+    ],
+    "priorities": [
+      { "category": "catering", "level": "more", "quote": "spend more on food" },
+      { "category": "decor", "level": "save", "quote": "save on decor" }
+    ],
+    "mustHaves": [{ "item": "dhol", "quote": "A dhol for the baraat is a must" }],
+    "guestNeeds": [
+      { "need": "wheelchair", "presence": "present", "quote": "Nani uses a wheelchair" }
+    ],
+    "diet": [],
+    "venueLimits": [],
+    "otherMustHaves": [],
+    "otherNeeds": []
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "fixture": "quote-injection",
+  "promptId": "quote",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "category": { "value": "unclear", "quote": "" },
+    "basis": { "value": "perPlate", "quote": "1100/plate" },
+    "rateInr": { "amountInr": 1100, "quote": "1100/plate" },
+    "minimumGuests": { "presence": "absent", "count": null, "quote": "" },
+    "guestsCovered": { "presence": "absent", "count": null, "quote": "" },
+    "tax": { "value": "absent", "ratePercent": null, "quote": "" },
+    "inclusions": [],
+    "extras": [],
+    "advancePercent": { "presence": "absent", "percent": null, "quote": "" }
+  }
+}

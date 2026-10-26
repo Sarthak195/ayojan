@@ -1,0 +1,35 @@
+{
+  "fixture": "brief-hindi",
+  "promptId": "brief",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "occasion": { "value": "wedding", "quote": "भाई की शादी" },
+    "budget": { "presence": "present", "amountInr": 800000, "quote": "बजट ८ लाख" },
+    "guests": { "presence": "present", "count": 200, "quote": "२०० मेहमान" },
+    "venueCapacity": { "presence": "absent", "count": null, "quote": "" },
+    "date": {
+      "presence": "present",
+      "day": 26,
+      "month": 2,
+      "year": 2027,
+      "quote": "तारीख़ २६ फ़रवरी २०२७"
+    },
+    "functions": [],
+    "priorities": [
+      { "category": "catering", "level": "more", "quote": "खाने पर ज़्यादा ख़र्च करना है" },
+      { "category": "decor", "level": "save", "quote": "सजावट सादी रखनी है" }
+    ],
+    "mustHaves": [{ "item": "dhol", "quote": "ढोल ज़रूर चाहिए" }],
+    "guestNeeds": [
+      { "need": "wheelchair", "presence": "present", "quote": "नानी व्हीलचेयर इस्तेमाल करती हैं।" }
+    ],
+    "diet": [],
+    "venueLimits": [],
+    "otherMustHaves": [],
+    "otherNeeds": []
+  }
+}

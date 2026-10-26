@@ -1,0 +1,21 @@
+{
+  "fixture": "change-vague-budget",
+  "promptId": "change",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "guests": { "mode": "absent", "count": null, "quote": "" },
+    "budget": {
+      "mode": "directionOnly",
+      "direction": "decrease",
+      "amountInr": null,
+      "quote": "budget thoda kam karna padega"
+    },
+    "dateShift": { "presence": "absent", "shiftDays": null, "quote": "" },
+    "dateWritten": { "presence": "absent", "day": null, "month": null, "year": null, "quote": "" },
+    "reallocate": { "presence": "absent", "to": "unclear", "amountInr": null, "quote": "" }
+  }
+}

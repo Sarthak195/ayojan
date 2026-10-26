@@ -1,0 +1,38 @@
+{
+  "fixture": "brief-hinglish",
+  "promptId": "brief",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": [],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "occasion": { "value": "wedding", "quote": "Bhai ki shaadi" },
+    "budget": { "presence": "present", "amountInr": 800000, "quote": "budget 8 lakh" },
+    "guests": { "presence": "present", "count": 200, "quote": "lagbhag 200 log" },
+    "venueCapacity": { "presence": "absent", "count": null, "quote": "" },
+    "date": {
+      "presence": "unclear",
+      "day": null,
+      "month": null,
+      "year": null,
+      "quote": "Feb end mein"
+    },
+    "functions": [
+      { "name": "haldi", "presence": "present", "quote": "Haldi" },
+      { "name": "mehndi", "presence": "present", "quote": "mehndi" }
+    ],
+    "priorities": [
+      { "category": "catering", "level": "more", "quote": "Khana sabse important" },
+      { "category": "decor", "level": "save", "quote": "decoration simple rakhna" }
+    ],
+    "mustHaves": [{ "item": "dhol", "quote": "Dhol must hai" }],
+    "guestNeeds": [
+      { "need": "wheelchair", "presence": "present", "quote": "Nani wheelchair use karti hain" }
+    ],
+    "diet": [{ "item": "jain", "presence": "present", "quote": "Jain khana" }],
+    "venueLimits": [{ "item": "indoorOnly", "presence": "present", "quote": "indoor hi rakhna" }],
+    "otherMustHaves": [{ "quote": "DJ chahiye" }],
+    "otherNeeds": []
+  }
+}

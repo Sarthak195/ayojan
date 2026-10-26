@@ -1,0 +1,17 @@
+{
+  "fixture": "family-update-facts",
+  "promptId": "familyUpdate",
+  "promptVersion": 1,
+  "schemaVersion": "1",
+  "cacheInputs": ["hi", "simple"],
+  "answeredBy": "gemini-3.5-flash-lite",
+  "recordedOn": "2026-10-26",
+  "reply": {
+    "lines": [
+      { "text": "नमस्ते परिवार" },
+      { "text": "शादी की तारीख बदल कर 2027-02-12 हो गई है" },
+      { "text": "केटरर बुक करें और डेकोरेटर बुक करें पर ध्यान दें" },
+      { "text": "धन्यवाद" }
+    ]
+  }
+}

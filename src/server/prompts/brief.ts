@@ -11,7 +11,7 @@ import {
   VenueLimit,
 } from '@/schemas/readings/vocabulary';
 
-import { composeInput, composeSystem } from './shared/guardrails';
+import { composeSystem } from './shared/guardrails';
 
 // Value lists come from the schema enums so a renamed value cannot leave the prompt stale.
 const list = (values: readonly string[]): string => values.join(', ');
@@ -42,10 +42,10 @@ export const system = composeSystem(
   ].join('\n'),
 );
 
-/** The model input for one brief: the delimited text, then the request. */
-export function instruction(text: string): string {
-  return composeInput(
-    text,
-    'Read the brief above into the BriefReading schema. Quote the exact words for every value you fill, and return unclear or absent for anything you cannot quote.',
-  );
+/**
+ * The request that follows the data block. It takes no text: the gateway wraps the text in the
+ * delimiter itself (interactions.ts), so the text reaches the model exactly once.
+ */
+export function instruction(): string {
+  return 'Read the brief above into the BriefReading schema. Quote the exact words for every value you fill, and return unclear or absent for anything you cannot quote.';
 }

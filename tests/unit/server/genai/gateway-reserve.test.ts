@@ -97,13 +97,13 @@ describe('the reading cache in the gateway', () => {
     [
       'the prompt version',
       brief(undefined, {
-        prompt: { id: 'brief', version: '2', system: 'SYSTEM', instruction: () => 'I' },
+        prompt: { id: 'brief', version: 2, system: 'SYSTEM', instruction: () => 'I' },
       }),
     ],
     [
       'the prompt id',
       brief(undefined, {
-        prompt: { id: 'quote', version: '1', system: 'SYSTEM', instruction: () => 'I' },
+        prompt: { id: 'quote', version: 1, system: 'SYSTEM', instruction: () => 'I' },
       }),
     ],
   ])('reads again when %s changes', async (_name, changed) => {
@@ -143,7 +143,7 @@ describe('the fake gateway', () => {
     );
     expect(await fake.extract(brief())).toMatchObject({ value: { city: 'Udaipur' } });
     const quote = brief('a quote', {
-      prompt: { id: 'quote', version: '1', system: 'S', instruction: () => 'I' },
+      prompt: { id: 'quote', version: 1, system: 'S', instruction: () => 'I' },
     });
     expect(await fake.extract(quote)).toEqual({ kind: 'unavailable', reason: 'quota' });
     expect(fake.calls.map((call) => call.promptId)).toEqual(['brief', 'quote']);

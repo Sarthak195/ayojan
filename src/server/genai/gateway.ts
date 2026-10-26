@@ -122,7 +122,7 @@ async function runLadder<T>(
         model: rung.model,
         system: request.prompt.system,
         text: request.text,
-        instruction: request.prompt.instruction(request.text),
+        instruction: request.prompt.instruction(),
         schema,
       });
       try {

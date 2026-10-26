@@ -2,7 +2,7 @@ import 'server-only';
 
 import { Category, QuoteBasis, TaxTreatment } from '@/schemas/readings/vocabulary';
 
-import { composeInput, composeSystem } from './shared/guardrails';
+import { composeSystem } from './shared/guardrails';
 
 const list = (values: readonly string[]): string => values.join(', ');
 
@@ -28,10 +28,10 @@ export const system = composeSystem(
   ].join('\n'),
 );
 
-/** The model input for one pasted quote: the delimited text, then the request. */
-export function instruction(text: string): string {
-  return composeInput(
-    text,
-    'Read the vendor quote above into the QuoteReading schema. Quote the exact words for every value you fill, and return unclear or absent for anything you cannot quote.',
-  );
+/**
+ * The request that follows the data block. It takes no text: the gateway wraps the text in the
+ * delimiter itself (interactions.ts), so the text reaches the model exactly once.
+ */
+export function instruction(): string {
+  return 'Read the vendor quote above into the QuoteReading schema. Quote the exact words for every value you fill, and return unclear or absent for anything you cannot quote.';
 }

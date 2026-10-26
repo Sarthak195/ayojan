@@ -103,7 +103,7 @@ export function brief(
   extra: Partial<ExtractionRequest<City>> = {},
 ): ExtractionRequest<City> {
   return {
-    prompt: { id: 'brief', version: '1', system: 'SYSTEM', instruction: () => 'INSTRUCTION' },
+    prompt: { id: 'brief', version: 1, system: 'SYSTEM', instruction: () => 'INSTRUCTION' },
     schema: CitySchema,
     schemaVersion: '1',
     text,

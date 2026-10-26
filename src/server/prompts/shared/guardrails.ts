@@ -43,13 +43,12 @@ const DELIMITER_LOOKALIKE = new RegExp(
 // The replacement holds no angle bracket or ampersand, so one pass cannot assemble a new tag.
 const NEUTRALISED = '[delimiter removed]';
 
-/** Wraps user text in the data delimiter after removing anything that could close it. */
+/**
+ * Wraps user text in the data delimiter after removing anything that could close it. The one
+ * request builder (genai/interactions.ts) calls this, so the delimiter the rules above name and
+ * the one the model receives cannot drift apart.
+ */
 export function wrapUserText(text: string): string {
   const safe = text.replace(DELIMITER_LOOKALIKE, NEUTRALISED);
   return `${USER_TEXT_OPEN}\n${safe}\n${USER_TEXT_CLOSE}`;
-}
-
-/** The model input: the delimited data first, the per-call instruction last. */
-export function composeInput(text: string, instruction: string): string {
-  return `${wrapUserText(text)}\n\n${instruction}`;
 }

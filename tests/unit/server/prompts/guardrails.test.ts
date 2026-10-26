@@ -8,6 +8,8 @@ import { BriefReading } from '@/schemas/readings/brief-reading';
 import { ChangeReading } from '@/schemas/readings/change-reading';
 import { FamilyUpdateDraft } from '@/schemas/readings/family-update-draft';
 import { QuoteReading } from '@/schemas/readings/quote-reading';
+import { buildInteractionRequest } from '@/server/genai/interactions';
+import type { PromptSpec } from '@/server/pipeline/llm-gateway';
 import * as brief from '@/server/prompts/brief';
 import * as change from '@/server/prompts/change';
 import * as familyUpdate from '@/server/prompts/family-update';
@@ -16,6 +18,18 @@ import { PROMPTS } from '@/server/prompts/registry';
 import { GUARDRAILS } from '@/server/prompts/shared/guardrails';
 
 const SAMPLE = 'sample text';
+
+// Typed as PromptSpec, so a prompt that stops fitting the gateway fails the type check, and
+// built by the one request builder, so the input checked is the input the model receives.
+function input(prompt: PromptSpec, text: string): string {
+  return buildInteractionRequest({
+    model: 'gemini-3.5-flash-lite',
+    system: prompt.system,
+    text,
+    instruction: prompt.instruction(),
+    schema: {},
+  }).input;
+}
 
 interface Case {
   readonly id: string;
@@ -27,18 +41,18 @@ interface Case {
 // Each prompt with its schema and one built input, so every check below covers the whole
 // text the model receives: the system prompt and the per-call instruction.
 const CASES: readonly Case[] = [
-  { id: brief.id, system: brief.system, input: brief.instruction(SAMPLE), schema: BriefReading },
-  { id: quote.id, system: quote.system, input: quote.instruction(SAMPLE), schema: QuoteReading },
+  { id: brief.id, system: brief.system, input: input(brief, SAMPLE), schema: BriefReading },
+  { id: quote.id, system: quote.system, input: input(quote, SAMPLE), schema: QuoteReading },
   {
     id: change.id,
     system: change.system,
-    input: change.instruction(SAMPLE),
+    input: input(change, SAMPLE),
     schema: ChangeReading,
   },
   {
     id: familyUpdate.id,
     system: familyUpdate.system,
-    input: familyUpdate.instruction('{"facts":[]}', 'hi'),
+    input: input(familyUpdate.promptFor('hi'), '{"facts":[]}'),
     schema: FamilyUpdateDraft,
   },
 ];
@@ -147,12 +161,12 @@ describe('family-update prompt', () => {
   it('forbids any number that is not in the facts', () => {
     expect(familyUpdate.system).toContain('Use only numbers present in the facts');
     expect(familyUpdate.system).toContain('never write any number that is not in the facts');
-    expect(familyUpdate.instruction('{}', 'en')).toContain('Use only the numbers in the facts');
+    expect(familyUpdate.instruction('en')).toContain('Use only the numbers in the facts');
   });
 
   it('names the requested language and the simple register', () => {
     expect(familyUpdate.register).toBe('simple');
-    expect(familyUpdate.instruction('{}', 'en')).toContain('in English, in the simple register');
-    expect(familyUpdate.instruction('{}', 'hi')).toContain('in Hindi, in Devanagari script');
+    expect(familyUpdate.instruction('en')).toContain('in English, in the simple register');
+    expect(familyUpdate.instruction('hi')).toContain('in Hindi, in Devanagari script');
   });
 });

@@ -2,6 +2,8 @@ import 'server-only';
 
 import { z } from 'zod';
 
+import { wrapUserText } from '@/server/prompts/shared/guardrails';
+
 export type GeminiSchema = Readonly<Record<string, unknown>>;
 
 // Gemini's schema subset ignores some of these and rejects over-complex schemas built from
@@ -105,26 +107,18 @@ export interface RequestParts {
   readonly schema: GeminiSchema;
 }
 
-const OPEN = '<user_text>';
-const CLOSE = '</user_text>';
-// A pasted closing tag would otherwise end the data block early and let the rest of the paste
-// sit where instructions go. Neutralised in place, so every other character is still quotable.
-const DELIMITER_TAG = /<\/?user_text>/gi;
-
-export function delimitUserText(text: string): string {
-  return `${OPEN}\n${text.replace(DELIMITER_TAG, (tag) => `(${tag.slice(1, -1)})`)}\n${CLOSE}`;
-}
-
 /**
  * The only place a request is shaped (measured in the 26 Oct probe). The untrusted text sits
  * inside the delimiter and the instruction comes last, so the model reads the rule after the
- * data it governs; the system instruction is the stable prefix shared by every call.
+ * data it governs; the system instruction is the stable prefix shared by every call. The
+ * delimiter comes from the guardrails module, whose neutraliser also catches spaced, hyphenated
+ * and entity-encoded closing tags (NFR-SEC-2); a second, weaker copy here would let one through.
  */
 export function buildInteractionRequest(parts: RequestParts): InteractionRequest {
   return {
     model: parts.model,
     system_instruction: parts.system,
-    input: `${delimitUserText(parts.text)}\n\n${parts.instruction}`,
+    input: `${wrapUserText(parts.text)}\n\n${parts.instruction}`,
     response_format: { type: 'text', mime_type: 'application/json', schema: parts.schema },
     generation_config: { thinking_level: 'low' },
     stream: false,

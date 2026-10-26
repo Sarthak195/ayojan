@@ -10,7 +10,7 @@ import {
 
 const BASE: ReadingCacheInputs = {
   promptId: 'brief',
-  promptVersion: '1',
+  promptVersion: 1,
   schemaVersion: '1',
   text: '200 guests in Jaipur',
   extra: [],
@@ -30,7 +30,7 @@ describe('readingCacheKey', () => {
 
   it.each<[string, Partial<ReadingCacheInputs>]>([
     ['the prompt id', { promptId: 'quote' }],
-    ['the prompt version', { promptVersion: '2' }],
+    ['the prompt version', { promptVersion: 2 }],
     ['the schema version', { schemaVersion: '2' }],
     ['the text', { text: '201 guests in Jaipur' }],
     ['an extra input such as the language', { extra: ['hi'] }],
@@ -41,8 +41,8 @@ describe('readingCacheKey', () => {
   });
 
   it('cannot collide by moving characters between inputs', () => {
-    const left = readingCacheKey({ ...BASE, promptVersion: '1', schemaVersion: '12' });
-    const right = readingCacheKey({ ...BASE, promptVersion: '11', schemaVersion: '2' });
+    const left = readingCacheKey({ ...BASE, promptVersion: 1, schemaVersion: '12' });
+    const right = readingCacheKey({ ...BASE, promptVersion: 11, schemaVersion: '2' });
     expect(left).not.toBe(right);
   });
 });

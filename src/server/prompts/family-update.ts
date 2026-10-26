@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { composeInput, composeSystem } from './shared/guardrails';
+import { composeSystem } from './shared/guardrails';
 
 export type FamilyUpdateLanguage = 'en' | 'hi';
 
@@ -31,10 +31,23 @@ export const system = composeSystem(
   ].join('\n'),
 );
 
-/** The model input for one draft: the delimited facts, then the language and register. */
-export function instruction(facts: string, language: FamilyUpdateLanguage): string {
-  return composeInput(
-    facts,
-    `Write the family update from the facts above in ${LANGUAGE_NAMES[language]}, in the ${register} register, as the FamilyUpdateDraft schema. Use only the numbers in the facts.`,
-  );
+/**
+ * The request that follows the facts block. The facts are not passed here: the gateway wraps
+ * them in the delimiter itself (interactions.ts), so they reach the model exactly once.
+ */
+export function instruction(language: FamilyUpdateLanguage): string {
+  return `Write the family update from the facts above in ${LANGUAGE_NAMES[language]}, in the ${register} register, as the FamilyUpdateDraft schema. Use only the numbers in the facts.`;
+}
+
+/**
+ * The prompt as the gateway takes it (PromptSpec): one per language, because the language
+ * changes the request tail. The caller still puts the language and register in cacheInputs.
+ */
+export function promptFor(language: FamilyUpdateLanguage): {
+  readonly id: typeof id;
+  readonly version: number;
+  readonly system: string;
+  readonly instruction: () => string;
+} {
+  return { id, version, system, instruction: () => instruction(language) };
 }

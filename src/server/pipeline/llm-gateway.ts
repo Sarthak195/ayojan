@@ -5,13 +5,15 @@ import type { z } from 'zod';
 /** What every prompt module exports; the fake gateway and the recorder route on `id`. */
 export interface PromptSpec {
   readonly id: string;
-  readonly version: string;
+  readonly version: number;
   readonly system: string;
   /**
-   * Returns only the instruction that follows the data block. The gateway wraps the text in
-   * the delimiter itself, so returning the text here would send it twice.
+   * Returns only the instruction that follows the data block. It takes no text on purpose: the
+   * gateway wraps the text in the delimiter itself, and a prompt that needed the text could
+   * only send it a second time, outside the delimiter's protection. For the family update use
+   * familyUpdate.promptFor(language); the readers (brief, quote, change) fit as modules.
    */
-  readonly instruction: (text: string) => string;
+  readonly instruction: () => string;
 }
 
 /**

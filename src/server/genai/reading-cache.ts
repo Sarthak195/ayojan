@@ -7,7 +7,7 @@ import { HOUR_MS } from './exhaustion';
 /** Every input that changes the answer; leaving one out would serve a stale reading. */
 export interface ReadingCacheInputs {
   readonly promptId: string;
-  readonly promptVersion: string;
+  readonly promptVersion: number;
   readonly schemaVersion: string;
   readonly text: string;
   /** Anything else the prompt sees, such as the language and register of a family update. */

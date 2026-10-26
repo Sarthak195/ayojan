@@ -23,8 +23,7 @@ export const QUOTE_CONFIRM_FIELDS = {
   advancePercent: OptionalInteger.optional(),
 };
 
-const QuoteConfirmPart = z.object(QUOTE_CONFIRM_FIELDS);
-export type QuoteConfirmPart = z.output<typeof QuoteConfirmPart>;
+export type QuoteConfirmPart = z.output<z.ZodObject<typeof QUOTE_CONFIRM_FIELDS>>;
 
 /**
  * The posted answers as quote fields. A field missing from the post keeps the read value,

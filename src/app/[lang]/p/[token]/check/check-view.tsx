@@ -25,7 +25,7 @@ export interface CheckViewProps {
 }
 
 // How this reading was made, so a cached or example reading is never shown as a fresh read.
-function sourceLabel(readBy: ReadBy, recordedOn: string | null, lang: Lang): string {
+export function sourceLabel(readBy: ReadBy, recordedOn: string | null, lang: Lang): string {
   const words = dictionaryFor(lang).check.source;
   switch (readBy.source) {
     case 'ai':

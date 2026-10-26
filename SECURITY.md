@@ -13,7 +13,7 @@ beside it. What data leaves the app, and for how long it lives, is in
 - **The model decides nothing.** Gemini turns free text into a closed JSON shape. Budgets,
   schedules, comparisons and every rupee figure are computed in TypeScript from `data/`. The
   reading schemas in `src/schemas/readings/` have no field for confirmation, availability,
-  ranking or price, so a planted instruction has nowhere to land.
+  ranking or recommendation, so a planted instruction has nowhere to land.
 - **Every claim carries a verbatim quote, and code checks it.** `src/core/grounding/` looks for
   the quote in the user's own text. A value whose quote is not found is shown as unverified,
   not dropped and not trusted.
@@ -43,15 +43,15 @@ Every POST is a plain form post (`application/x-www-form-urlencoded`) with the s
 a hidden field. `runStep` in `src/server/http/post-step.ts` runs the checks in this order, and
 each refusal happens before the next, costlier step:
 
-| Order | Status | Condition                                                                                                                                                                                           | Code                                                           |
-| ----- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| 0     | 404    | First path segment is not `en` or `hi`                                                                                                                                                              | `src/server/http/post-step.ts`                                 |
-| 1     | 429    | Rate limit spent; `Retry-After` is set and the page states the wait. Checked before the body is read                                                                                                | `src/server/ratelimit/rate-limit.ts`                           |
-| 2     | 415    | `Content-Type` is not `application/x-www-form-urlencoded` (multipart and JSON are refused), or it names a charset other than UTF-8                                                                  | `src/server/http/form-body.ts`                                 |
-| 3     | 413    | Body over 32 KiB. A declared `Content-Length` over the cap is refused before a byte is read; a chunked body is cancelled at the cap                                                                 | `src/server/http/form-body.ts`                                 |
-| 4     | 400    | Body is not UTF-8 urlencoded, a field fails its Zod form schema (unknown field, repeated scalar, wrong type), or the token fails any decode step                                                    | `src/server/http/form-body.ts`, `src/schemas/forms/`           |
-| 5     | 422    | Well formed but not processable: free text over 2,000 code points, a link that would exceed 4,000 characters, a 41st step, an unknown task, undo with nothing to undo, confirm with nothing pending | `src/server/http/form-body.ts`, `src/server/http/post-step.ts` |
-| any   | 500    | An unexpected throw: a fixed page with no detail; the log line carries the error class name only                                                                                                    | `src/server/http/post-step.ts`                                 |
+| Order | Status | Condition                                                                                                                                                                                           | Code                                                                                 |
+| ----- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 0     | 404    | First path segment is not `en` or `hi`                                                                                                                                                              | `src/server/http/post-step.ts`                                                       |
+| 1     | 429    | Rate limit spent; `Retry-After` is set and the page states the wait. Checked before the body is read                                                                                                | `src/server/ratelimit/rate-limit.ts`                                                 |
+| 2     | 415    | `Content-Type` is not `application/x-www-form-urlencoded` (multipart and JSON are refused), or it names a charset other than UTF-8                                                                  | `src/server/http/form-body.ts`                                                       |
+| 3     | 413    | Body over 32 KiB. A declared `Content-Length` over the cap is refused before a byte is read; a chunked body is cancelled at the cap                                                                 | `src/server/http/form-body.ts`                                                       |
+| 4     | 400    | Body is not UTF-8 urlencoded, a field fails its Zod form schema (unknown field, repeated scalar, wrong type), or the token fails any decode step                                                    | `src/server/http/form-body.ts`, `src/server/http/post-step.ts`, `src/schemas/forms/` |
+| 5     | 422    | Well formed but not processable: free text over 2,000 code points, a link that would exceed 4,000 characters, a 41st step, an unknown task, undo with nothing to undo, confirm with nothing pending | `src/server/http/form-body.ts`, `src/server/http/post-step.ts`                       |
+| any   | 500    | An unexpected throw: a fixed page with no detail; the log line carries the error class name only                                                                                                    | `src/server/http/post-step.ts`                                                       |
 
 Other statuses:
 
@@ -89,7 +89,7 @@ form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 - The proxy hands the same nonce to Next in the request, so the header and the `nonce`
   attributes on the page's script tags come from one value.
 - On 26 Oct 2026 the deployed service sent a different nonce on each request, and the nonce in
-  the HTML matched the header. Its pages loaded with no CSP violation and no hydration error
+  the HTML matched the header. A revision page loaded with no CSP violation and no hydration error
   (checked in Chrome on the live revision).
 - Tests: `tests/unit/security/content-security-policy.test.ts` for the builder, and
   `tests/unit/app/security-headers.test.ts` for what actually leaves `next.config.ts` and the
@@ -261,9 +261,6 @@ value, not the rules.
   left.
 - Next's own console output for an exception during a page render is outside the logger's
   allowlist. It was not observed to carry user text in the checks above.
-- The `?sel=` query on the revision page is not deduplicated or capped when read, so a very
-  long list does a little extra work. The result is still deduplicated before use and the
-  request line is bounded by Node's header limit.
 
 ## Reporting a vulnerability
 

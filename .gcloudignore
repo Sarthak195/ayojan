@@ -1,0 +1,30 @@
+# What `gcloud run deploy --source` uploads to Cloud Build. It mirrors .dockerignore, so the
+# build context is the same whichever tool sends it. A .gcloudignore replaces .gitignore for
+# gcloud, so everything that must stay local is listed here again.
+.gcloudignore
+
+# Rebuilt inside the image; a host node_modules carries binaries for the wrong platform.
+node_modules
+.next
+
+# History and CI configuration are not build inputs.
+.git
+.gitignore
+.github
+
+# `next build` copies any .env it finds into .next/standalone/.env, which the runner stage
+# would ship. Keys must never leave this machine.
+.env
+.env.*
+
+# Not needed to build or run.
+tests
+coverage
+.planning
+docs
+*.md
+
+# Unlike .dockerignore, the Dockerfile stays: Cloud Build reads it from the upload.
+
+# Incremental type-check state from the host describes the host tree, not the image.
+*.tsbuildinfo

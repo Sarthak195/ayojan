@@ -68,38 +68,54 @@ function ticks<T extends string>(
   }));
 }
 
+function FunctionRows({
+  lang,
+  values,
+}: {
+  readonly lang: Lang;
+  readonly values: BriefChoiceValues;
+}): ReactElement {
+  const words = dictionaryFor(lang).form;
+  return (
+    <fieldset className="my-4">
+      <legend className="font-semibold">{words.functionsLegend}</legend>
+      <p className="text-sm text-muted">{words.functionsHint}</p>
+      {FunctionName.options.map((name) => (
+        <ChoiceGroup
+          key={name}
+          id={`function-${name}`}
+          name={`function${capitalised(name)}`}
+          type="radio"
+          inline
+          legend={words.functions[name]}
+          choices={FunctionAnswer.options.map((answer) => ({
+            value: answer,
+            label: words.functionAnswers[answer],
+            checked: values.functions[name] === answer,
+          }))}
+        />
+      ))}
+    </fieldset>
+  );
+}
+
 export function BriefChoiceRows({
   lang,
   values,
   priorityChoices,
+  showFunctions = true,
 }: {
   readonly lang: Lang;
   readonly values: BriefChoiceValues;
   /** The form twin offers three answers; the check page adds "Not sure" (spec 6.3). */
   readonly priorityChoices: readonly Priority[];
+  /** False hides the wedding function rows; the confirm route reads absent rows as unchanged. */
+  readonly showFunctions?: boolean;
 }): ReactElement {
   const words = dictionaryFor(lang).form;
   return (
     <>
-      <fieldset className="my-4">
-        <legend className="font-semibold">{words.functionsLegend}</legend>
-        <p className="text-sm text-muted">{words.functionsHint}</p>
-        {FunctionName.options.map((name) => (
-          <ChoiceGroup
-            key={name}
-            id={`function-${name}`}
-            name={`function${capitalised(name)}`}
-            type="radio"
-            inline
-            legend={words.functions[name]}
-            choices={FunctionAnswer.options.map((answer) => ({
-              value: answer,
-              label: words.functionAnswers[answer],
-              checked: values.functions[name] === answer,
-            }))}
-          />
-        ))}
-      </fieldset>
+      {showFunctions ? <FunctionRows lang={lang} values={values} /> : null}
       <fieldset className="my-4">
         <legend className="font-semibold">{words.prioritiesLegend}</legend>
         {Category.options.map((category) => (

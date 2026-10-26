@@ -114,6 +114,7 @@ export function CheckView({
           draft={pending.values}
           questions={questions}
           fields={pending.fields}
+          weights={weights}
         />
       ) : (
         <PostForm lang={lang} route="confirm" token={token}>

@@ -2,10 +2,12 @@ import type { ReactElement } from 'react';
 
 import { TextField } from '@/components/form/fields';
 import { PostForm, SubmitButton } from '@/components/form/post-form';
+import { profileForOccasion } from '@/core/budget/budget-profile';
 import type { BriefDraft } from '@/core/brief/brief-draft';
 import type { BriefField, BriefQuestion } from '@/core/brief/questions';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
+import type { BudgetWeightsFile } from '@/schemas/data/budget-weights';
 import type { FieldVerdict } from '@/schemas/plan/state-token';
 
 import { BriefChoiceRows, OccasionPicker } from '../../../_brief/brief-choices';
@@ -17,6 +19,23 @@ export interface BriefAnswersProps {
   readonly draft: BriefDraft;
   readonly questions: readonly BriefQuestion[];
   readonly fields: readonly FieldVerdict[];
+  readonly weights: BudgetWeightsFile;
+}
+
+/**
+ * Whether the wedding function rows belong on the page: for a wedding, an occasion still open,
+ * or a reading that already answered a function (so that answer can still be changed). Hidden,
+ * every function is "Not sure" in the draft, and an absent row keeps it so.
+ */
+export function showsFunctions(
+  draft: BriefDraft,
+  weights: BudgetWeightsFile,
+  occasionAsked: boolean,
+): boolean {
+  if (occasionAsked || draft.occasion === null) return true;
+  if (Object.values(draft.functions).some((answer) => answer !== 'unsure')) return true;
+  const profile = profileForOccasion(weights, draft.occasion);
+  return !profile.ok || profile.value.id === 'wedding';
 }
 
 /**
@@ -30,6 +49,7 @@ export function BriefAnswers({
   draft,
   questions,
   fields,
+  weights,
 }: BriefAnswersProps): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.check;
@@ -42,6 +62,7 @@ export function BriefAnswers({
       ? undefined
       : questionText(question, verdictFor(field, fields), lang);
   };
+  const withFunctions = showsFunctions(draft, weights, asked('occasion') !== undefined);
   const prefill = (field: BriefField, value: number | string | null): { defaultValue?: string } =>
     asked(field) !== undefined || value === null ? {} : { defaultValue: String(value) };
 
@@ -87,11 +108,14 @@ export function BriefAnswers({
           error={error('venueCapacity')}
           {...prefill('venueCapacity', draft.venueCapacity)}
         />
-        <h3 className="mt-6 text-lg font-semibold">{words.choicesHeading}</h3>
+        <h3 className="mt-6 text-lg font-semibold">
+          {withFunctions ? words.choicesHeading : words.choicesHeadingNoFunctions}
+        </h3>
         <BriefChoiceRows
           lang={lang}
           values={draft}
           priorityChoices={['more', 'standard', 'save', 'unclear']}
+          showFunctions={withFunctions}
         />
         {draft.notes.length === 0 ? null : (
           <div className="my-4">

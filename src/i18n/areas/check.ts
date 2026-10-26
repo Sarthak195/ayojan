@@ -29,6 +29,8 @@ export interface CheckDictionary {
   readonly fields: Readonly<Record<BriefField, string>>;
   readonly noteLabel: string;
   readonly choicesHeading: string;
+  /** The heading when the wedding function rows are not shown. */
+  readonly choicesHeadingNoFunctions: string;
   readonly notedHeading: string;
   readonly notedHint: string;
   readonly confirm: string;
@@ -90,6 +92,7 @@ export const en: CheckDictionary = {
   },
   noteLabel: 'Noted',
   choicesHeading: 'Functions, priorities and needs',
+  choicesHeadingNoFunctions: 'Priorities and needs',
   notedHeading: 'Noted, not planned by this app',
   notedHint: 'These stay in your plan as notes. No number or task is computed from them.',
   confirm: 'Make the plan',
@@ -152,6 +155,7 @@ export const hi: CheckDictionary = {
   },
   noteLabel: 'लिख लिया',
   choicesHeading: 'फ़ंक्शन, प्राथमिकताएँ और ज़रूरतें',
+  choicesHeadingNoFunctions: 'प्राथमिकताएँ और ज़रूरतें',
   notedHeading: 'लिख लिया, पर यह ऐप इसकी योजना नहीं बनाता',
   notedHint: 'ये आपकी योजना में नोट की तरह रहते हैं। इनसे कोई रक़म या काम नहीं निकाला जाता।',
   confirm: 'योजना बनाइए',

@@ -72,7 +72,7 @@ export const hi: LeversDictionary = {
   notSuggested: 'सुझाया नहीं गया',
   showAnyway: 'फिर भी दिखाएँ',
   disabled: (mustHave) => `उपलब्ध नहीं: आपने कहा था कि ${mustHave} ज़रूरी है।`,
-  booked: (category) => `उपलब्ध नहीं: ${category} पहले से बुक है; अपने वेंडर से पूछें।`,
+  booked: (category) => `उपलब्ध नहीं: ${category} पहले से बुक है; अपने विक्रेता से पूछें।`,
   chosenHeading: 'पहले से चुने हुए',
   chosenNote: 'ये लागू रहेंगे। किसी को हटाने के लिए वह क़दम वापस लें।',
   whyThisNumber: 'यह संख्या क्यों?',

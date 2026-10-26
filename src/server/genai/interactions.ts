@@ -49,3 +49,88 @@ export function toGeminiSchema(schema: z.ZodType): GeminiSchema {
   if (!isRecord(pruned)) throw new Error('A model schema must be a JSON object schema.');
   return pruned;
 }
+
+/**
+ * Only the ladder's models can be named in a request, so `gemini-3.8-flash` (90 s in the probe)
+ * or a preview model cannot be called by mistake.
+ */
+export type LadderModel = 'gemini-3.5-flash-lite' | 'gemini-3.1-flash-lite' | 'gemini-3.5-flash';
+
+/**
+ * Reasoning is steered by `thinking_level` alone. The SDK still accepts the deprecated sampling
+ * knobs, so they are typed `never` here: no caller can set them, even through a spread.
+ */
+export interface GenerationConfig {
+  readonly thinking_level: 'low';
+  readonly temperature?: never;
+  readonly top_p?: never;
+  readonly top_k?: never;
+}
+
+export interface InteractionRequest {
+  readonly model: LadderModel;
+  readonly system_instruction: string;
+  readonly input: string;
+  readonly response_format: {
+    readonly type: 'text';
+    readonly mime_type: 'application/json';
+    readonly schema: GeminiSchema;
+  };
+  readonly generation_config: GenerationConfig;
+  readonly stream: false;
+}
+
+/** SDK retries are off because the ladder decides what happens after a failure, not the SDK. */
+export interface CallOptions {
+  readonly timeout_ms: number;
+  readonly retries: { readonly strategy: 'none' };
+}
+
+export interface InteractionReply {
+  readonly output_text?: string | undefined;
+  readonly model?: string | undefined;
+  readonly usage?: { readonly total_tokens?: number | undefined } | undefined;
+}
+
+/** The narrow surface the gateway needs, so tests can stand in a fake without loading the SDK. */
+export interface InteractionsClient {
+  create(request: InteractionRequest, options: CallOptions): Promise<InteractionReply>;
+}
+
+export interface RequestParts {
+  readonly model: LadderModel;
+  readonly system: string;
+  readonly text: string;
+  readonly instruction: string;
+  readonly schema: GeminiSchema;
+}
+
+const OPEN = '<user_text>';
+const CLOSE = '</user_text>';
+// A pasted closing tag would otherwise end the data block early and let the rest of the paste
+// sit where instructions go. Neutralised in place, so every other character is still quotable.
+const DELIMITER_TAG = /<(\/?)user_text>/gi;
+
+export function delimitUserText(text: string): string {
+  return `${OPEN}\n${text.replace(DELIMITER_TAG, (tag) => `(${tag.slice(1, -1)})`)}\n${CLOSE}`;
+}
+
+/**
+ * The only place a request is shaped (measured in the 26 Oct probe). The untrusted text sits
+ * inside the delimiter and the instruction comes last, so the model reads the rule after the
+ * data it governs; the system instruction is the stable prefix shared by every call.
+ */
+export function buildInteractionRequest(parts: RequestParts): InteractionRequest {
+  return {
+    model: parts.model,
+    system_instruction: parts.system,
+    input: `${delimitUserText(parts.text)}\n\n${parts.instruction}`,
+    response_format: { type: 'text', mime_type: 'application/json', schema: parts.schema },
+    generation_config: { thinking_level: 'low' },
+    stream: false,
+  };
+}
+
+export function callOptions(timeoutMs: number): CallOptions {
+  return { timeout_ms: timeoutMs, retries: { strategy: 'none' } };
+}

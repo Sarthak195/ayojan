@@ -69,6 +69,9 @@ describe('dictionaries', () => {
       'This plan has reached 40 steps; undo a step or start a new plan.',
     );
     expect(en.common.readingHint).toBe('Reading can take up to 40 seconds.');
+    expect(en.common.privacyHint).toBe(
+      "Gemini's free tier may use what you send to improve Google's products, so leave out names and phone numbers.",
+    );
   });
 
   it('writes Hindi in Devanagari, not English left untranslated', () => {

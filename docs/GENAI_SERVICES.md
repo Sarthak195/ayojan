@@ -55,8 +55,8 @@ Settings shared by the four calls, all fixed in code rather than chosen per call
 - **Timeouts:** the ladder gives the first model 20 s, the second 12 s and the third up to 40 s,
   each capped by what is left of a 40 s budget for the whole read. A call is started only when at
   least 6 s remain (15 s for the third model), so a call that would be cut off is not spent. Cloud
-  Run's request timeout is 60 s. The form shows "Reading can take up to 40 seconds." under each
-  read button.
+  Run's request timeout is 60 s. The form shows "Reading can take up to 40 seconds." and a
+  privacy sentence (the free tier may use what is sent) under each read button.
 - **Retries:** the SDK's own retries are off (`retries: { strategy: 'none' }`). The ladder decides
   what happens after a failure.
 - **Output:** JSON only (`mime_type: 'application/json'`) against a response schema derived from

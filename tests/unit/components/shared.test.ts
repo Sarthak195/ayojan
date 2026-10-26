@@ -211,9 +211,9 @@ describe('status summary and forms', () => {
   });
 
   it('shows the reading hint (D16)', () => {
-    expect(html(createElement(ReadingHint, { lang: 'en', id: 'read-hint' }))).toContain(
-      'Reading can take up to 40 seconds.',
-    );
+    const out = html(createElement(ReadingHint, { lang: 'en', id: 'read-hint' }));
+    expect(out).toContain('Reading can take up to 40 seconds. Gemini&#x27;s free tier may use');
+    expect(out).toContain('leave out names and phone numbers.</p>');
   });
 });
 

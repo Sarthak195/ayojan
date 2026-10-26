@@ -41,6 +41,8 @@ export interface CommonDictionary {
   };
   /** D16: shown under every read button. */
   readonly readingHint: string;
+  /** D41: said under every read button, in the same <p> as readingHint. */
+  readonly privacyHint: string;
   readonly optional: string;
   readonly scrollTableHint: string;
 }
@@ -85,6 +87,8 @@ export const en: CommonDictionary = {
     overBudget: 'Over budget by',
   },
   readingHint: 'Reading can take up to 40 seconds.',
+  privacyHint:
+    "Gemini's free tier may use what you send to improve Google's products, so leave out names and phone numbers.",
   optional: '(optional)',
   scrollTableHint: 'Scroll sideways to see the whole table.',
 };
@@ -129,6 +133,8 @@ export const hi: CommonDictionary = {
     overBudget: 'बजट से ज़्यादा:',
   },
   readingHint: 'पढ़ने में 40 सेकंड तक लग सकते हैं।',
+  privacyHint:
+    'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर करने में इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न लिखें।',
   optional: '(वैकल्पिक)',
   scrollTableHint: 'पूरी तालिका देखने के लिए बाएँ-दाएँ स्क्रॉल करें।',
 };

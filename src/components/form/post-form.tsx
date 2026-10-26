@@ -83,7 +83,12 @@ export function SubmitButton({
   );
 }
 
-/** D16: "Reading can take up to 40 seconds.", rendered on the server under each read button. */
+/**
+ * D16: "Reading can take up to 40 seconds.", rendered on the server under each read button.
+ * D41: the privacy sentence shares this <p>, so the button's aria-describedby covers both. These
+ * boxes invite vendor quotes and family details, and the free tier's terms let Google use what is
+ * sent.
+ */
 export function ReadingHint({
   lang,
   id,
@@ -91,9 +96,10 @@ export function ReadingHint({
   readonly lang: Lang;
   readonly id: string;
 }): ReactElement {
+  const { common } = dictionaryFor(lang);
   return (
     <p id={id} className="mt-2 text-sm text-muted">
-      {dictionaryFor(lang).common.readingHint}
+      {common.readingHint} {common.privacyHint}
     </p>
   );
 }

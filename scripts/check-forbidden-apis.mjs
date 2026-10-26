@@ -32,6 +32,10 @@ const RULES = [
     why: 'Raw HTML injection bypasses React escaping.',
   },
   {
+    pattern: new RegExp(String.fromCharCode(0x2014)),
+    why: 'Project style: use a comma, colon or parentheses instead of an em dash.',
+  },
+  {
     pattern: new RegExp('AI' + `za${KEY_CHARS}{35}`),
     why: 'Looks like a Google API key (AIza format).',
     secret: true,

@@ -21,13 +21,8 @@
    binaries, banned strings (the legacy call, lint and type suppressions, unfinished-work
    markers, key-shaped strings), a 250-line cap on files in `src` and `scripts`, and comments
    that say why, not what. `npm run verify` checks all of it.
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-## This is NOT the Next.js you know
-
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+6. Next.js 16 is not the Next.js in most training data: its APIs, conventions and file layout
+   have changed. Read the matching guide in `node_modules/next/dist/docs/` before writing
+   framework code, and heed deprecation notices (for example, `src/proxy.ts` replaces
+   `middleware.ts`). `agentRules: false` in `next.config.ts` keeps `next dev` from rewriting this
+   file, so this item is the maintained copy of that instruction.

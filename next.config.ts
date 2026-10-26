@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   // Emits a self-contained server for the container image instead of shipping node_modules.
   output: 'standalone',
   poweredByHeader: false,
+  // AGENTS.md carries the "read the bundled docs" instruction itself (item 6), so next dev
+  // must not keep re-inserting its own managed copy of it.
+  agentRules: false,
 
   // Fixed headers live here; the Content-Security-Policy cannot, because its nonce changes
   // on every response (see src/proxy.ts). Next types this as a promise with nothing to await.

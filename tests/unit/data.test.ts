@@ -5,6 +5,7 @@ import { parse, stringify } from 'yaml';
 
 import { BASIS_PREFIX } from '@/schemas/data/planning-row';
 import { Category, Diet, MustHave, VenueLimit } from '@/schemas/readings/vocabulary';
+import { absoluteRupeeProblems } from '@/server/knowledge/absolute-rupees';
 import { createKnowledgeRepository, readFromDirectory } from '@/server/knowledge/repository';
 
 const realText = readFromDirectory(join(process.cwd(), 'data'));
@@ -144,9 +145,27 @@ describe('referential-integrity', () => {
 
 describe('no-absolute-rupees', () => {
   it.each(FILES)('%s holds no rupee word and no number of four or more digits', (fileName) => {
-    const text = realText(fileName);
-    expect(text).not.toMatch(/\b(?:rs\.?|inr|rupees?|lakhs?|crores?|hazaa?r)\b|₹|लाख|करोड़|हज़ार/i);
-    expect(text).not.toMatch(/\d[\d,]{3,}/);
+    expect(absoluteRupeeProblems(fileName, realText(fileName))).toEqual([]);
+  });
+
+  it.each([
+    'percent: 45000',
+    'basis: costs Rs 50,000',
+    'en: about 2 lakh',
+    'hi: लगभग दो लाख',
+    'hi: ₹ 500',
+    'basis: 1,90,000 for food',
+  ])('refuses "%s"', (line) => {
+    expect(absoluteRupeeProblems('levers.yaml', line)).toHaveLength(1);
+  });
+
+  it('allows a sign-off date in reviewed, so signing a row off cannot break boot', () => {
+    expect(absoluteRupeeProblems('tasks.yaml', "    reviewed: 'SK 2026-10-27'")).toEqual([]);
+    const signed = realText('functions.yaml').replace("reviewed: ''", "reviewed: 'SK 2026-10-27'");
+    const repository = createKnowledgeRepository((name) =>
+      name === 'functions.yaml' ? signed : realText(name),
+    );
+    expect(repository.all().functions.functions[0]?.reviewed).toBe('SK 2026-10-27');
   });
 });
 

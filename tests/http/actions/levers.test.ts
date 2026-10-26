@@ -84,6 +84,7 @@ describe('POST /[lang]/levers intent=preview (Recalculate without JavaScript)', 
     ]);
     const html = sectionHtml(where.token, { sel: 'e-invites,half-contingency' });
     expect(runningLine(html)).toBe('Selected saves Rs 59,200; now Rs 97,800 over budget');
+    expect(html).toMatch(/id="running-line"[^>]*>[^<]*<\/p><span[^>]*>Computed<\/span>/);
     expect(html).toMatch(/id="lever-e-invites"[^>]*checked/);
     expect(html).toContain('Preview: nothing is applied yet.');
   });

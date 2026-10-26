@@ -5,6 +5,7 @@ import type { ReactElement } from 'react';
 import { PostForm, SubmitButton } from '@/components/form/post-form';
 import { RunningTotal } from '@/components/islands/running-total.client';
 import { Amount } from '@/components/money/amount';
+import { ProvenanceBadge } from '@/components/money/provenance-badge';
 import type { IsoDate } from '@/core/calendar/day-number';
 import { runningLineSentence } from '@/core/levers/running-line';
 import type { PlanData } from '@/core/plan/plan-data';
@@ -163,6 +164,8 @@ export function LeverSection(props: LeverSectionProps): ReactElement {
             needsShowAnyway={refusedIds}
             initial={sentence}
           />
+          {/* Both figures in the line are arithmetic over the plan (spec 7). */}
+          <ProvenanceBadge provenance="computed" lang={lang} />
           <p className="text-sm text-muted">
             {fresh.length > 0 ? words.previewNote : words.nothingTicked}
           </p>

@@ -62,7 +62,7 @@ export function LeverRow({
   const reason = blockedReason(option, lang);
   return (
     <li className="py-3">
-      <div className="flex min-h-11 gap-3">
+      <label htmlFor={id} className="flex min-h-11 items-start gap-3 font-medium">
         <input
           type="checkbox"
           id={id}
@@ -73,10 +73,8 @@ export function LeverRow({
           aria-describedby={`${id}-detail`}
           className={BOX}
         />
-        <label htmlFor={id} className="font-medium">
-          {option.label[lang]}
-        </label>
-      </div>
+        <span className="pt-1">{option.label[lang]}</span>
+      </label>
       <div id={`${id}-detail`} className="pl-9">
         <p className="flex flex-wrap gap-x-2">
           <Saving option={option} lang={lang} />
@@ -92,7 +90,7 @@ export function LeverRow({
         {extra}
       </div>
       {option.status === 'refused' && option.showAnywayAllowed ? (
-        <div className="flex min-h-11 items-center gap-3 pl-9">
+        <label htmlFor={`${id}-anyway`} className="flex min-h-11 items-center gap-3 pl-9">
           <input
             type="checkbox"
             id={`${id}-anyway`}
@@ -101,11 +99,11 @@ export function LeverRow({
             defaultChecked={ticked}
             className={BOX}
           />
-          <label htmlFor={`${id}-anyway`}>
+          <span>
             {words.showAnyway}
             <span className="sr-only">: {option.label[lang]}</span>
-          </label>
-        </div>
+          </span>
+        </label>
       ) : null}
       <details className="pl-9">
         <summary className="inline-flex min-h-11 cursor-pointer items-center">

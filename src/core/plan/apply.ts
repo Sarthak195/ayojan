@@ -11,6 +11,7 @@ import { profileForOccasion } from '../budget/budget-profile';
 import { markDone, type MarkDoneRefusal } from '../timeline/task-progress';
 import { resolveTask, selectTasks } from '../timeline/task-selection';
 import { leversInDataOrder, type PlanData } from './plan-data';
+import { RAISE_BUDGET_ID } from './plan-money';
 import type { BriefOp, ChangeOp, LeversOp, PlanInputs } from './plan-inputs';
 import { applyFail, budgetFail, planOk, type ApplyRefusal, type PlanResult } from './plan-refusal';
 
@@ -137,7 +138,14 @@ function continuePlan(inputs: PlanInputs, op: Op, data: PlanData): PlanResult<Pl
     }
     case 'changeConfirmed': {
       const checked = checkChange(op, index);
-      return checked.ok ? planOk({ ...inputs, ops, latestChange: index }) : checked;
+      if (!checked.ok) return checked;
+      // A budget the family states replaces any raise chosen before it, so the raise is no
+      // longer a choice in force and must not be offered back or shown as applied.
+      const leverIds =
+        op.budgetInr === null
+          ? inputs.leverIds
+          : inputs.leverIds.filter((id) => id !== RAISE_BUDGET_ID);
+      return planOk({ ...inputs, ops, leverIds, latestChange: index });
     }
     case 'leversApplied': {
       const checked = checkLevers(inputs, op, data, index);

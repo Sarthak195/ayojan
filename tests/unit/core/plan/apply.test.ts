@@ -20,6 +20,7 @@ import {
   first,
   inputsOf,
   versionOf,
+  viewOf,
 } from './plan-fixture';
 
 function refusalOf(ops: readonly Op[], op: Op, data: PlanData = PLAN_DATA): ApplyRefusal | null {
@@ -195,5 +196,31 @@ describe('apply never mutates its input', () => {
     expect(after.ok).toBe(true);
     expect({ ...before, selection: null }).toStrictEqual(snapshot);
     expect(before.ops).toHaveLength(5);
+  });
+});
+
+describe('a raise chosen as a lever, then a change', () => {
+  // v6 is Rs 48,900 over (spec 5.2); the raise covers exactly that gap.
+  const raised: Op[] = [
+    ...first(6),
+    { kind: 'leversApplied', leverIds: ['raise-budget'], raiseBudgetInr: 48_900 },
+  ];
+
+  it('drops the raise when the change states a budget, so no stale raise line is shown', () => {
+    const view = viewOf([...raised, change({ budgetInr: 760_000 })]);
+    expect(view.current.headline.budget.inr).toBe(760_000);
+    expect(view.current.leverIds).not.toContain('raise-budget');
+    expect(view.current.money.applied).toEqual([]);
+    const changed = view.revision?.kept.changed.map((item) => item.key);
+    expect(changed).toContain('lever:raise-budget');
+  });
+
+  it('keeps the raise when the change leaves the budget alone', () => {
+    const view = viewOf([...raised, change({ guests: 240 })]);
+    expect(view.current.headline.budget.inr).toBe(750_000 + 48_900);
+    expect(view.current.leverIds).toContain('raise-budget');
+    expect(view.current.money.applied).toEqual([
+      { id: 'raise-budget', category: null, effect: { inr: 48_900, provenance: 'your-number' } },
+    ]);
   });
 });

@@ -107,6 +107,8 @@ function applyChange(
     budgetInr: op.budgetInr ?? walk.budgetInr,
     eventDate: date === null ? walk.eventDate : date.value,
     priorities: op.priorities ?? walk.priorities,
+    // A stated budget already includes whatever the family now means to spend.
+    raises: op.budgetInr === null ? walk.raises : [],
   };
   if (op.reallocate === null) return planOk(changed);
   const now = leveredPlan(changed, context);

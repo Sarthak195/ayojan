@@ -15,6 +15,8 @@ import {
   VenueLimit,
 } from '@/schemas/readings/vocabulary';
 
+import { QUOTE_CONFIRM_FIELDS } from '../p/[token]/quotes/_quote/quote-fields';
+
 // The check page's brief rows on top of the shared confirm fields: the occasion picker (D38)
 // and the function, priority and list rows of spec 6.3. Field names match the form twin's
 // (BriefForm), so one set of names covers both pages. Every row is optional because the
@@ -37,7 +39,7 @@ export const ConfirmForm = CheckConfirm.extend({
   need: listOf(GuestNeed, 3),
   diet: listOf(Diet, 3),
   venueLimit: listOf(VenueLimit, 2),
-});
+}).extend(QUOTE_CONFIRM_FIELDS);
 export type ConfirmForm = z.infer<typeof ConfirmForm>;
 
 // A row missing from the post keeps the reading's answer, because core reads an absent key

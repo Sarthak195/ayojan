@@ -8,6 +8,7 @@ import { problemResponse } from '@/server/http/problem-page';
 import { formReadBy } from '@/server/pipeline/reading-outcome';
 
 import { checkAgain, planFromBrief } from '../../_brief/brief-steps';
+import { enterQuoteStep } from '../../p/[token]/quotes/_quote/quote-steps';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,6 +23,7 @@ export async function POST(
   deps: StepDeps = defaultStepDeps(),
 ): Promise<Response> {
   const { lang, kind } = await context.params;
+  if (kind === 'quote') return runStep(request, Promise.resolve({ lang }), enterQuoteStep(), deps);
   if (kind !== 'brief') {
     return problemResponse({ lang: isLang(lang) ? lang : 'en', problem: 'not-found' });
   }

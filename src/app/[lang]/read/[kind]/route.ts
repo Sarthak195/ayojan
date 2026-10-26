@@ -4,12 +4,13 @@ import { isLang } from '@/i18n/lang';
 import { runStep } from '@/server/http/post-step';
 import { problemResponse } from '@/server/http/problem-page';
 
+import { readQuoteStep } from '../../p/[token]/quotes/_quote/quote-steps';
 import { defaultReadDeps, readBriefStep, type ReadDeps } from './read-step';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * POST /[lang]/read/[kind]. Only the brief is read here so far; an unknown kind is a 404
+ * POST /[lang]/read/[kind] for a brief or a vendor quote; an unknown kind is a 404
  * before the rate limit or the body is touched. `deps` is for tests: Next passes two
  * arguments, so production always gets the real gateway, limiter and seal key.
  */
@@ -19,6 +20,8 @@ export async function POST(
   deps: ReadDeps = defaultReadDeps(),
 ): Promise<Response> {
   const { lang, kind } = await context.params;
+  if (kind === 'quote')
+    return runStep(request, Promise.resolve({ lang }), readQuoteStep(deps), deps);
   if (kind !== 'brief') {
     return problemResponse({ lang: isLang(lang) ? lang : 'en', problem: 'not-found' });
   }

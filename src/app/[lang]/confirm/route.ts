@@ -10,6 +10,7 @@ import {
 } from '@/server/http/post-step';
 
 import { checkAgain, planFromBrief } from '../_brief/brief-steps';
+import { confirmQuote } from '../p/[token]/quotes/_quote/quote-steps';
 import { briefAnswersOf, ConfirmForm } from './confirm-form';
 
 export const dynamic = 'force-dynamic';
@@ -37,7 +38,8 @@ function confirmWork(form: ConfirmForm, context: StepContext): StepOutcome {
     };
   }
 
-  // A brief starts a plan; quote and change readings are confirmed on their own pages.
+  if (pending.kind === 'quote') return confirmQuote(form, pending, context);
+  // A brief starts a plan; a change reading is confirmed on its own page.
   if (pending.kind !== 'brief' || state.ops.length > 0) {
     return { kind: 'problem', problem: 'cannot-apply' };
   }

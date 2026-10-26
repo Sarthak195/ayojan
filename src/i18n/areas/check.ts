@@ -16,6 +16,7 @@ export interface CheckDictionary {
     readonly form: string;
   };
   readonly matched: (matched: number, total: number) => string;
+  readonly answeredBy: (model: string) => string;
   readonly summaryQuestions: (count: number) => string;
   readonly summaryReady: string;
   readonly readHeading: string;
@@ -52,6 +53,7 @@ export const en: CheckDictionary = {
     form: 'Entered by form',
   },
   matched: (matched, total) => `${String(matched)} of ${String(total)} values matched your words.`,
+  answeredBy: (model) => `Answered by the model ${model}.`,
   summaryQuestions: (count) =>
     count === 1
       ? '1 question needs your answer before the plan is made.'
@@ -119,6 +121,7 @@ export const hi: CheckDictionary = {
   },
   matched: (matched, total) =>
     `${String(total)} में से ${String(matched)} मान आपके शब्दों से मिले।`,
+  answeredBy: (model) => `जवाब देने वाला मॉडल: ${model}।`,
   summaryQuestions: (count) =>
     count === 1
       ? 'योजना बनाने से पहले 1 सवाल का जवाब चाहिए।'

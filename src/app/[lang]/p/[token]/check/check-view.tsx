@@ -13,6 +13,7 @@ import type { PendingReading } from '@/schemas/plan/state-token';
 
 import { BriefAnswers } from './brief-answers';
 import { ReadList } from './read-list';
+import { ReadSource } from './read-source';
 
 export interface CheckViewProps {
   readonly lang: Lang;
@@ -74,7 +75,7 @@ export function CheckView({
   return (
     <div>
       <h1 className="text-2xl font-bold">{words.title}</h1>
-      <p className="mt-4 font-medium">{sourceLabel(readBy, recordedOn, lang)}</p>
+      <ReadSource readBy={readBy} label={sourceLabel(readBy, recordedOn, lang)} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{words.matched(readBy.matched, readBy.total)}</p>
       )}

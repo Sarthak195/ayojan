@@ -17,6 +17,7 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
 import { dateWords } from '../../../_brief/words';
+import { ReadSource } from '../check/read-source';
 import type { CategoryLabel } from './category-labels';
 import { ChangeReadingList } from './change-reading-list';
 import type { PendingChange } from './change-values';
@@ -142,7 +143,7 @@ export function ChangeCheckView({
   return (
     <div>
       <h1 className="text-2xl font-bold">{check.title}</h1>
-      <p className="mt-4 font-medium">{source}</p>
+      <ReadSource readBy={readBy} label={source} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{check.matched(readBy.matched, readBy.total)}</p>
       )}

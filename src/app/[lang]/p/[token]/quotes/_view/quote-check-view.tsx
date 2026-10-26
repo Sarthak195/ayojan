@@ -9,6 +9,7 @@ import type { Lang } from '@/i18n/lang';
 import type { QuoteSlot } from '@/schemas/plan/quote-record';
 import type { FieldVerdict, PendingReading } from '@/schemas/plan/state-token';
 
+import { ReadSource } from '../../check/read-source';
 import { fieldsFrom } from '../_quote/quote-record';
 import {
   QuoteInputs,
@@ -113,7 +114,7 @@ export function QuoteCheckView({
   return (
     <div>
       <h1 className="text-2xl font-bold">{dict.check.title}</h1>
-      <p className="mt-4 font-medium">{source}</p>
+      <ReadSource readBy={readBy} label={source} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{dict.check.matched(readBy.matched, readBy.total)}</p>
       )}

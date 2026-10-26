@@ -78,7 +78,10 @@ describe('POST /[lang]/read/quote', () => {
     });
     const target = response === undefined ? '' : location(response);
     expect(target).not.toContain('?');
-    const logged = `${stdout}\n${JSON.stringify(deps.logger)}`;
+    // Only the structured log lines: the test runner may write its own output meanwhile.
+    const logLines = stdout.split('\n').filter((line) => line.startsWith('{"severity"'));
+    expect(logLines.length).toBeGreaterThan(0);
+    const logged = `${logLines.join('\n')}\n${JSON.stringify(deps.logger)}`;
     for (const word of PASTED_WORDS) {
       expect(target.toLowerCase()).not.toContain(word.toLowerCase());
       expect(logged.toLowerCase()).not.toContain(word.toLowerCase());

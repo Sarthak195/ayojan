@@ -140,7 +140,10 @@ describe('POST /[lang]/messages ("Write it with AI", FR-35)', () => {
     const limited = await messages(
       post('/en/messages', { token: OVER_BUDGET_TOKEN }),
       context({ lang: 'en' }),
-      { ...deps({ limiter: limiter({ allowed: false, retryAfterSeconds: 30 }) }), gateway },
+      {
+        ...deps({ limiter: limiter({ allowed: false, reason: 'minute', retryAfterSeconds: 30 }) }),
+        gateway,
+      },
     );
     expect(limited.status).toBe(429);
     expect(gateway.calls).toHaveLength(0);

@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Tests run offline by design: there is no API key in this workflow and there must never be one.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history: the repository size check must see every object, and a shallow
+          # clone would report a reassuring but meaningless number.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Enforce the 250-line file cap
+        run: npm run check:size
+
+      - name: Check for forbidden patterns and leaked keys
+        run: npm run check:api
+
+      - name: Check repository size against the contest limit
+        run: npm run check:repo
+
+      - name: Build
+        run: npm run build

@@ -59,7 +59,7 @@ export const hi: RevisionDictionary = {
   keptIntro: 'ये फ़ैसले बिना बदले आगे चलते हैं।',
   askAgainHeading: 'बरक़रार, दोबारा पूछें',
   askAgainIntro:
-    'बरक़रार, पर वेंडर ने पुराने मेहमानों या तारीख़ पर हामी भरी थी, इसलिए उनसे पक्का करें।',
+    'बरक़रार, पर विक्रेता ने पुराने मेहमानों या तारीख़ पर हामी भरी थी, इसलिए उनसे पक्का करें।',
   changedHeading: 'इस क़दम से बदले',
   none: 'कोई नहीं।',
   decision: {
@@ -75,10 +75,10 @@ export const hi: RevisionDictionary = {
     taskDelayed: (task, date) => `${task}: ${date} से पहले नहीं`,
     lever: (lever) => `समझौता: ${lever}`,
   },
-  reconfirmHeading: 'इन वेंडरों से दोबारा पूछें',
+  reconfirmHeading: 'इन विक्रेताओं से दोबारा पूछें',
   reconfirmIntro:
     'हर एक ने उन शर्तों पर हामी भरी थी जिनसे योजना अब हट गई है। उन्हें ये सवाल भेजें।',
-  reconfirmNone: 'किसी वेंडर से दोबारा पक्का करने की ज़रूरत नहीं।',
+  reconfirmNone: 'किसी विक्रेता से दोबारा पक्का करने की ज़रूरत नहीं।',
   needsReconfirmation: 'दोबारा पक्का करना है',
   reconfirmReason: {
     date: 'तारीख़ खिसकी',

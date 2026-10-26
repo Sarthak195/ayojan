@@ -163,7 +163,7 @@ A call is not started with less than 6 s left. The gateway tries the configured 
       'error',
       {
         selector: "NewExpression[callee.name='Date'][arguments.length=0]",
-        message: 'src/core must be deterministic: take `today: Date` as a parameter.',
+        message: 'src/core must be deterministic: take `today: IsoDate` as a parameter.',
       },
       {
         selector: "MemberExpression[object.name='Date'][property.name='now']",

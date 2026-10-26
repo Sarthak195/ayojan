@@ -119,8 +119,8 @@ both. On 26 Oct 2026 `gemini-api-key` had two enabled versions and `state-seal-k
 - Production refuses to run without the seal key (`SealKeyError`), so a missing secret shows up
   at once as a 503 from `/api/health` and not as links that die on the next cold start. Locally,
   without the variable, a random key for that process is used and a warning is printed.
-- [.env.example](../.env.example) lists only `GEMINI_API_KEY`. `STATE_SEAL_KEY` is documented
-  here, not there.
+- [.env.example](../.env.example) lists both variables with empty values. Locally, an empty
+  `STATE_SEAL_KEY` behaves like a missing one: a random key for that process.
 
 ## The health endpoint
 

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { parse, stringify } from 'yaml';
 
 import { BASIS_PREFIX } from '@/schemas/data/planning-row';
-import { Category, Diet, MustHave, VenueLimit } from '@/schemas/readings/vocabulary';
+import { Category, Diet, MustHave, Occasion, VenueLimit } from '@/schemas/readings/vocabulary';
 import { absoluteRupeeProblems } from '@/server/knowledge/absolute-rupees';
 import { createKnowledgeRepository, readFromDirectory } from '@/server/knowledge/repository';
 
@@ -123,6 +123,16 @@ describe('referential-integrity', () => {
       expect(profile.categories.map((row) => row.category)).toEqual(Category.options);
       const contingency = profile.categories.find((row) => row.category === 'contingency');
       expect(contingency?.floor).toEqual({ of: 'budget', percent: 5 });
+    }
+  });
+
+  it('maps every occasion to exactly one profile, the wedding alone to the wedding profile (D38)', () => {
+    const profileOf = budgetWeights.profiles.flatMap((profile) =>
+      profile.occasions.map((occasion) => [occasion, profile.id] as const),
+    );
+    expect(profileOf.map(([occasion]) => occasion).sort()).toEqual([...Occasion.options].sort());
+    for (const [occasion, profile] of profileOf) {
+      expect(profile).toBe(occasion === 'wedding' ? 'wedding' : 'celebration');
     }
   });
 
@@ -297,6 +307,15 @@ const plantedFaults: readonly [string, string, Mutation, RegExp][] = [
       if (wedding) wedding.categories = (wedding.categories as unknown[]).slice(1);
     },
     /budget-weights\.yaml, row profiles\[0\] \(wedding\)\.categories: "venue" is missing/,
+  ],
+  [
+    'occasion-in-two-profiles',
+    'budget-weights.yaml',
+    (d) => {
+      const wedding = rowsOf(d, 'profiles')[0];
+      if (wedding) wedding.occasions = ['wedding', 'puja'];
+    },
+    /budget-weights\.yaml, row profiles\.occasions: "puja" appears twice/,
   ],
   [
     'data-absolute-rupee',

@@ -13,6 +13,23 @@ export const categories = [
   'contingency',
 ] as const;
 
+// Named occasions rather than wedding or other, so a birthday or a puja reads as itself; which
+// budget profile each one uses is a lookup in data/budget-weights.yaml, not code (D38).
+export const occasions = [
+  'wedding',
+  'birthday',
+  'anniversary',
+  'puja',
+  'communityEvent',
+  'other',
+] as const;
+
+export const Occasion = z.enum(occasions);
+export type Occasion = z.infer<typeof Occasion>;
+
+export const OccasionOrUnclear = z.enum([...occasions, 'unclear']);
+export type OccasionOrUnclear = z.infer<typeof OccasionOrUnclear>;
+
 export const Presence = z.enum(['present', 'absent', 'unclear']);
 export type Presence = z.infer<typeof Presence>;
 

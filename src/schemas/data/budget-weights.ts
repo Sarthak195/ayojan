@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { Category, Priority } from '../readings/vocabulary';
+import { Category, Occasion, Priority } from '../readings/vocabulary';
 import { Percent, planningRow } from './planning-row';
 
 // Proportions only: every amount the app shows is a share of the user's own budget, so no
@@ -25,6 +25,8 @@ const CategoryWeight = z.strictObject({
 const Profile = z.strictObject({
   id: z.enum(['wedding', 'celebration']),
   ...planningRow,
+  // The occasions that use this profile; each occasion belongs to exactly one profile (D38).
+  occasions: z.array(Occasion).min(1),
   categories: z.array(CategoryWeight).min(1),
 });
 

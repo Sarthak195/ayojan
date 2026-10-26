@@ -179,6 +179,17 @@ describe('plan-state', () => {
     expect(Brief.safeParse({ ...brief, priorities: sixPriorities }).success).toBe(false);
   });
 
+  it('keeps a named occasion such as puja, and refuses one outside the list (D38)', () => {
+    expect(Brief.safeParse({ ...brief, occasion: 'puja' }).success).toBe(true);
+    expect(Brief.safeParse({ ...brief, occasion: 'unclear' }).success).toBe(false);
+    expect(Brief.safeParse({ ...brief, occasion: 'graduation' }).success).toBe(false);
+    const reading = (value: string) =>
+      BriefReading.shape.occasion.safeParse({ value, quote: 'Papa ka 60th birthday' }).success;
+    expect(reading('birthday')).toBe(true);
+    expect(reading('unclear')).toBe(true);
+    expect(reading('graduation')).toBe(false);
+  });
+
   it('bounds the confirmed budget at Rs 5,000 to Rs 10 crore (D15)', () => {
     expect(Brief.safeParse({ ...brief, budgetInr: 5_000 }).success).toBe(true);
     expect(Brief.safeParse({ ...brief, budgetInr: 4_999 }).success).toBe(false);

@@ -6,6 +6,7 @@ import {
   FunctionName,
   GuestNeed,
   MustHave,
+  Occasion,
   Priority,
   VenueLimit,
 } from '../readings/vocabulary';
@@ -25,8 +26,8 @@ export type FunctionAnswer = z.infer<typeof FunctionAnswer>;
 // The confirmed brief. Records over the closed enums are exhaustive, so every function and
 // every category has an explicit answer and nothing defaults silently.
 export const Brief = z.strictObject({
-  // 'other' selects the small-celebration profile (D15).
-  occasion: z.enum(['wedding', 'other']),
+  // Stored as named so pages can say "birthday"; data maps it to a budget profile (D15, D38).
+  occasion: Occasion,
   budgetInr: z.number().int().min(BUDGET_MIN_INR).max(BUDGET_MAX_INR),
   guests: z.number().int().min(1).max(5_000),
   eventDate: IsoDate,

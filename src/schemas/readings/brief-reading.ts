@@ -6,6 +6,7 @@ import {
   FunctionName,
   GuestNeed,
   MustHave,
+  OccasionOrUnclear,
   Presence,
   Priority,
   Quote,
@@ -17,7 +18,7 @@ const count = z.number().int().nullable();
 // Call 1. The model returns day, month and an optional year, never a computed date, so neither
 // the prompt nor the cache key carries today's date; code picks the year.
 export const BriefReading = z.object({
-  occasion: z.object({ value: z.enum(['wedding', 'other', 'unclear']), quote: Quote }),
+  occasion: z.object({ value: OccasionOrUnclear, quote: Quote }),
   budget: z.object({ presence: Presence, amountInr: z.number().nullable(), quote: Quote }),
   guests: z.object({ presence: Presence, count, quote: Quote }),
   venueCapacity: z.object({ presence: Presence, count, quote: Quote }),

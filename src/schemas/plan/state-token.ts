@@ -6,6 +6,7 @@ import {
   FunctionName,
   GuestNeed,
   MustHave,
+  Occasion,
   Priority,
   VenueLimit,
 } from '../readings/vocabulary';
@@ -40,7 +41,7 @@ const count = z.number().int().nullable();
 // Values are unbounded integers here on purpose: an out-of-range value the user really said
 // (0 guests, a past date) must survive to the check screen as a question, not fail parsing.
 const BriefValues = z.strictObject({
-  occasion: z.enum(['wedding', 'other']).nullable(),
+  occasion: Occasion.nullable(),
   budgetInr: count,
   guests: count,
   eventDate: IsoDate.nullable(),

@@ -2,6 +2,7 @@
 # baseWeight: relative share before priorities (weights are normalised, so they need not sum to 100).
 # perGuestSharePercent: how much of the category grows with the guest count (100 = fully, 0 = not at all).
 # floor: how far Move money may take the category down (share of its own frozen allocation, or of the budget).
+# occasions: the occasions that use the profile; every occasion appears in exactly one profile.
 # multipliers: applied to baseWeight by the priority the family chose, then everything is normalised again.
 # reviewed: empty until the user signs the row off; until then the app calls these unreviewed planning assumptions.
 
@@ -33,6 +34,7 @@ multipliers:
 
 profiles:
   - id: wedding
+    occasions: [wedding]
     en: Wedding
     hi: शादी
     basis: 'Planning assumption chosen by the author: food is usually the largest share of a family wedding and the venue the second.'
@@ -96,6 +98,7 @@ profiles:
         reviewed: ''
 
   - id: celebration
+    occasions: [birthday, anniversary, puja, communityEvent, other]
     en: Small celebration
     hi: छोटा समारोह
     basis: 'Planning assumption chosen by the author: at a birthday or anniversary food is an even larger share and photos a smaller one than at a wedding.'

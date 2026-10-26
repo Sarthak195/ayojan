@@ -5,7 +5,7 @@ import type { FunctionsFile } from '@/schemas/data/functions';
 import type { LeversFile } from '@/schemas/data/levers';
 import type { TasksFile } from '@/schemas/data/tasks';
 import type { VendorQuestionsFile } from '@/schemas/data/vendor-questions';
-import { Category, FunctionName, Priority } from '@/schemas/readings/vocabulary';
+import { Category, FunctionName, Occasion, Priority } from '@/schemas/readings/vocabulary';
 
 import { rowLabel, type DataProblem } from './data-problem';
 
@@ -65,6 +65,13 @@ export function budgetWeightProblems(file: BudgetWeightsFile): DataProblem[] {
       'profiles',
       file.profiles.map((row) => row.id),
       ['wedding', 'celebration'],
+    ),
+    // One profile per occasion, so the profile a brief uses is never ambiguous (D38).
+    ...exactlyOnce(
+      fileName,
+      'profiles.occasions',
+      file.profiles.flatMap((row) => row.occasions),
+      Occasion.options,
     ),
   );
   file.profiles.forEach((profile, p) => {

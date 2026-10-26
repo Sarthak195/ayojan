@@ -16,8 +16,12 @@ export const TextField = z.string();
 export const NumberText = z.string().max(40);
 
 // Empty when the field was left blank; whole digits otherwise, so "1.5" is a 400.
+// Families group digits the Indian way ("1,80,000"). Commas and spaces carry no value, so they
+// are dropped before the digits-only check instead of turning a booking into a dead-end 400.
 export const OptionalInteger = z
-  .union([z.literal(''), z.string().regex(/^\d{1,9}$/)])
+  .string()
+  .transform((value) => value.replace(/[,\s]/g, ''))
+  .pipe(z.union([z.literal(''), z.string().regex(/^\d{1,9}$/)]))
   .transform((value) => (value === '' ? null : Number(value)));
 
 export const OptionalDate = z

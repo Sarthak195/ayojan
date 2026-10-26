@@ -289,3 +289,28 @@ describe('forms', () => {
     expect(QuoteForm.shape.tax.options).toContain('extraRateUnstated');
   });
 });
+
+// A family types "1,80,000" into Amount booked; the a11y pass found it a 400 dead end.
+describe('a typed whole number in a form', () => {
+  const done = (amountInr: string) =>
+    TaskEvent.safeParse({ token: 'abc', taskId: 'book-venue', event: 'done', amountInr });
+
+  it.each([
+    ['1,80,000', 180_000],
+    ['180,000', 180_000],
+    ['1 80 000', 180_000],
+    ['180000', 180_000],
+  ])('reads "%s" as %i', (typed, inr) => {
+    const parsed = done(typed);
+    expect(parsed.success && parsed.data.event === 'done' ? parsed.data.amountInr : 'refused').toBe(
+      inr,
+    );
+  });
+
+  it('still reads blank as nothing and refuses a fraction or a word', () => {
+    const blank = done('');
+    expect(blank.success && blank.data.event === 'done' ? blank.data.amountInr : 'x').toBeNull();
+    expect(done('1.5').success).toBe(false);
+    expect(done('1.8 lakh').success).toBe(false);
+  });
+});

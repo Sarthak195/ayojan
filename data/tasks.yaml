@@ -1,0 +1,307 @@
+# Task templates for the timeline. Day counts only, no prices.
+# latestFinishDaysBefore: the task should be finished this many days before the event.
+# durationDays: working days the task takes once started.
+# dependsOn: tasks that must finish first (a dependency on an inactive task counts as satisfied).
+# activatedBy: the task is in the plan when any one condition holds.
+# books: marking this task done with an amount books this category (the one booking path).
+# fasterAlternative: what the task becomes when a lever chooses the quicker route.
+# weddingOnly: dropped for the small-celebration profile.
+
+thresholds:
+  atRiskSlackDays:
+    en: At risk when a task has less than this many days of slack
+    hi: इतने दिन से कम गुंजाइश बचे तो काम ख़तरे में
+    days: 14
+    basis: 'Planning assumption chosen by the author: two weeks of slack is the least that absorbs one vendor delay without touching the date.'
+    reviewed: ''
+  dueSoonDays:
+    en: Due this week when the latest start is this many days away or fewer
+    hi: आख़िरी शुरुआत इतने दिन में हो तो इसी हफ़्ते करना है
+    days: 7
+    basis: 'Planning assumption chosen by the author: a week is how far ahead a family looks when deciding what to do next.'
+    reviewed: ''
+
+tasks:
+  - id: book-venue
+    category: venue
+    en: Book the venue
+    hi: शादी की जगह बुक करें
+    dependsOn: []
+    latestFinishDaysBefore: 100
+    durationDays: 10
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: venue
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: good halls go first in the season, so the venue is fixed more than three months ahead.'
+    reviewed: ''
+
+  - id: book-caterer
+    category: catering
+    en: Book the caterer
+    hi: केटरर बुक करें
+    dependsOn: [book-venue]
+    latestFinishDaysBefore: 90
+    durationDays: 10
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: catering
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: the caterer is chosen once the venue and its kitchen rules are known, about three months ahead.'
+    reviewed: ''
+
+  - id: book-decorator
+    category: decor
+    en: Book the decorator
+    hi: डेकोरेटर बुक करें
+    dependsOn: [book-venue]
+    latestFinishDaysBefore: 75
+    durationDays: 10
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: decor
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: the decorator needs the venue first and about ten weeks to plan sets.'
+    reviewed: ''
+
+  - id: decor-sign-off
+    category: decor
+    en: Sign off the decor plan
+    hi: सजावट का प्लान फ़ाइनल करें
+    dependsOn: [book-decorator]
+    latestFinishDaysBefore: 30
+    durationDays: 7
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: a month ahead leaves the decorator time to order flowers and fabric.'
+    reviewed: ''
+
+  - id: mandap-design
+    category: decor
+    en: Fix the mandap design
+    hi: मंडप का डिज़ाइन तय करें
+    dependsOn: [decor-sign-off]
+    latestFinishDaysBefore: 21
+    durationDays: 7
+    activatedBy: [{ when: always }]
+    weddingOnly: true
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: the mandap is built last from the signed-off decor plan, about three weeks ahead.'
+    reviewed: ''
+
+  - id: final-walkthrough
+    category: venue
+    en: Final walkthrough at the venue
+    hi: शादी की जगह पर आख़िरी जाँच
+    dependsOn: [mandap-design, book-caterer]
+    latestFinishDaysBefore: 7
+    durationDays: 1
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: one visit a week ahead catches layout problems while they can still be fixed.'
+    reviewed: ''
+
+  - id: finalise-guest-list
+    category: invites
+    en: Finalise the guest list
+    hi: मेहमानों की सूची पक्की करें
+    dependsOn: []
+    latestFinishDaysBefore: 75
+    durationDays: 14
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: collecting names from both sides of the family takes about two weeks.'
+    reviewed: ''
+
+  - id: print-invitations
+    category: invites
+    en: Print the invitation cards
+    hi: शादी के कार्ड छपवाएँ
+    dependsOn: [finalise-guest-list]
+    latestFinishDaysBefore: 60
+    durationDays: 21
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative:
+      en: Send e-invites
+      hi: ई-कार्ड भेजें
+      latestFinishDaysBefore: 30
+      durationDays: 3
+    basis: 'Planning assumption chosen by the author: design, proofs and printing take about three weeks, while e-invites take a few days.'
+    reviewed: ''
+
+  - id: send-invitations
+    category: invites
+    en: Send the invitations
+    hi: न्योते भेजें
+    dependsOn: [print-invitations]
+    latestFinishDaysBefore: 45
+    durationDays: 7
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: six weeks notice lets outstation relatives book travel.'
+    reviewed: ''
+
+  - id: book-dhol-or-band
+    category: music
+    en: Book the dhol or band
+    hi: ढोल या बैंड बुक करें
+    dependsOn: []
+    latestFinishDaysBefore: 60
+    durationDays: 5
+    activatedBy: [{ when: mustHave, mustHave: dhol }]
+    weddingOnly: false
+    books: music
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: good dhol players are booked out on season dates, so two months ahead.'
+    reviewed: ''
+
+  - id: book-mehndi-artist
+    category: decor
+    en: Book the mehndi artist
+    hi: मेहंदी वाली बुक करें
+    dependsOn: []
+    latestFinishDaysBefore: 45
+    durationDays: 3
+    activatedBy: [{ when: function, function: mehndi }, { when: mustHave, mustHave: mehndiArtist }]
+    weddingOnly: true
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: a mehndi artist is a short booking, about six weeks ahead in season.'
+    reviewed: ''
+
+  - id: confirm-step-free-access
+    category: venue
+    en: Confirm step-free access at the venue
+    hi: शादी की जगह पर बिना सीढ़ी का रास्ता पक्का करें
+    dependsOn: [book-venue]
+    latestFinishDaysBefore: 60
+    durationDays: 3
+    activatedBy: [{ when: need, need: wheelchair }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: a ramp or lift must be arranged early enough to change venue plans if it is missing.'
+    reviewed: ''
+
+  - id: book-photographer
+    category: photo
+    en: Book the photographer
+    hi: फ़ोटोग्राफ़र बुक करें
+    dependsOn: []
+    latestFinishDaysBefore: 90
+    durationDays: 7
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: photo
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: photographers book out early in season, about three months ahead.'
+    reviewed: ''
+
+  - id: menu-tasting
+    category: catering
+    en: Menu tasting with the caterer
+    hi: केटरर के साथ खाना चखें
+    dependsOn: [book-caterer]
+    latestFinishDaysBefore: 30
+    durationDays: 1
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: a tasting a month ahead leaves time to change dishes.'
+    reviewed: ''
+
+  - id: confirm-live-counter
+    category: catering
+    en: Confirm the live counter with the caterer
+    hi: केटरर से लाइव काउंटर पक्का करें
+    dependsOn: [book-caterer]
+    latestFinishDaysBefore: 30
+    durationDays: 2
+    activatedBy: [{ when: mustHave, mustHave: liveCounter }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: a live counter needs space and staff, so it is confirmed with the menu.'
+    reviewed: ''
+
+  - id: book-choreographer
+    category: music
+    en: Book the choreographer
+    hi: डांस सिखाने वाले को बुक करें
+    dependsOn: []
+    latestFinishDaysBefore: 45
+    durationDays: 3
+    activatedBy: [{ when: mustHave, mustHave: choreographer }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: the family needs about six weeks of practice, so the choreographer is booked before that.'
+    reviewed: ''
+
+  - id: haldi-arrangements
+    category: decor
+    en: Arrange the haldi ceremony
+    hi: हल्दी की रस्म की तैयारी करें
+    dependsOn: []
+    latestFinishDaysBefore: 14
+    durationDays: 3
+    activatedBy: [{ when: function, function: haldi }]
+    weddingOnly: true
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: haldi is a small home ceremony that needs a few days of preparation two weeks out.'
+    reviewed: ''
+
+  - id: sangeet-programme
+    category: music
+    en: Plan the sangeet programme
+    hi: संगीत का कार्यक्रम तय करें
+    dependsOn: []
+    latestFinishDaysBefore: 30
+    durationDays: 7
+    activatedBy: [{ when: function, function: sangeet }]
+    weddingOnly: true
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: the running order and songs are fixed a month ahead so performers can practise.'
+    reviewed: ''
+
+  - id: return-gifts
+    category: invites
+    en: Buy the return gifts
+    hi: रिटर्न गिफ़्ट ख़रीदें
+    dependsOn: []
+    latestFinishDaysBefore: 21
+    durationDays: 10
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: bulk gifts need about ten days to order and pack, done three weeks out.'
+    reviewed: ''
+
+  - id: final-headcount
+    category: catering
+    en: Give the final headcount to the caterer
+    hi: केटरर को मेहमानों की आख़िरी गिनती दें
+    dependsOn: [send-invitations, book-caterer]
+    latestFinishDaysBefore: 7
+    durationDays: 1
+    activatedBy: [{ when: always }]
+    weddingOnly: false
+    books: null
+    fasterAlternative: null
+    basis: 'Planning assumption chosen by the author: caterers usually fix plate counts about a week before the event.'
+    reviewed: ''

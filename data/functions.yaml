@@ -1,0 +1,44 @@
+# Wedding functions the brief can name, and the optional tasks each one adds.
+# tasks: must match the tasks in tasks.yaml whose activatedBy names this function.
+# weddingOnly: dropped for the small-celebration profile.
+
+functions:
+  - id: haldi
+    en: Haldi
+    hi: हल्दी
+    weddingOnly: true
+    tasks: [haldi-arrangements]
+    basis: 'Planning assumption chosen by the author: haldi is a small home ceremony that adds one preparation task.'
+    reviewed: ''
+
+  - id: mehndi
+    en: Mehndi
+    hi: मेहंदी
+    weddingOnly: true
+    tasks: [book-mehndi-artist]
+    basis: 'Planning assumption chosen by the author: a mehndi function needs a mehndi artist booked.'
+    reviewed: ''
+
+  - id: sangeet
+    en: Sangeet
+    hi: संगीत
+    weddingOnly: true
+    tasks: [sangeet-programme]
+    basis: 'Planning assumption chosen by the author: a sangeet needs a running order and songs fixed ahead.'
+    reviewed: ''
+
+  - id: wedding
+    en: Wedding ceremony
+    hi: शादी (फेरे)
+    weddingOnly: true
+    tasks: []
+    basis: 'Planning assumption chosen by the author: the ceremony itself is covered by the tasks every wedding plan has.'
+    reviewed: ''
+
+  - id: reception
+    en: Reception
+    hi: रिसेप्शन
+    weddingOnly: false
+    tasks: []
+    basis: 'Planning assumption chosen by the author: a reception reuses the venue, caterer and decor tasks, so it adds none of its own.'
+    reviewed: ''

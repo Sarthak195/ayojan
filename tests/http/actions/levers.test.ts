@@ -121,6 +121,16 @@ describe('POST /[lang]/levers intent=preview (Recalculate without JavaScript)', 
     const html = sectionHtml(OVER_BUDGET_TOKEN, { sel: 'smaller-band' });
     expect(runningLine(html)).toBe('Selected saves Rs 0; now Rs 1,57,000 over budget');
   });
+
+  it('reads each lever once from a hand-repeated selection, and at most every lever', () => {
+    expect(selectionOf({ sel: 'e-invites,e-invites,simpler-decor,e-invites' })).toEqual([
+      'e-invites',
+      'simpler-decor',
+    ]);
+    const flood = Array.from({ length: 2_000 }, () => 'e-invites').join(',');
+    expect(selectionOf({ sel: flood })).toEqual(['e-invites']);
+    expect(selectionOf({ sel: 'e-invites,not-a-lever' })).toEqual([]);
+  });
 });
 
 describe('POST /[lang]/levers intent=apply', () => {

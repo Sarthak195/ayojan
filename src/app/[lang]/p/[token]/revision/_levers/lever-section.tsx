@@ -38,7 +38,11 @@ export function selectionOf(
   const raw = query.sel;
   if (typeof raw !== 'string' || raw === '') return [];
   const ids = raw.split(',');
-  return ids.every((id) => LeverId.safeParse(id).success) ? ids : [];
+  // Each lever once, at most every lever there is: a repeated id cannot make the checks below
+  // do more work than a full list.
+  return ids.every((id) => LeverId.safeParse(id).success)
+    ? [...new Set(ids)].slice(0, LeverId.options.length)
+    : [];
 }
 
 export interface LeverSectionProps {

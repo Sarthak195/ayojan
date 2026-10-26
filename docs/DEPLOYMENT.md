@@ -225,5 +225,5 @@ is unchanged and the seal key is the same, which a rollback does not change.
 - **A tagged revision without the Gemini secret** (for showing the form fallback on the real
   image) has not been deployed.
 - **A throwaway service named `pw5-deploy-check`** (a ten-line Node server, used on 26 Oct 2026
-  to prove Cloud Build, the public URL and the secret binding before the app was deployed)
-  still exists in the same project and is not part of Ayojan.
+  to prove Cloud Build, the public URL and the secret binding before the app was deployed) was
+  deleted on 26 Oct 2026 at about 20:30 IST, with the owner's okay. It was not part of Ayojan.

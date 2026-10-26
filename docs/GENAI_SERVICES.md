@@ -229,7 +229,7 @@ reader on a deploy that has none.
 | Letting the model plan budgets, schedules or rankings | The answer would change with wording and could be steered by pasted text. Code from `data/` gives the same answer every time and can be tested.        |
 | `generateContent` (the legacy call)                   | The Interactions API is the current surface; `npm run check:api` fails the build on the legacy call.                                                   |
 | Setting `temperature` and other sampling knobs        | Reasoning is controlled by `thinking_level`; the request type forbids the knobs.                                                                       |
-| Vertex AI or Gemini Enterprise                        | Needs billing and a service-account credential. The Developer API with keys held in Secret Manager does the job. The service runs on free-tier keys.   |
+| Vertex AI or Gemini Enterprise                        | Needs billing and a service-account credential. The Developer API with keys held in Secret Manager does the job. No paid key was added.                |
 | A paid last rung on the ladder                        | Considered and not built. Without it, an exhausted pool sends the user to a form, which gives the same plan.                                           |
 | Gemini File Search                                    | Adds a store, a quota and a failure mode, while the reference data is small and exact in `data/`.                                                      |
 | Document AI, PDF or image reading                     | The app reads pasted text only and accepts no uploads.                                                                                                 |
@@ -244,8 +244,9 @@ reader on a deploy that has none.
 
 ## 9. Limits, stated plainly
 
-- The quota numbers in section 6 are working assumptions, not measurements. The deployed service
-  runs on free-tier keys, and the real ceiling on model calls is the three Cloud Run instances times
+- The quota numbers in section 6 are working assumptions, not measurements. The service is
+  treated as a free-tier client: no key comes from the billed Cloud Run project and no paid key was
+  added (see [DATA_HANDLING.md](DATA_HANDLING.md)). The real ceiling on model calls is the three Cloud Run instances times
   the per-instance budget, together with the Gemini quota itself.
 - Latency is observed, not benchmarked. On 26 Oct 2026 one Hinglish brief read on the deployed
   service took 5.2 s, and a read of a pasted quote took 12.8 s. The same day, a dozen reads from a

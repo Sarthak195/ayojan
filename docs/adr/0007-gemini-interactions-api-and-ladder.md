@@ -47,8 +47,8 @@ of models.
 - **The answering model is reported as the API reports it.** The server may answer as a newer id
   than the one requested, so the gateway records `interaction.model` and never the requested id.
   If the reply names no model, the requested id is recorded with an `-unconfirmed` suffix.
-- **Free tier only.** A paid last rung was considered and not built. The service runs on free-tier
-  keys, and [`docs/DATA_HANDLING.md`](../DATA_HANDLING.md) carries the disclosure that follows.
+- **Free tier only.** A paid last rung was considered and not built. No key comes from the billed
+  Cloud Run project and no paid key was added, so the service is treated as a free-tier client, and [`docs/DATA_HANDLING.md`](../DATA_HANDLING.md) carries the disclosure that follows.
 
 ## Consequences
 

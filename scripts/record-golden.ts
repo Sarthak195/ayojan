@@ -25,6 +25,7 @@ import { GatewayBugError } from '@/server/genai/classify';
 import { defaultGateway } from '@/server/genai/gateway';
 import type { LlmGateway, PromptSpec } from '@/server/pipeline/llm-gateway';
 import { SCHEMA_VERSIONS } from '@/server/pipeline/schema-versions';
+import { stableJson } from '@/server/pipeline/stable-json';
 import * as brief from '@/server/prompts/brief';
 import * as change from '@/server/prompts/change';
 import * as familyUpdate from '@/server/prompts/family-update';
@@ -65,8 +66,8 @@ const ROUTES: Readonly<Record<PromptId, Route>> = {
     prompt: familyUpdate.promptFor(DRAFT_LANGUAGE),
     schema: FamilyUpdateDraft,
     cacheInputs: [DRAFT_LANGUAGE, familyUpdate.register],
-    // The app sends the built facts, so the fixture goes through the same builder.
-    toText: (raw) => JSON.stringify(buildMessageFacts(JSON.parse(raw) as MessageFactsInput)),
+    // The app sends the built facts with sorted keys (stableJson), so the fixture does too.
+    toText: (raw) => stableJson(buildMessageFacts(JSON.parse(raw) as MessageFactsInput)),
   },
 };
 

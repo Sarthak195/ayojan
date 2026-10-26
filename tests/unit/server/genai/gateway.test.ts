@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { GatewayBugError } from '@/server/genai/classify';
 import { INSTANCE_DAILY_ACTIONS, LADDER_MODEL_COUNT } from '@/server/genai/exhaustion';
 import { ACTION_BUDGET_MS, LADDER, MIN_CALL_START_MS } from '@/server/genai/gateway';
+import { formatLogLine } from '@/server/observability/logger';
 
 import {
   answer,
@@ -39,6 +40,16 @@ describe('the ladder on a good day', () => {
     );
     const result = await gateway.extract(brief());
     expect(result).toMatchObject({ kind: 'reading', answeredBy: 'gemini-3.6-flash' });
+  });
+
+  it('marks a reply with no model id as the requested model, unconfirmed, and the log keeps it', async () => {
+    const { gateway } = harness(() => ({ reply: { output_text: '{"city":"Jaipur"}' } }));
+    const result = await gateway.extract(brief());
+    expect(result).toMatchObject({ kind: 'reading', answeredBy: `${LITE}-unconfirmed` });
+    if (result.kind !== 'reading') return;
+    const line = formatLogLine('INFO', 'read', { answeredBy: result.answeredBy });
+    expect(JSON.parse(line)).toMatchObject({ answeredBy: `${LITE}-unconfirmed` });
+    expect(line).not.toContain('dropped');
   });
 
   it('starts the next action on the next key (round robin)', async () => {

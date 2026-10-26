@@ -66,7 +66,11 @@ export interface GatewayDeps {
 }
 
 type LadderOutcome =
-  | { readonly kind: 'answer'; readonly reply: InteractionReply }
+  | {
+      readonly kind: 'answer';
+      readonly reply: InteractionReply;
+      readonly requested: LadderModel;
+    }
   | { readonly kind: 'none'; readonly reason: UnavailableReason };
 
 async function runLadder<T>(
@@ -120,7 +124,7 @@ async function runLadder<T>(
         const reply = await deps
           .clientFor(apiKey)
           .create(shaped, callOptions(Math.min(rung.timeoutMs, remaining)));
-        return { kind: 'answer', reply };
+        return { kind: 'answer', reply, requested: rung.model };
       } catch (error: unknown) {
         const failure = classifyFailure(error);
         if (failure === 'our-bug') throw new GatewayBugError('bad-request', 'the API refused it');
@@ -198,7 +202,9 @@ export function createGateway(deps: GatewayDeps): LlmGateway {
       const outcome = await runLadder(request, keys, deps, allowance);
       if (outcome.kind === 'none') return unavailable(outcome.reason);
 
-      const answeredBy = outcome.reply.model ?? 'unknown';
+      // A reply without a model id is reported as the model asked for, marked unconfirmed, because
+      // the logger's allowlist drops anything that is not a gemini-* id.
+      const answeredBy = outcome.reply.model ?? `${outcome.requested}-unconfirmed`;
       const value = validateReply(request.schema, outcome.reply.output_text ?? '');
       const refusal = request.check?.(value);
       if (refusal !== undefined) {

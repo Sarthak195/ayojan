@@ -8,10 +8,10 @@ entry exists only for a change that really happened.
 
 | Prompt id      | File                                      | Schema              | Current version | Introduced  | Answering model on the last recording |
 | -------------- | ----------------------------------------- | ------------------- | --------------- | ----------- | ------------------------------------- |
-| `brief`        | `src/server/prompts/brief.ts`             | `BriefReading`      | 1               | 26 Oct 2026 | not recorded yet                      |
-| `quote`        | `src/server/prompts/quote.ts`             | `QuoteReading`      | 1               | 26 Oct 2026 | not recorded yet                      |
-| `change`       | `src/server/prompts/change.ts`            | `ChangeReading`     | 1               | 26 Oct 2026 | not recorded yet                      |
-| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 1               | 26 Oct 2026 | not recorded yet                      |
+| `brief`        | `src/server/prompts/brief.ts`             | `BriefReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
+| `quote`        | `src/server/prompts/quote.ts`             | `QuoteReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
+| `change`       | `src/server/prompts/change.ts`            | `ChangeReading`     | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
+| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 2               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | shared         | `src/server/prompts/shared/guardrails.ts` | n/a                 | 1               | 26 Oct 2026 | n/a                                   |
 
 ## Before attempt 1

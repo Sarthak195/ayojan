@@ -1,25 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
+import { quotaDayKey } from '@/server/config/clock';
 import {
   createExhaustionMemory,
   exhaustionMemory,
   HOUR_MS,
   MINUTE_MS,
-  quotaDay,
 } from '@/server/genai/exhaustion';
 
 const LITE = 'gemini-3.5-flash-lite';
 const OLD_LITE = 'gemini-3.1-flash-lite';
 const T0 = Date.UTC(2026, 9, 27, 3, 0); // 27 Oct 08:30 IST, 26 Oct 20:00 Pacific
 
-describe('quotaDay', () => {
+describe('the quota day', () => {
   it.each([
     ['before midnight Pacific in daylight time', Date.UTC(2026, 9, 27, 6, 59), '2026-10-26'],
     ['at midnight Pacific in daylight time (12:30 IST)', Date.UTC(2026, 9, 27, 7, 0), '2026-10-27'],
     ['before midnight Pacific in standard time', Date.UTC(2026, 10, 3, 7, 59), '2026-11-02'],
     ['at midnight Pacific in standard time (13:30 IST)', Date.UTC(2026, 10, 3, 8, 0), '2026-11-03'],
-  ])('resets %s', (_name, nowMs, day) => {
-    expect(quotaDay(nowMs)).toBe(day);
+  ])('resets %s, by the clock rule', (_name, nowMs, day) => {
+    const memory = createExhaustionMemory();
+    expect(memory.snapshot(nowMs).quotaDay).toBe(day);
+    expect(quotaDayKey(() => nowMs)).toBe(day);
   });
 });
 

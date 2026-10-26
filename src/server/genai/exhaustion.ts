@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { quotaDayKey } from '../config/clock';
 import type { LadderModel } from './interactions';
 
 /** D17 working value: about 20 requests a day per model per project, one project per key. */
@@ -23,22 +24,6 @@ export const RESERVE_SHARE = 0.8;
 
 export const HOUR_MS = 60 * 60 * 1000;
 export const MINUTE_MS = 60 * 1000;
-
-// en-CA formats as YYYY-MM-DD. Built once: Intl formatters are costly to construct.
-const PACIFIC_DAY = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'America/Los_Angeles',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
-
-/**
- * The free-tier quota day, assumed to reset at midnight Pacific (D17). Intl follows the US
- * daylight change, so the reset moves from 12:30 to 13:30 IST on 2 Nov without a code change.
- */
-export function quotaDay(nowMs: number): string {
-  return PACIFIC_DAY.format(new Date(nowMs));
-}
 
 export interface PairCalls {
   readonly model: LadderModel;
@@ -102,7 +87,8 @@ export function createExhaustionMemory(): ExhaustionMemory {
   let actions = 0;
 
   function rollDay(nowMs: number): void {
-    const today = quotaDay(nowMs);
+    // The one Pacific quota-day rule is the clock's (D17), so counters and daily caps roll together.
+    const today = quotaDayKey(() => nowMs);
     if (today === day) return;
     day = today;
     actions = 0;

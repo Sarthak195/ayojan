@@ -16,8 +16,12 @@ export function fakeLlmGateway(replies: ReadonlyMap<string, FakeReply>): FakeLlm
     extract<T>(request: ExtractionRequest<T>): Promise<GatewayResult<T>> {
       calls.push({ promptId: request.prompt.id, text: request.text });
       const reply = replies.get(request.prompt.id);
-      if (reply === undefined) throw new Error(`No fake reply for prompt "${request.prompt.id}"`);
-      if (reply === 'schema-violation') throw new GatewayBugError('schema-violation', 'fake');
+      if (reply === undefined) {
+        return Promise.reject(new Error(`No fake reply for prompt "${request.prompt.id}"`));
+      }
+      if (reply === 'schema-violation') {
+        return Promise.reject(new GatewayBugError('schema-violation', 'fake'));
+      }
       if (reply === 'quota' || reply === 'timeout') {
         return Promise.resolve({ kind: 'unavailable', reason: reply });
       }

@@ -7,6 +7,10 @@ export interface PromptSpec {
   readonly id: string;
   readonly version: string;
   readonly system: string;
+  /**
+   * Returns only the instruction that follows the data block. The gateway wraps the text in
+   * the delimiter itself, so returning the text here would send it twice.
+   */
   readonly instruction: (text: string) => string;
 }
 

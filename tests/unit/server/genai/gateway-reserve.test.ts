@@ -52,8 +52,20 @@ describe('the reserve for typed text (D18)', () => {
   });
 
   it('falls back to the recording, not the form, when an example cannot be read live', async () => {
-    const h = harness(() => ({ error: failure(429) }));
-    expect(await h.gateway.extract(example)).toEqual({ kind: 'example', value: RECORDING });
+    const quota = harness(() => ({ error: failure(429) }));
+    expect(await quota.gateway.extract(example)).toEqual({ kind: 'example', value: RECORDING });
+    const timeout = harness(() => 'hang');
+    expect(await timeout.gateway.extract(example)).toEqual({ kind: 'example', value: RECORDING });
+  });
+
+  it('says no key is set up even for an example text, so a keyless deploy looks keyless', async () => {
+    const h = harness(() => answer(LITE), { keys: () => [] });
+    expect(await h.gateway.extract(example)).toEqual({ kind: 'unavailable', reason: 'nokey' });
+  });
+
+  it('rejects, never throws synchronously, from the fake on a schema violation', async () => {
+    const fake = fakeLlmGateway(new Map<string, FakeReply>([['brief', 'schema-violation']]));
+    await expect(fake.extract(brief())).rejects.toMatchObject({ kind: 'schema-violation' });
   });
 
   it('counts each live call against its pair for the quota day', async () => {

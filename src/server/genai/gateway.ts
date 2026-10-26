@@ -194,11 +194,13 @@ export function createGateway(deps: GatewayDeps): LlmGateway {
       const cached = fromCache(request, cache, cacheKey, now());
       if (cached !== undefined) return cached;
 
+      // A keyless server says so even for an example text: a recording there would pass for
+      // a working AI reader on a deploy that has none.
+      if (keys.length === 0) return { kind: 'unavailable', reason: 'nokey' };
       const unavailable = (reason: UnavailableReason): GatewayResult<T> =>
         request.origin.kind === 'example'
           ? { kind: 'example', value: request.origin.recording }
           : { kind: 'unavailable', reason };
-      if (keys.length === 0) return unavailable('nokey');
       if (memory.actionsToday(now()) >= budget) return unavailable('quota');
 
       const outcome = await runLadder(request, keys, deps, allowance);

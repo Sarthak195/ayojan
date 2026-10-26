@@ -139,7 +139,10 @@ export const hi: ChangeDictionary = {
   priorityRow: (category) => category,
   noChange: 'कोई बदलाव नहीं',
   formApply: 'लागू करें',
-  summaryQuestions: (count) => `बदलाव लागू करने से पहले ${String(count)} सवाल का जवाब ज़रूरी है।`,
+  summaryQuestions: (count) =>
+    count === 1
+      ? 'बदलाव लागू करने से पहले 1 सवाल का जवाब ज़रूरी है।'
+      : `बदलाव लागू करने से पहले ${String(count)} सवालों के जवाब ज़रूरी हैं।`,
   summaryReady: 'जो चाहिए वह सब यहाँ है। मान जाँचें, फिर बदलाव लागू करें।',
   summaryBlocked: 'जैसा हमने पढ़ा, यह बदलाव लागू नहीं हो सकता। आपकी योजना में कुछ नहीं बदला।',
   readingHeading: 'हमने क्या पढ़ा',

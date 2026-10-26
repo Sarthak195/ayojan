@@ -148,4 +148,12 @@ describe('the fake gateway', () => {
     expect(await fake.extract(quote)).toEqual({ kind: 'unavailable', reason: 'quota' });
     expect(fake.calls.map((call) => call.promptId)).toEqual(['brief', 'quote']);
   });
+
+  // Same outcomes as the real gateway, so a pipeline test on the fake meets the real contract.
+  it('serves an example text its recording on quota, but reports a missing key', async () => {
+    const quota = fakeLlmGateway(new Map<string, FakeReply>([['brief', 'quota']]));
+    expect(await quota.extract(example)).toEqual({ kind: 'example', value: RECORDING });
+    const keyless = fakeLlmGateway(new Map<string, FakeReply>([['brief', 'nokey']]));
+    expect(await keyless.extract(example)).toEqual({ kind: 'unavailable', reason: 'nokey' });
+  });
 });

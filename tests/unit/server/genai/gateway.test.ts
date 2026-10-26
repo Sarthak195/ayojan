@@ -71,13 +71,21 @@ describe('a failed call', () => {
     expect(memory.isPairBlocked(LITE, 0, T0 + 6 * 60 * 60 * 1000)).toBe(false);
   });
 
-  it('404 remembers the retired pair for six hours and moves to the next model', async () => {
+  it('404 retires the model on every key for six hours and moves to the next model', async () => {
     const { gateway, calls, memory } = harness((model) =>
       model === LITE ? { error: failure(404) } : answer(OLD_LITE),
     );
-    expect(await gateway.extract(brief())).toMatchObject({ kind: 'reading' });
+    expect(await gateway.extract(brief('first'))).toMatchObject({ kind: 'reading' });
     expect(tried(calls)).toEqual([`${LITE}#0`, `${OLD_LITE}#0`]);
-    expect(memory.isPairBlocked(LITE, 0, T0 + 6 * 60 * 60 * 1000 - 1)).toBe(true);
+    const sixHours = 6 * 60 * 60 * 1000;
+    expect(memory.isModelCooled(LITE, T0 + sixHours - 1)).toBe(true);
+    expect(memory.isPairBlocked(OLD_LITE, 0, T0)).toBe(false);
+
+    // The second read never touches the retired model on any key.
+    calls.length = 0;
+    expect(await gateway.extract(brief('second'))).toMatchObject({ kind: 'reading' });
+    expect(tried(calls)).toEqual([`${OLD_LITE}#1`]);
+    expect(memory.isModelCooled(LITE, T0 + sixHours)).toBe(false);
   });
 
   const timeoutLike = (name: string, message: string, extra: object = {}): Error =>

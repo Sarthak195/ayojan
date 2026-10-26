@@ -132,8 +132,9 @@ async function runLadder<T>(
           memory.coolKey(keyIndex, KEY_COOL_MS, now());
           continue;
         }
+        // A retired model is retired for every key, so one 404 spares the others a wasted call.
         if (failure === 'retired') {
-          memory.coolPair(rung.model, keyIndex, RETIRED_COOL_MS, now());
+          memory.coolModel(rung.model, RETIRED_COOL_MS, now());
         } else {
           reason = 'timeout';
           if (failure === 'overload') memory.coolModel(rung.model, OVERLOAD_COOL_MS, now());

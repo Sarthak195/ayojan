@@ -60,6 +60,14 @@ describe('marking a task done: the one booking path (D10)', () => {
     });
   });
 
+  it('keeps a capacity given without an amount on the record, with no booking to report', () => {
+    expect(markDone(done('book-venue', null, 220), tasks)).toEqual({
+      ok: true,
+      record: done('book-venue', null, 220),
+      booking: null,
+    });
+  });
+
   it('treats an amount of zero as a number the family typed, not as unset', () => {
     expect(markDone(done('book-decorator', 0, null), tasks)).toMatchObject({
       ok: true,
@@ -91,7 +99,6 @@ describe('marking a task done: the one booking path (D10)', () => {
       done('book-caterer', 1_000, 200),
       'capacity-on-task-without-venue',
     ],
-    ['a capacity without an amount', done('book-venue', null, 220), 'capacity-needs-amount'],
   ])('refuses %s', (_label, request, reason) => {
     expect(markDone(request, tasks)).toEqual({ ok: false, reason });
   });

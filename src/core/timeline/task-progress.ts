@@ -3,6 +3,7 @@
 // bookings, so a booking has exactly one path from the task list to the money table.
 
 import { addDays, parseIsoDate } from '@/core/calendar/day-number';
+import { MAX_DELAY_DAYS } from '@/schemas/forms/task-event';
 import type { Op } from '@/schemas/plan/op';
 import type { Category } from '@/schemas/readings/vocabulary';
 
@@ -10,9 +11,10 @@ import { latestDone } from './schedule';
 import type { DelayRecord, DoneRecord, Schedule } from './schedule-types';
 import type { ResolvedTask } from './task-selection';
 
-/** The form allows 1 to 60 days (D11); the core holds the same bound so a crafted request fails here too. */
+// The form owns the 1 to 60 day range (D11); the core enforces the same bound so a crafted
+// request that skipped the form fails here too.
+export { MAX_DELAY_DAYS };
 export const MIN_DELAY_DAYS = 1;
-export const MAX_DELAY_DAYS = 60;
 
 /** What a booking task being marked done with an amount tells the budget engine. */
 export interface Booking {
@@ -28,8 +30,7 @@ export type MarkDoneRefusal =
   | 'amount-not-whole-rupees'
   | 'amount-on-task-without-booking'
   | 'capacity-not-positive-whole-number'
-  | 'capacity-on-task-without-venue'
-  | 'capacity-needs-amount';
+  | 'capacity-on-task-without-venue';
 
 export type MarkDoneResult =
   | { readonly ok: true; readonly record: DoneRecord; readonly booking: Booking | null }
@@ -59,7 +60,8 @@ function booking(task: ResolvedTask, request: DoneRecord): Booking | null {
 /**
  * Marks a task done. An amount books the task's category at that amount and nothing more: the
  * category's provenance and the capacity override are the budget engine's to apply (D10). Without
- * an amount the task is simply done and the category stays projected.
+ * an amount the task is simply done and the category stays projected; a capacity given alone
+ * stays on the record for the plan to apply, but is not a booking.
  */
 export function markDone(request: DoneRecord, tasks: readonly ResolvedTask[]): MarkDoneResult {
   const task = tasks.find((candidate) => candidate.id === request.taskId);
@@ -76,8 +78,6 @@ export function markDone(request: DoneRecord, tasks: readonly ResolvedTask[]): M
     return refuseDone('amount-on-task-without-booking');
   if (capacity !== null && task.books !== 'venue')
     return refuseDone('capacity-on-task-without-venue');
-  // A capacity with no amount would never reach the budget engine, so it is asked for, not dropped.
-  if (capacity !== null && amountInr === null) return refuseDone('capacity-needs-amount');
   return { ok: true, record: request, booking: booking(task, request) };
 }
 

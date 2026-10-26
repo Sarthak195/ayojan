@@ -955,7 +955,8 @@
       "criticalPath": ["book-venue"]
     },
     "delayEffects": [],
-    "leverIds": []
+    "leverIds": [],
+    "agreements": []
   },
   "revision": null,
   "reconfirmations": [],

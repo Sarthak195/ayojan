@@ -69,12 +69,12 @@ function versionAt(
 interface RevisionParts {
   readonly before: PlanVersion;
   readonly revision: Revision;
-  readonly items: readonly ReconfirmationItem[];
 }
 
 function revisionOf(
   inputs: PlanInputs,
   current: PlanVersion,
+  items: readonly ReconfirmationItem[],
   data: PlanData,
   today: IsoDate,
 ): PlanResult<RevisionParts | null> {
@@ -86,10 +86,8 @@ function revisionOf(
   const after = isLast ? planOk(current) : versionAt(inputs.ops, index + 1, data, today);
   if (!after.ok) return after;
   // Kept is judged at the change, but "ask again" follows the vendors as they stand now.
-  const items = reconfirmations(before.value, current);
   return planOk({
     before: before.value,
-    items,
     revision: {
       beforeVersion: before.value.version,
       afterVersion: after.value.version,
@@ -102,10 +100,10 @@ function revisionOf(
 export function planView(inputs: PlanInputs, data: PlanData, today: IsoDate): PlanResult<PlanView> {
   const current = planVersion(inputs, data, today);
   if (!current.ok) return current;
-  const revision = revisionOf(inputs, current.value, data, today);
+  const items = reconfirmations(current.value);
+  const revision = revisionOf(inputs, current.value, items, data, today);
   if (!revision.ok) return revision;
   const before = revision.value?.before ?? null;
-  const items = revision.value?.items ?? [];
   const vendors = vendorContacts(current.value, items, data);
   return planOk({
     current: current.value,

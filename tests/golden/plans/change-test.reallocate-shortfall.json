@@ -1518,7 +1518,36 @@
         ]
       }
     ],
-    "leverIds": ["e-invites", "half-contingency"]
+    "leverIds": ["e-invites", "half-contingency"],
+    "agreements": [
+      {
+        "vendor": {
+          "kind": "booking",
+          "category": "venue",
+          "taskId": "book-venue"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      },
+      {
+        "vendor": {
+          "kind": "quote",
+          "category": "catering",
+          "quoteId": "A"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      },
+      {
+        "vendor": {
+          "kind": "quote",
+          "category": "catering",
+          "quoteId": "B"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      }
+    ]
   },
   "revision": {
     "beforeVersion": 7,
@@ -1752,6 +1781,26 @@
           "vendor": null
         },
         {
+          "key": "taskEvent:book-decorator",
+          "kind": "taskEvent",
+          "value": "{\"doneOn\":null,\"notBefore\":\"2026-11-10\"}",
+          "vendor": null
+        },
+        {
+          "key": "lever:e-invites",
+          "kind": "lever",
+          "value": "true",
+          "vendor": null
+        },
+        {
+          "key": "lever:half-contingency",
+          "kind": "lever",
+          "value": "true",
+          "vendor": null
+        }
+      ],
+      "keptAskAgain": [
+        {
           "key": "booking:venue",
           "kind": "booking",
           "value": "{\"taskId\":\"book-venue\",\"amountInr\":180000,\"capacity\":220}",
@@ -1780,27 +1829,8 @@
             "category": "catering",
             "quoteId": "B"
           }
-        },
-        {
-          "key": "taskEvent:book-decorator",
-          "kind": "taskEvent",
-          "value": "{\"doneOn\":null,\"notBefore\":\"2026-11-10\"}",
-          "vendor": null
-        },
-        {
-          "key": "lever:e-invites",
-          "kind": "lever",
-          "value": "true",
-          "vendor": null
-        },
-        {
-          "key": "lever:half-contingency",
-          "kind": "lever",
-          "value": "true",
-          "vendor": null
         }
       ],
-      "keptAskAgain": [],
       "changed": [],
       "added": [],
       "counter": {
@@ -1809,7 +1839,35 @@
       }
     }
   },
-  "reconfirmations": [],
+  "reconfirmations": [
+    {
+      "vendor": {
+        "kind": "booking",
+        "category": "venue",
+        "taskId": "book-venue"
+      },
+      "reasons": ["date", "capacity"],
+      "status": "needs-reconfirmation"
+    },
+    {
+      "vendor": {
+        "kind": "quote",
+        "category": "catering",
+        "quoteId": "A"
+      },
+      "reasons": ["date", "guests"],
+      "status": "needs-reconfirmation"
+    },
+    {
+      "vendor": {
+        "kind": "quote",
+        "category": "catering",
+        "quoteId": "B"
+      },
+      "reasons": ["date"],
+      "status": "needs-reconfirmation"
+    }
+  ],
   "vendors": [
     {
       "vendor": {
@@ -1823,6 +1881,24 @@
       },
       "questions": [
         {
+          "id": "date-reconfirmation",
+          "en": "Our date has changed to 12 Feb 2027. Can you still do it on that day, at the same price?",
+          "hi": "हमारी तारीख़ बदलकर 12 फ़रवरी 2027 हो गई है। क्या आप उस दिन भी उसी क़ीमत पर काम कर पाएँगे?",
+          "raisedBy": {
+            "when": "reconfirmation",
+            "subject": "date"
+          }
+        },
+        {
+          "id": "venue-capacity",
+          "en": "Guests are now 250 and you booked for 220. Can the venue take 250, and at what rate?",
+          "hi": "मेहमान अब 250 हैं और आपने 220 के लिए बुक किया था। क्या जगह में 250 लोग आ सकते हैं, और किस रेट पर?",
+          "raisedBy": {
+            "when": "reconfirmation",
+            "subject": "capacity"
+          }
+        },
+        {
           "id": "step-free-access",
           "en": "Is there step-free access, without stairs, to the hall and the serving area?",
           "hi": "क्या हॉल और खाने की जगह तक बिना सीढ़ी का रास्ता है?",
@@ -1832,8 +1908,8 @@
           }
         }
       ],
-      "reconfirm": [],
-      "status": "current",
+      "reconfirm": ["date", "capacity"],
+      "status": "needs-reconfirmation",
       "bookedCapacity": 220
     },
     {
@@ -1866,6 +1942,24 @@
           }
         },
         {
+          "id": "date-reconfirmation",
+          "en": "Our date has changed to 12 Feb 2027. Can you still do it on that day, at the same price?",
+          "hi": "हमारी तारीख़ बदलकर 12 फ़रवरी 2027 हो गई है। क्या आप उस दिन भी उसी क़ीमत पर काम कर पाएँगे?",
+          "raisedBy": {
+            "when": "reconfirmation",
+            "subject": "date"
+          }
+        },
+        {
+          "id": "guest-count-reconfirmation",
+          "en": "Our guest count is now 250. Does your quote change?",
+          "hi": "हमारे मेहमान अब 250 हैं। क्या आपकी क़ीमत बदलेगी?",
+          "raisedBy": {
+            "when": "reconfirmation",
+            "subject": "guests"
+          }
+        },
+        {
           "id": "step-free-access",
           "en": "Is there step-free access, without stairs, to the hall and the serving area?",
           "hi": "क्या हॉल और खाने की जगह तक बिना सीढ़ी का रास्ता है?",
@@ -1875,8 +1969,8 @@
           }
         }
       ],
-      "reconfirm": [],
-      "status": "current",
+      "reconfirm": ["date", "guests"],
+      "status": "needs-reconfirmation",
       "bookedCapacity": null
     },
     {
@@ -1891,6 +1985,15 @@
       },
       "questions": [
         {
+          "id": "date-reconfirmation",
+          "en": "Our date has changed to 12 Feb 2027. Can you still do it on that day, at the same price?",
+          "hi": "हमारी तारीख़ बदलकर 12 फ़रवरी 2027 हो गई है। क्या आप उस दिन भी उसी क़ीमत पर काम कर पाएँगे?",
+          "raisedBy": {
+            "when": "reconfirmation",
+            "subject": "date"
+          }
+        },
+        {
           "id": "step-free-access",
           "en": "Is there step-free access, without stairs, to the hall and the serving area?",
           "hi": "क्या हॉल और खाने की जगह तक बिना सीढ़ी का रास्ता है?",
@@ -1900,8 +2003,8 @@
           }
         }
       ],
-      "reconfirm": [],
-      "status": "current",
+      "reconfirm": ["date"],
+      "status": "needs-reconfirmation",
       "bookedCapacity": null
     }
   ],
@@ -2065,7 +2168,7 @@
           "hi": "शादी की जगह (बुक किया)"
         },
         "category": "venue",
-        "questionIds": ["step-free-access"],
+        "questionIds": ["date-reconfirmation", "venue-capacity", "step-free-access"],
         "bookedCapacity": 220
       },
       {
@@ -2074,7 +2177,13 @@
           "hi": "कैटरर A"
         },
         "category": "catering",
-        "questionIds": ["tax-rate", "rate-above-minimum", "step-free-access"],
+        "questionIds": [
+          "tax-rate",
+          "rate-above-minimum",
+          "date-reconfirmation",
+          "guest-count-reconfirmation",
+          "step-free-access"
+        ],
         "bookedCapacity": null
       },
       {
@@ -2083,7 +2192,7 @@
           "hi": "कैटरर B"
         },
         "category": "catering",
-        "questionIds": ["step-free-access"],
+        "questionIds": ["date-reconfirmation", "step-free-access"],
         "bookedCapacity": null
       }
     ],

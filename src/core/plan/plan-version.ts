@@ -26,10 +26,17 @@ import { resolveTask } from '../timeline/task-selection';
 import type { PlanData } from './plan-data';
 import { venueCapacityOf, type VenueCapacity } from './plan-evidence';
 import type { PlanInputs } from './plan-inputs';
-import { leveredPlan, walkMoney, type MoveRecord, type WalkContext } from './plan-money';
+import {
+  leveredPlan,
+  walkMoney,
+  type MoneyWalk,
+  type MoveRecord,
+  type WalkContext,
+} from './plan-money';
 import { planComparisons } from './plan-quotes';
 import { budgetFail, planOk, type PlanResult } from './plan-refusal';
 import { planTimeline } from './plan-timeline';
+import type { VendorRef } from './vendor-ref';
 
 export interface AppliedLeverLine {
   readonly id: LeverId;
@@ -63,6 +70,13 @@ export interface PlanMoney {
   readonly cheapest: Readonly<Partial<Record<Category, CheapestQuote>>>;
 }
 
+/** A booked or quoted vendor with the guest count and date it agreed to. */
+export interface VendorAgreement {
+  readonly vendor: VendorRef;
+  readonly guests: number;
+  readonly eventDate: IsoDate;
+}
+
 export interface PlanVersion {
   /** How many ops this version folds; version 1 is the brief alone. */
   readonly version: number;
@@ -77,6 +91,29 @@ export interface PlanVersion {
   readonly schedule: Schedule;
   readonly delayEffects: readonly DelayPropagation[];
   readonly leverIds: readonly LeverId[];
+  /** Booked vendors first, then quotes in slot order: what re-confirmation compares against. */
+  readonly agreements: readonly VendorAgreement[];
+}
+
+function agreementsOf(walk: MoneyWalk, bookings: readonly Booking[]): VendorAgreement[] {
+  const found: VendorAgreement[] = [];
+  for (const booking of bookings) {
+    const terms = walk.agreed.tasks[booking.taskId];
+    if (terms === undefined) continue;
+    const vendor: VendorRef = {
+      kind: 'booking',
+      category: booking.category,
+      taskId: booking.taskId,
+    };
+    found.push({ vendor, ...terms });
+  }
+  for (const quote of walk.quotes) {
+    const terms = walk.agreed.quotes[quote.id];
+    if (terms === undefined) continue;
+    const vendor: VendorRef = { kind: 'quote', category: quote.category, quoteId: quote.id };
+    found.push({ vendor, ...terms });
+  }
+  return found;
 }
 
 function appliedLines(
@@ -168,5 +205,6 @@ export function planVersion(
     schedule: timeline.value.schedule,
     delayEffects: timeline.value.delayEffects,
     leverIds: inputs.leverIds,
+    agreements: agreementsOf(walk.value, evidence.bookings),
   });
 }

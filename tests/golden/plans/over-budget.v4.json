@@ -1495,7 +1495,36 @@
       "criticalPath": ["book-venue"]
     },
     "delayEffects": [],
-    "leverIds": []
+    "leverIds": [],
+    "agreements": [
+      {
+        "vendor": {
+          "kind": "quote",
+          "category": "venue",
+          "quoteId": "A"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      },
+      {
+        "vendor": {
+          "kind": "quote",
+          "category": "catering",
+          "quoteId": "B"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      },
+      {
+        "vendor": {
+          "kind": "quote",
+          "category": "photo",
+          "quoteId": "C"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      }
+    ]
   },
   "revision": null,
   "reconfirmations": [],

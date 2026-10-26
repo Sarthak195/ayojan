@@ -27,6 +27,12 @@ export interface MoveRecord {
   readonly outcome: MoveMoneyOutcome;
 }
 
+/** The guest count and date a vendor agreed to: when it quoted, or when it was booked. */
+export interface AgreedTerms {
+  readonly guests: number;
+  readonly eventDate: IsoDate;
+}
+
 export interface RaiseRecord {
   readonly opIndex: number;
   readonly amountInr: number;
@@ -47,6 +53,11 @@ export interface MoneyWalk {
   readonly leverIds: readonly LeverId[];
   readonly raises: readonly RaiseRecord[];
   readonly moves: readonly MoveRecord[];
+  /** By quote slot and by task id; a later mark of the same task replaces the earlier terms. */
+  readonly agreed: {
+    readonly quotes: Readonly<Record<string, AgreedTerms>>;
+    readonly tasks: Readonly<Record<string, AgreedTerms>>;
+  };
 }
 
 export interface WalkContext extends EvidenceContext {
@@ -128,12 +139,17 @@ export function walkMoney(inputs: PlanInputs, context: WalkContext): PlanResult<
     deltas: {},
     quotes: [],
     done: [],
+    agreed: { quotes: {}, tasks: {} },
     leverIds: [],
     raises: [],
     moves: [],
   };
   for (const [index, op] of inputs.ops.entries()) {
-    if (op.kind === 'quoteAdded') walk = { ...walk, quotes: [...walk.quotes, op.quote] };
+    const terms: AgreedTerms = { guests: walk.guests, eventDate: walk.eventDate };
+    if (op.kind === 'quoteAdded') {
+      const quotes = { ...walk.agreed.quotes, [op.quote.id]: terms };
+      walk = { ...walk, quotes: [...walk.quotes, op.quote], agreed: { ...walk.agreed, quotes } };
+    }
     if (op.kind === 'taskDone') {
       const on = parseIsoDate(op.on);
       if (!on.ok) return applyFail('date-invalid', index);
@@ -143,7 +159,8 @@ export function walkMoney(inputs: PlanInputs, context: WalkContext): PlanResult<
         amountInr: op.amountInr,
         capacity: op.capacity,
       };
-      walk = { ...walk, done: [...walk.done, record] };
+      const tasks = { ...walk.agreed.tasks, [op.taskId]: terms };
+      walk = { ...walk, done: [...walk.done, record], agreed: { ...walk.agreed, tasks } };
     }
     if (op.kind === 'leversApplied') {
       const raise = op.raiseBudgetInr ?? 0;

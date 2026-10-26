@@ -6,7 +6,8 @@
 import { FunctionName } from '@/schemas/readings/vocabulary';
 
 import type { PlanVersion } from './plan-version';
-import { sameVendor, type ReconfirmationItem, type VendorRef } from './reconfirmation';
+import type { ReconfirmationItem } from './reconfirmation';
+import { sameVendor, type VendorRef } from './vendor-ref';
 
 export type DecisionKind =
   | 'priority'

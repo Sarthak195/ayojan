@@ -43,7 +43,7 @@ describe('decision keys', () => {
 });
 
 describe('Kept after the explainer change (D29)', () => {
-  const kept = keptDecisions(v5, v6, reconfirmations(v5, v6));
+  const kept = keptDecisions(v5, v6, reconfirmations(v6));
 
   it('keeps the venue booking and both quotes, but asks again', () => {
     expect(kept.keptAskAgain.map((item) => item.key)).toEqual([
@@ -76,7 +76,7 @@ describe('Kept after the explainer change (D29)', () => {
 });
 
 describe('Kept after the second change', () => {
-  const kept = keptDecisions(v7, v8, reconfirmations(v7, v8));
+  const kept = keptDecisions(v7, v8, reconfirmations(v8));
 
   it('counts the food priority as changed and Move money as no decision change', () => {
     expect(kept.changed.map((item) => item.key)).toEqual(['priority:catering']);
@@ -86,8 +86,12 @@ describe('Kept after the second change', () => {
     });
   });
 
-  it('asks nobody again when neither the date nor the guests moved', () => {
-    expect(kept.keptAskAgain).toEqual([]);
+  it('still asks the vendors the first change affected: nobody has confirmed them yet', () => {
+    expect(kept.keptAskAgain.map((item) => item.key)).toEqual([
+      'booking:venue',
+      'quote:A',
+      'quote:B',
+    ]);
   });
 });
 

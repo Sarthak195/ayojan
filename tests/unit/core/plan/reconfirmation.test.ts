@@ -8,7 +8,7 @@ import { QUOTE_A, VENUE_BOOKED, change, first, versionOf, viewOf } from './plan-
 const v5 = versionOf(first(5));
 
 function reasonsAfter(op: Op): [string, readonly string[]][] {
-  return reconfirmations(v5, versionOf([...first(5), op])).map((item) => [
+  return reconfirmations(versionOf([...first(5), op])).map((item) => [
     item.vendor.kind === 'quote'
       ? `quote:${item.vendor.quoteId}`
       : `booking:${item.vendor.category}`,
@@ -63,10 +63,7 @@ describe('re-confirmation after a change (FR-27)', () => {
   });
 
   it('asks nothing of categories with no booking and no quote', () => {
-    const items = reconfirmations(
-      v5,
-      versionOf([...first(5), change({ eventDate: '2027-03-05' })]),
-    );
+    const items = reconfirmations(versionOf([...first(5), change({ eventDate: '2027-03-05' })]));
     expect(items.map((item) => item.vendor.category)).not.toContain('photo');
   });
 
@@ -75,6 +72,20 @@ describe('re-confirmation after a change (FR-27)', () => {
       (op): op is Op => op !== undefined,
     );
     expect(viewOf(ops).reconfirmations).toEqual([]);
+  });
+
+  it('keeps asking after a later change of something else', () => {
+    const view = viewOf([...first(6), change({ budgetInr: 760_000 })]);
+    expect(view.reconfirmations.map((item) => item.reasons)).toEqual([
+      ['date', 'capacity'],
+      ['date', 'guests'],
+      ['date'],
+    ]);
+  });
+
+  it('stops asking a vendor whose terms are back where they were agreed', () => {
+    const back = change({ guests: 200, eventDate: '2027-02-26' });
+    expect(viewOf([...first(6), back]).reconfirmations).toEqual([]);
   });
 
   it('stops asking the venue once it is booked again after the change', () => {

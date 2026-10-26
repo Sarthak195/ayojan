@@ -19,6 +19,8 @@
 //       now Rs 15,600 under budget"; Print invitations is no longer At risk.            matches
 //   v8  Move Rs 40,000 to photo: Rs 15,600 from headroom, Rs 24,400 from decor (53,000 to
 //       28,600, above its 26,500 floor); projected Rs 7,48,780; simpler menu offered.  matches
+//       The venue and both caterers still need re-confirmation: nobody has confirmed them
+//       since the first change moved the date and guests.
 //   Undo of v8 equals v7.                                                              matches
 //
 // Divergences from the spec's prose, each kept on purpose:
@@ -353,6 +355,11 @@ describe('the change test (spec 5.2)', () => {
       'offered',
     );
     expect(v8.revision?.kept.changed.map((item) => item.key)).toEqual(['priority:catering']);
+    expect(v8.reconfirmations.map((item) => item.vendor.kind)).toEqual([
+      'booking',
+      'quote',
+      'quote',
+    ]);
   });
 
   it('undoes the last step back to exactly the previous plan', () => {

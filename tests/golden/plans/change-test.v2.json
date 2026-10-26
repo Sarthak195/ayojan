@@ -1157,7 +1157,18 @@
       "criticalPath": ["book-caterer"]
     },
     "delayEffects": [],
-    "leverIds": []
+    "leverIds": [],
+    "agreements": [
+      {
+        "vendor": {
+          "kind": "booking",
+          "category": "venue",
+          "taskId": "book-venue"
+        },
+        "guests": 200,
+        "eventDate": "2027-02-26"
+      }
+    ]
   },
   "revision": null,
   "reconfirmations": [],

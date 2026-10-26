@@ -29,7 +29,7 @@ functions:
 
   - id: wedding
     en: Wedding ceremony
-    hi: शादी (फेरे)
+    hi: शादी की रस्म
     weddingOnly: true
     tasks: []
     basis: 'Planning assumption chosen by the author: the ceremony itself is covered by the tasks every wedding plan has.'

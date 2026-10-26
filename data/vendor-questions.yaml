@@ -72,7 +72,7 @@ questions:
     categories: [venue]
     raisedBy: { when: reconfirmation, subject: capacity }
     en: Guests are now {guests} and you booked for {capacity}. Can the venue take {guests}, and at what rate?
-    hi: मेहमान अब {guests} हैं और आपने {capacity} के लिए बुक किया था। क्या जगह में {guests} लोग आ सकते हैं, और किस रेट पर?
+    hi: मेहमान अब {guests} हैं और आपने {capacity} लोगों के लिए बुक किया था। क्या आपके यहाँ {guests} लोग आ सकते हैं, और किस रेट पर?
     basis: 'Planning assumption chosen by the author: a hall booked for fewer guests than invited is a question for the venue, not something the app decides.'
     reviewed: ''
 
@@ -101,10 +101,10 @@ questions:
     reviewed: ''
 
   - id: elderly-seating
-    categories: [venue]
+    categories: [venue, decor]
     raisedBy: { when: need, need: elderly }
     en: Can you arrange chairs near the stage and a quiet corner for elderly guests?
-    hi: क्या बुज़ुर्ग मेहमानों के लिए स्टेज के पास कुर्सियाँ और एक शांत कोना हो सकता है?
+    hi: क्या आप बुज़ुर्ग मेहमानों के लिए स्टेज के पास कुर्सियाँ और एक शांत कोने का इंतज़ाम कर सकते हैं?
     basis: 'Planning assumption chosen by the author: elderly guests are most comfortable seated near the ceremony and away from loud music.'
     reviewed: ''
 
@@ -120,7 +120,7 @@ questions:
     categories: [catering]
     raisedBy: { when: diet, diet: vegOnly }
     en: Can the whole menu be vegetarian, cooked in a vegetarian kitchen?
-    hi: क्या पूरा मेन्यू शाकाहारी हो सकता है, शाकाहारी रसोई में बना हुआ?
+    hi: क्या पूरा मेन्यू शाकाहारी हो सकता है, और खाना शाकाहारी रसोई में ही बने?
     basis: 'Planning assumption chosen by the author: a vegetarian family usually wants the kitchen, not just the dishes, to be vegetarian.'
     reviewed: ''
 
@@ -128,7 +128,7 @@ questions:
     categories: [catering]
     raisedBy: { when: diet, diet: jain }
     en: Can you make Jain food, without onion, garlic or root vegetables?
-    hi: क्या आप जैन खाना बना सकते हैं, बिना प्याज़, लहसुन और ज़मीन के नीचे उगने वाली सब्ज़ियों के?
+    hi: क्या आप जैन खाना बना सकते हैं, बिना प्याज़, लहसुन और ज़मीकंद के?
     basis: 'Planning assumption chosen by the author: Jain food rules exclude onion, garlic and root vegetables, which not every caterer handles.'
     reviewed: ''
 
@@ -144,7 +144,7 @@ questions:
     categories: [venue, decor]
     raisedBy: { when: venueLimit, venueLimit: indoorOnly }
     en: We need everything indoors. Is there an indoor space for every function?
-    hi: हमें सब कुछ अंदर चाहिए। क्या हर रस्म के लिए अंदर जगह है?
+    hi: हमें सारे कार्यक्रम अंदर ही करने हैं। क्या हर कार्यक्रम के लिए अंदर की जगह है?
     basis: 'Planning assumption chosen by the author: an indoor-only family needs the venue and decorator to plan without a lawn.'
     reviewed: ''
 
@@ -152,6 +152,6 @@ questions:
     categories: [venue, music]
     raisedBy: { when: venueLimit, venueLimit: musicCurfew }
     en: What time must the music stop at the venue?
-    hi: शादी की जगह पर संगीत किस समय तक बंद करना होगा?
+    hi: वेन्यू पर संगीत कितने बजे तक बंद करना होगा?
     basis: 'Planning assumption chosen by the author: a music curfew shapes the band booking and the programme, so both are asked.'
     reviewed: ''

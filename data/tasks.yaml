@@ -10,13 +10,13 @@
 thresholds:
   atRiskSlackDays:
     en: At risk when a task has less than this many days of slack
-    hi: इतने दिन से कम गुंजाइश बचे तो काम ख़तरे में
+    hi: इतने दिन से कम की गुंजाइश बचे तो काम ख़तरे में है
     days: 14
     basis: 'Planning assumption chosen by the author: two weeks of slack is the least that absorbs one vendor delay without touching the date.'
     reviewed: ''
   dueSoonDays:
     en: Due this week when the latest start is this many days away or fewer
-    hi: आख़िरी शुरुआत इतने दिन में हो तो इसी हफ़्ते करना है
+    hi: शुरू करने की आख़िरी तारीख़ इतने दिन के अंदर हो तो इसी हफ़्ते करना है
     days: 7
     basis: 'Planning assumption chosen by the author: a week is how far ahead a family looks when deciding what to do next.'
     reviewed: ''
@@ -25,7 +25,7 @@ tasks:
   - id: book-venue
     category: venue
     en: Book the venue
-    hi: शादी की जगह बुक करें
+    hi: वेन्यू बुक करें
     dependsOn: []
     latestFinishDaysBefore: 100
     durationDays: 10
@@ -95,8 +95,8 @@ tasks:
   - id: final-walkthrough
     category: venue
     en: Final walkthrough at the venue
-    hi: शादी की जगह पर आख़िरी जाँच
-    dependsOn: [mandap-design, book-caterer]
+    hi: वेन्यू पर आख़िरी जाँच
+    dependsOn: [mandap-design, decor-sign-off, book-caterer]
     latestFinishDaysBefore: 7
     durationDays: 1
     activatedBy: [{ when: always }]
@@ -123,7 +123,7 @@ tasks:
   - id: print-invitations
     category: invites
     en: Print the invitation cards
-    hi: शादी के कार्ड छपवाएँ
+    hi: न्योते के कार्ड छपवाएँ
     dependsOn: [finalise-guest-list]
     latestFinishDaysBefore: 60
     durationDays: 21
@@ -131,9 +131,9 @@ tasks:
     weddingOnly: false
     books: null
     fasterAlternative:
-      en: Send e-invites
-      hi: ई-कार्ड भेजें
-      latestFinishDaysBefore: 30
+      en: Make the e-invite
+      hi: ई-कार्ड बनवाएँ
+      latestFinishDaysBefore: 52
       durationDays: 3
     basis: 'Planning assumption chosen by the author: design, proofs and printing take about three weeks, while e-invites take a few days.'
     reviewed: ''
@@ -154,27 +154,27 @@ tasks:
 
   - id: book-dhol-or-band
     category: music
-    en: Book the dhol or band
-    hi: ढोल या बैंड बुक करें
+    en: 'Book the music: band, dhol or DJ'
+    hi: बैंड, ढोल या DJ बुक करें
     dependsOn: []
     latestFinishDaysBefore: 60
     durationDays: 5
-    activatedBy: [{ when: mustHave, mustHave: dhol }]
+    activatedBy: [{ when: always }, { when: mustHave, mustHave: dhol }]
     weddingOnly: false
     books: music
     fasterAlternative: null
-    basis: 'Planning assumption chosen by the author: good dhol players are booked out on season dates, so two months ahead.'
+    basis: 'Planning assumption chosen by the author: good bands, dhol players and DJs are booked out on season dates, so two months ahead.'
     reviewed: ''
 
   - id: book-mehndi-artist
     category: decor
     en: Book the mehndi artist
-    hi: मेहंदी वाली बुक करें
+    hi: मेहंदी आर्टिस्ट बुक करें
     dependsOn: []
     latestFinishDaysBefore: 45
     durationDays: 3
     activatedBy: [{ when: function, function: mehndi }, { when: mustHave, mustHave: mehndiArtist }]
-    weddingOnly: true
+    weddingOnly: false
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a mehndi artist is a short booking, about six weeks ahead in season.'
@@ -183,7 +183,7 @@ tasks:
   - id: confirm-step-free-access
     category: venue
     en: Confirm step-free access at the venue
-    hi: शादी की जगह पर बिना सीढ़ी का रास्ता पक्का करें
+    hi: वेन्यू पर बिना सीढ़ी का रास्ता पक्का करें
     dependsOn: [book-venue]
     latestFinishDaysBefore: 60
     durationDays: 3
@@ -239,7 +239,7 @@ tasks:
   - id: book-choreographer
     category: music
     en: Book the choreographer
-    hi: डांस सिखाने वाले को बुक करें
+    hi: डांस कोरियोग्राफ़र बुक करें
     dependsOn: []
     latestFinishDaysBefore: 45
     durationDays: 3
@@ -267,7 +267,7 @@ tasks:
   - id: sangeet-programme
     category: music
     en: Plan the sangeet programme
-    hi: संगीत का कार्यक्रम तय करें
+    hi: संगीत संध्या का कार्यक्रम तय करें
     dependsOn: []
     latestFinishDaysBefore: 30
     durationDays: 7

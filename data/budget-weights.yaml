@@ -42,7 +42,7 @@ profiles:
     categories:
       - category: venue
         en: Venue
-        hi: शादी की जगह
+        hi: वेन्यू
         baseWeight: 22
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }
@@ -82,7 +82,7 @@ profiles:
         reviewed: ''
       - category: invites
         en: Invitations and return gifts
-        hi: कार्ड और रिटर्न गिफ़्ट
+        hi: न्योते और रिटर्न गिफ़्ट
         baseWeight: 7
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
@@ -101,12 +101,12 @@ profiles:
     occasions: [birthday, anniversary, puja, communityEvent, other]
     en: Small celebration
     hi: छोटा समारोह
-    basis: 'Planning assumption chosen by the author: at a birthday or anniversary food is an even larger share and photos a smaller one than at a wedding.'
+    basis: 'Planning assumption chosen by the author: at a birthday, anniversary, puja or community event food is an even larger share and photos a smaller one than at a wedding.'
     reviewed: ''
     categories:
       - category: venue
         en: Venue or hall
-        hi: जगह या हॉल
+        hi: वेन्यू या हॉल
         baseWeight: 20
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }

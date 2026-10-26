@@ -43,7 +43,7 @@ const CASES: readonly Case[] = [
   },
 ];
 
-const EM_DASH = '—';
+const EM_DASH = String.fromCharCode(0x2014);
 const RUPEE_FIGURE =
   /(?:₹|\bRs\.?|\bINR\b)\s*\d|\d[\d,.]*\s*(?:lakh|lac|lakhs|crore|crores|hazaar|hazar|k)\b/iu;
 

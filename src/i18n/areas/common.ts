@@ -130,5 +130,5 @@ export const hi: CommonDictionary = {
   },
   readingHint: 'पढ़ने में 40 सेकंड तक लग सकते हैं।',
   optional: '(वैकल्पिक)',
-  scrollTableHint: 'पूरी तालिका देखने के लिए बगल में स्क्रॉल करें।',
+  scrollTableHint: 'पूरी तालिका देखने के लिए बाएँ-दाएँ स्क्रॉल करें।',
 };

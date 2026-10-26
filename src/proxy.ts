@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { LANG_HEADER, langOfPath, PATH_HEADER } from '@/i18n/path';
 import { buildContentSecurityPolicy } from '@/security/content-security-policy';
 
 export function proxy(request: NextRequest): NextResponse {
@@ -14,6 +15,11 @@ export function proxy(request: NextRequest): NextResponse {
   const headers = new Headers(request.headers);
   headers.set('x-nonce', nonce);
   headers.set('content-security-policy', policy);
+  // Set on every request, never only when present, so a client cannot supply its own value:
+  // the root layout writes <html lang> and the language switch from these two.
+  const { pathname } = request.nextUrl;
+  headers.set(LANG_HEADER, langOfPath(pathname));
+  headers.set(PATH_HEADER, pathname);
 
   const response = NextResponse.next({ request: { headers } });
   response.headers.set('content-security-policy', policy);

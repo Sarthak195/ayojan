@@ -4,21 +4,71 @@
   color-scheme: light dark;
   --background: #ffffff;
   --foreground: #171717;
+  --muted: #4b5563;
+  --line: #d1d5db;
+  --surface: #f5f5f4;
+  --accent: #9a3412;
   --focus: #1d4ed8;
+  --note-bg: #eff6ff;
+  --note-line: #1d4ed8;
+  --warn-bg: #fffbeb;
+  --warn-line: #b45309;
+  --ok: #15803d;
+  --risk: #b45309;
+  --late: #b91c1c;
+  --info: #1d4ed8;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --muted: #a3a3a3;
+    --line: #404040;
+    --surface: #171717;
+    --accent: #fdba74;
     --focus: #93c5fd;
+    --note-bg: #0f1d33;
+    --note-line: #93c5fd;
+    --warn-bg: #2b1d05;
+    --warn-line: #fbbf24;
+    --ok: #4ade80;
+    --risk: #fbbf24;
+    --late: #f87171;
+    --info: #93c5fd;
   }
+}
+
+/* Utilities such as bg-surface and text-muted read these, so a theme change is one place. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-note-bg: var(--note-bg);
+  --color-note-line: var(--note-line);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-line: var(--warn-line);
+  --color-ok: var(--ok);
+  --color-risk: var(--risk);
+  --color-late: var(--late);
+  --color-info: var(--info);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  /* System fonts only: no webfont download on a slow phone, and Devanagari comes with the OS. */
   font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 /* Never remove the outline without replacing it: keyboard users rely on it to see where they are. */
@@ -30,6 +80,11 @@ body {
 /* The programmatic focus the skip link puts on <main> needs no ring around the whole page. */
 main:focus {
   outline: none;
+}
+
+/* Narrow tables stay tables and scroll inside their region (D35); the region itself takes focus. */
+.table-scroll {
+  overflow-x: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {

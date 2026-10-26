@@ -1,6 +1,13 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { connection } from 'next/server';
 import type { ReactElement, ReactNode } from 'react';
+
+import { SiteFooter } from '@/components/layout/site-footer';
+import { SiteHeader } from '@/components/layout/site-header';
+import { SkipLink } from '@/components/layout/skip-link';
+import { dictionaryFor } from '@/i18n/dictionary';
+import { LANG_HEADER, langOfHeader, PATH_HEADER } from '@/i18n/path';
 
 import './globals.css';
 
@@ -16,19 +23,21 @@ export default async function RootLayout({
   // blocked and it would never hydrate. Opting the whole tree into dynamic rendering here
   // means no future page can forget to.
   await connection();
+  // The layout sits above the [lang] segment, so the proxy passes the language and path.
+  const requestHeaders = await headers();
+  const lang = langOfHeader(requestHeaders.get(LANG_HEADER));
+  const pathname = requestHeaders.get(PATH_HEADER) ?? '';
+  const { common } = dictionaryFor(lang);
 
   return (
-    <html lang="en">
-      <body>
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-10 focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-black"
-        >
-          Skip to main content
-        </a>
-        <main id="main" tabIndex={-1}>
+    <html lang={lang}>
+      <body className="min-h-screen">
+        <SkipLink label={common.skipLink} />
+        <SiteHeader lang={lang} pathname={pathname} common={common} />
+        <main id="main" tabIndex={-1} className="mx-auto max-w-3xl px-4 py-8">
           {children}
         </main>
+        <SiteFooter privacy={common.privacyFooter} />
       </body>
     </html>
   );

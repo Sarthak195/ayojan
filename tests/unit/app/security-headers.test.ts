@@ -47,7 +47,7 @@ describe('fixed response headers (next.config.ts)', () => {
   it('refuses each powerful feature it names in Permissions-Policy', async () => {
     const policy = (await fixedHeaders()).get('permissions-policy') ?? '';
     const features = policy.split(',').map((part) => part.trim());
-    for (const feature of ['camera', 'microphone', 'geolocation', 'payment']) {
+    for (const feature of ['camera', 'microphone', 'geolocation', 'payment', 'usb']) {
       expect(features).toContain(`${feature}=()`);
     }
     // An allowlist such as camera=(self) would grant the feature; only empty lists refuse.

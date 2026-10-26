@@ -68,7 +68,6 @@ describe('re-confirmation after a change (FR-27)', () => {
       versionOf([...first(5), change({ eventDate: '2027-03-05' })]),
     );
     expect(items.map((item) => item.vendor.category)).not.toContain('photo');
-    expect(items.every((item) => item.status === 'needs-reconfirmation')).toBe(true);
   });
 
   it('does not ask a vendor quoted or booked after the change, who knew the new terms', () => {

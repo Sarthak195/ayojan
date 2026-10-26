@@ -53,6 +53,7 @@ import { runningLineSentence } from '@/core/levers/running-line';
 import { delayTask, markDone } from '@/core/timeline/task-progress';
 import { resolveTask } from '@/core/timeline/task-selection';
 import type { Op } from '@/schemas/plan/op';
+import type { QuoteSlot } from '@/schemas/plan/quote-record';
 import { toShortText } from '@/schemas/plan/short-text';
 import type { ChangeReading } from '@/schemas/readings/change-reading';
 
@@ -92,7 +93,11 @@ function line(view: PlanView, category: 'venue' | 'catering' | 'decor' | 'photo'
   return view.current.money.projection.lines[category];
 }
 
-function changeOp(reading: ChangeReading, view: PlanView, budgetAnswer: number | null): Op {
+function changeOp(
+  reading: ChangeReading,
+  view: PlanView,
+  budgetAnswer: number | null,
+): Extract<Op, { kind: 'changeConfirmed' }> {
   const { headline } = view.current;
   const current = {
     guests: headline.guests,
@@ -216,7 +221,7 @@ describe('the change test (spec 5.2)', () => {
     expect(v5.current.headline.projected.inr).toBe(743_000);
     const breakEven = v5.current.comparisons[0]?.breakEvens[0];
     if (breakEven === undefined) throw new Error('no break-even');
-    const label = (slot: 'A' | 'B'): string => quoteLabel({ category: 'catering', id: slot }, 'en');
+    const label = (slot: QuoteSlot): string => quoteLabel({ category: 'catering', id: slot }, 'en');
     expect(breakEvenSentence(breakEven, label, 'en').headline).toBe(
       "Caterer B becomes cheaper from 231 guests, before Caterer A's GST.",
     );

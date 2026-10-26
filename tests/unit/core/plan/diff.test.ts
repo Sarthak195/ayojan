@@ -51,9 +51,7 @@ describe('diff of the explainer change (v5 to v6)', () => {
   });
 
   it('omits unchanged values: the booked venue, photo, music and the finished task', () => {
-    const money = changeRows
-      .filter((row) => row.kind === 'money')
-      .map((row) => row.kind === 'money' && row.category);
+    const money = changeRows.flatMap((row) => (row.kind === 'money' ? [row.category] : []));
     expect(money).toEqual(['catering', 'decor', 'invites']);
     expect(changeRows.some((row) => row.kind === 'task' && row.taskId === 'book-venue')).toBe(
       false,
@@ -81,9 +79,7 @@ describe('diff of other pairs', () => {
       },
       reason: 'reallocated',
     });
-    const moved = rows
-      .filter((row) => row.kind === 'money')
-      .map((row) => [row.kind === 'money' && row.category, row.reason]);
+    const moved = rows.flatMap((row) => (row.kind === 'money' ? [[row.category, row.reason]] : []));
     expect(moved).toEqual([
       ['decor', 'reallocated'],
       ['photo', 'reallocated'],

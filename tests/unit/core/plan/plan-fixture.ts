@@ -47,11 +47,15 @@ export function viewOf(ops: readonly Op[], when: IsoDate = today): PlanView {
   return view.value;
 }
 
-export function briefOp(changes: Partial<Brief> = {}): Op {
+export type BriefOp = Extract<Op, { kind: 'briefConfirmed' }>;
+export type TaskDoneOp = Extract<Op, { kind: 'taskDone' }>;
+export type ChangeOp = Extract<Op, { kind: 'changeConfirmed' }>;
+
+export function briefOp(changes: Partial<Brief> = {}): BriefOp {
   return { kind: 'briefConfirmed', brief: { ...HINGLISH_BRIEF, ...changes }, readBy: AI_READ };
 }
 
-export const VENUE_BOOKED: Op = {
+export const VENUE_BOOKED: TaskDoneOp = {
   kind: 'taskDone',
   taskId: 'book-venue',
   on: TODAY,
@@ -70,7 +74,7 @@ export const DECORATOR_DELAYED: Op = {
 export const QUOTE_A: Op = { kind: 'quoteAdded', quote: CATERER_A, readBy: AI_READ };
 export const QUOTE_B: Op = { kind: 'quoteAdded', quote: CATERER_B, readBy: AI_READ };
 
-export function change(fields: Partial<Extract<Op, { kind: 'changeConfirmed' }>> = {}): Op {
+export function change(fields: Partial<ChangeOp> = {}): ChangeOp {
   return {
     kind: 'changeConfirmed',
     guests: null,

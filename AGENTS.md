@@ -20,7 +20,8 @@
 5. Repository hygiene: one branch (`main`), a 10 MB cap on the repository including history, no
    binaries, banned strings (the legacy call, lint and type suppressions, unfinished-work
    markers, key-shaped strings), a 250-line cap on files in `src` and `scripts`, and comments
-   that say why, not what. `npm run verify` checks all of it.
+   that say why, not what. `npm run verify` checks the banned strings, the line cap and the
+   repository size; one branch and no binaries are kept by review.
 6. Next.js 16 is not the Next.js in most training data: its APIs, conventions and file layout
    have changed. Read the matching guide in `node_modules/next/dist/docs/` before writing
    framework code, and heed deprecation notices (for example, `src/proxy.ts` replaces

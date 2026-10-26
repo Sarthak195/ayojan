@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Fields every data row carries. A basis is the author's stated assumption and never a cited
 // source (D37): nobody fetched and verified a survey, so naming one would be the "AI inventing
-// prices" defect one level up. `reviewed` stays empty until the user signs the row off.
+// prices" defect one level up. `reviewed` records a review for people; no plan or page uses it.
 
 export const BASIS_PREFIX = 'Planning assumption chosen by the author: ';
 

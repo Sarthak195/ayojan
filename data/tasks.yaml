@@ -8,7 +8,7 @@
 # weddingOnly: dropped for the small-celebration profile.
 # celebration: the small-celebration profile's own two day counts, with their basis (null only
 #   on a wedding-only task). A birthday is planned weeks ahead, not months, so the wedding's
-#   lead times would show every task Late. reviewed stays empty until the user signs it off.
+#   lead times would show every task Late. Its reviewed field is empty: nobody has reviewed it yet.
 
 thresholds:
   atRiskSlackDays:

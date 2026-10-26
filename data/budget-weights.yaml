@@ -4,7 +4,7 @@
 # floor: how far Move money may take the category down (share of its own frozen allocation, or of the budget).
 # occasions: the occasions that use the profile; every occasion appears in exactly one profile.
 # multipliers: applied to baseWeight by the priority the family chose, then everything is normalised again.
-# reviewed: empty until the user signs the row off; until then the app calls these unreviewed planning assumptions.
+# reviewed: a record of who reviewed the row and when, for people; no plan or page uses it.
 
 multipliers:
   - priority: more

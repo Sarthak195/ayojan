@@ -34,10 +34,25 @@ export type ChangeConfirmation =
   | { readonly ok: true; readonly fields: ChangeFields }
   | { readonly ok: false; readonly open: readonly ChangeQuestion[] };
 
-function answered(question: ChangeQuestion, answers: ChangeAnswers): boolean {
+// "Budget decreased: by how much?" answered with a larger budget contradicts the reading the
+// family just checked, so it stays open rather than silently reversing the change.
+function agrees(direction: 'increase' | 'decrease' | 'none', answer: number, now: number): boolean {
+  if (direction === 'decrease') return answer < now;
+  return direction === 'increase' ? answer > now : true;
+}
+
+function answered(
+  question: ChangeQuestion,
+  answers: ChangeAnswers,
+  current: CurrentHeadline,
+): boolean {
   switch (question.kind) {
     case 'budget-how-much':
-      return answers.budgetInr !== null && inBudget(answers.budgetInr);
+      return (
+        answers.budgetInr !== null &&
+        inBudget(answers.budgetInr) &&
+        agrees(question.direction, answers.budgetInr, current.budgetInr)
+      );
     case 'which-date':
       return answers.eventDate !== null && question.candidates.includes(answers.eventDate);
     case 'nothing-to-change':
@@ -59,7 +74,7 @@ export function confirmChange(
   today: IsoDate,
 ): ChangeConfirmation {
   const open = changeQuestions(values, current, today).filter(
-    (question) => !answered(question, answers),
+    (question) => !answered(question, answers, current),
   );
   if (open.length > 0) return { ok: false, open };
   const { dateCandidates, reallocate } = values;

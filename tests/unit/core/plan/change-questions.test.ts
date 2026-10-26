@@ -186,9 +186,15 @@ describe('confirming a change', () => {
     ['an offered option', 760_000, true],
     ['an exact amount', 750_000, true],
     ['an amount under Rs 5,000', 4_999, false],
-  ])('accepts %s only when it is inside the bounds', (_name, budgetInr, ok) => {
-    expect(confirmChange(howMuch, { budgetInr, eventDate: null }, CURRENT, today).ok).toBe(ok);
-  });
+    // The reading said the budget went down; an answer at or above Rs 8,00,000 reverses it.
+    ['the same budget for a decrease', 800_000, false],
+    ['a larger budget for a decrease', 900_000, false],
+  ])(
+    'accepts %s only when it is inside the bounds and agrees with the reading',
+    (_name, budgetInr, ok) => {
+      expect(confirmChange(howMuch, { budgetInr, eventDate: null }, CURRENT, today).ok).toBe(ok);
+    },
+  );
 
   it('builds the op fields from the answers', () => {
     expect(confirmChange(howMuch, { budgetInr: 750_000, eventDate: null }, CURRENT, today)).toEqual(

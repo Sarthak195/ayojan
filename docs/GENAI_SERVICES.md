@@ -258,7 +258,7 @@ reader on a deploy that has none.
   so on a miss the messages page shows the template again with the "Write it with AI" button.
 - Text the user submits to a reader is sent to the Gemini Developer API. The server keeps no
   database: the plan, with the short quotes behind each value, lives in an encrypted link, and the
-  app's log lines hold routes, status codes, durations, prompt ids, reason codes and counts, never
-  the text.
+  app's log lines hold routes, status codes, durations, prompt ids, reason codes, counts and error class
+  names, never the text.
 - The recordings are replies from one recording session per fixture. They show that the grounding
   code handles real replies. They do not measure how often the model gets a reading right.

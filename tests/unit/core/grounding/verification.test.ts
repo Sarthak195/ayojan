@@ -111,8 +111,13 @@ describe('verifyClaim reads Hindi amounts inside the quote', () => {
   describe.each<[string, string, number, string]>([
     ['dedh lakh', 'budget dedh lakh tak', 150_000, 'verified'],
     ['saadhe teen lakh', 'kul saadhe teen lakh', 350_000, 'verified'],
-    ['Devanagari words', 'बजट डेढ़ लाख', 150_000, 'verified'],
-    ['Devanagari digits', 'बजट ८ लाख', 800_000, 'verified'],
+    [
+      'Devanagari words',
+      '\u092C\u091C\u091F \u0921\u0947\u0922\u093C \u0932\u093E\u0916',
+      150_000,
+      'verified',
+    ],
+    ['Devanagari digits', '\u092C\u091C\u091F \u096E \u0932\u093E\u0916', 800_000, 'verified'],
     // "aath" (8) is inside the ek-to-das table (D34); "pachaas" (50) is outside it.
     ['a word outside the table', 'budget pachaas hazaar', 50_000, 'unverified:number-not-in-quote'],
     ['English number words', 'budget eight lakh', 800_000, 'unverified:number-not-in-quote'],
@@ -136,7 +141,7 @@ describe('verifyClaim checks only the number the model returned', () => {
     expect(outcomeOf(verdict)).toBe('unverified:number-not-in-quote');
   });
 
-  it('reads the number from the user’s words, not the model’s copy', () => {
+  it('reads the number from the user\u2019s words, not the model\u2019s copy', () => {
     // "budget 1.9L" matches "budget 19L" only after punctuation is dropped; the user wrote 19L.
     const verdict = verdictOf('budget 19L hai', amountClaim('budget 1.9L', 190_000, BUDGET));
     expect(outcomeOf(verdict)).toBe('unverified:number-not-in-quote');
@@ -206,10 +211,10 @@ describe('verifyClaim passes unclear and absent values through', () => {
   });
 
   it('highlights the original characters of a WhatsApp paste', () => {
-    const text = '[26/10/26, 9:41 pm] Mausi: Budget ₹8,00,000 \u{1F389} rakhna';
+    const text = '[26/10/26, 9:41 pm] Mausi: Budget \u20B98,00,000 \u{1F389} rakhna';
     const verdict = verdictOf(text, amountClaim('Budget Rs 8,00,000', 800_000, BUDGET));
     expect(verdict.status).toBe('verified');
-    expect(verdict.displayQuote).toBe('Budget ₹8,00,000');
+    expect(verdict.displayQuote).toBe('Budget \u20B98,00,000');
     expect(text.slice(verdict.highlight?.start, verdict.highlight?.end)).toBe(verdict.displayQuote);
   });
 });
@@ -292,7 +297,7 @@ describe('verification treats an instruction in pasted text as plain text', () =
     expect(report).toMatchObject({ matched: 1, total: 1 });
   });
 
-  it('grounds a quote holding the instruction as the user’s words, nothing more', () => {
+  it('grounds a quote holding the instruction as the user\u2019s words, nothing more', () => {
     const verdict = verdictOf(QUOTE_INJECTION, amountClaim(QUOTE_INJECTION, 1_100));
     expect(verdict.status).toBe('verified');
     expect(verdict.displayQuote).toBe(QUOTE_INJECTION);

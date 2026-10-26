@@ -21,10 +21,10 @@ describe('locateQuote finds the words the model copied', () => {
     ['an exact quote', 'Budget 8 lakh hai', 'Budget 8 lakh', 'found:exact', 'Budget 8 lakh'],
     [
       'a smart-quote difference',
-      'Mausi said “dhol zaroor”',
+      'Mausi said \u201Cdhol zaroor\u201D',
       'said "dhol zaroor"',
       'found:exact',
-      'said “dhol zaroor”',
+      'said \u201Cdhol zaroor\u201D',
     ],
     [
       'collapsed whitespace',
@@ -48,7 +48,13 @@ describe('locateQuote finds the words the model copied', () => {
       'found:normalised',
       'budget: 8 lakh, guests 200',
     ],
-    ['a different rupee marker', 'rate ₹1300/plate', 'Rs 1300/plate', 'found:exact', '₹1300/plate'],
+    [
+      'a different rupee marker',
+      'rate \u20B91300/plate',
+      'Rs 1300/plate',
+      'found:exact',
+      '\u20B91300/plate',
+    ],
     [
       'a quote spanning a removed emoji',
       `budget ${PARTY} 8 lakh`,
@@ -63,7 +69,13 @@ describe('locateQuote finds the words the model copied', () => {
       'found:exact',
       `budget ${PARTY} 8 lakh`,
     ],
-    ['a composed quote against decomposed text', '50 हज़ार', '50 हज़ार', 'found:exact', '50 हज़ार'],
+    [
+      'a composed quote against decomposed text',
+      '50 \u0939\u091C\u093C\u093E\u0930',
+      '50 \u0939\u095B\u093E\u0930',
+      'found:exact',
+      '50 \u0939\u091C\u093C\u093E\u0930',
+    ],
     ['a quote padded with blanks', 'guests 200 tak', '  guests 200 ', 'found:exact', 'guests 200'],
   ])('%s', (_name, text, quote, outcome, highlight) => {
     it(`reads ${JSON.stringify(quote)} as ${outcome}`, () => {

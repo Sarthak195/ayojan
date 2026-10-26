@@ -74,10 +74,10 @@ describe('dictionaries', () => {
     );
   });
 
-  it('keeps the owner-approved Hindi privacy line word for word (D41)', () => {
+  it('pins the Hindi privacy line word for word (D41)', () => {
     const hi = dictionaryFor('hi');
     expect(hi.common.privacyHint).toBe(
-      'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर करने में इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न लिखें।',
+      'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर बनाने के लिए इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न डालें।',
     );
     expect(hi.common.privacyHint.endsWith('।')).toBe(true);
   });

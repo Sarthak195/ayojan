@@ -61,8 +61,7 @@ export function decisionsOf(version: PlanVersion): Decision[] {
   for (const item of brief.diet) decisions.push(decision('diet', item, true));
   for (const item of brief.venueLimits) decisions.push(decision('venueLimit', item, true));
   for (const name of FunctionName.options) {
-    const answer = brief.functions[name];
-    if (answer !== undefined) decisions.push(decision('function', name, answer));
+    decisions.push(decision('function', name, brief.functions[name]));
   }
   const bookingTasks = new Set<string>();
   for (const booking of version.bookings) {

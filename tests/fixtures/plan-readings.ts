@@ -52,7 +52,13 @@ export const HINGLISH_BRIEF: Brief = {
   guests: 200,
   eventDate: '2027-02-26',
   venueCapacity: null,
-  functions: { haldi: 'yes', mehndi: 'yes', sangeet: 'unsure', wedding: 'yes', reception: 'unsure' },
+  functions: {
+    haldi: 'yes',
+    mehndi: 'yes',
+    sangeet: 'unsure',
+    wedding: 'yes',
+    reception: 'unsure',
+  },
   priorities: SPEC_PRIORITIES,
   mustHaves: ['dhol'],
   needs: ['wheelchair'],
@@ -63,7 +69,11 @@ export const HINGLISH_BRIEF: Brief = {
 
 export const BRIEF_OP: Op = { kind: 'briefConfirmed', brief: HINGLISH_BRIEF, readBy: AI_READ };
 
-const LIVE_COUNTER = { key: 'liveCounter', label: 'Live chaat counter', amountInr: 15_000 } as const;
+const LIVE_COUNTER = {
+  key: 'liveCounter',
+  label: 'Live chaat counter',
+  amountInr: 15_000,
+} as const;
 
 // "1300/plate, min 200 plate, GST extra, live chaat counter 15k alag, 30% advance".
 export const CATERER_A: QuoteRecord = {

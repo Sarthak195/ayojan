@@ -10,7 +10,7 @@ questions:
     en: Is GST included in your price? If not, at what rate?
     hi: क्या आपकी क़ीमत में GST शामिल है? अगर नहीं, तो कितने प्रतिशत?
     basis: 'Planning assumption chosen by the author: a quote without its tax rate cannot be compared fairly, so the rate is asked rather than guessed.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: minimum-guarantee
     categories: [catering]
@@ -18,7 +18,7 @@ questions:
     en: What is the smallest number of plates you charge for?
     hi: आप कम से कम कितनी प्लेट का पैसा लेते हैं?
     basis: 'Planning assumption chosen by the author: a minimum plate count changes the total when guests drop, so it must be known.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: rate-above-minimum
     categories: [catering]
@@ -26,7 +26,7 @@ questions:
     en: Is the per-plate rate the same above the minimum count?
     hi: कम से कम गिनती से ज़्यादा प्लेट होने पर भी क्या प्रति प्लेट रेट वही रहेगा?
     basis: 'Planning assumption chosen by the author: some caterers change the rate above the minimum, which changes the comparison.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: guests-covered
     categories: []
@@ -34,7 +34,7 @@ questions:
     en: How many guests does this price cover?
     hi: यह क़ीमत कितने मेहमानों के लिए है?
     basis: 'Planning assumption chosen by the author: a lump sum means little until the family knows how many guests it covers.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: days-for-per-day
     categories: []
@@ -42,7 +42,7 @@ questions:
     en: Your price is per day. For how many days would we need you?
     hi: आपकी क़ीमत रोज़ के हिसाब से है। हमें आपकी कितने दिन ज़रूरत होगी?
     basis: 'Planning assumption chosen by the author: a per-day price has no total until the number of days is agreed, so the app asks instead of assuming.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: guest-cap-exceeded
     categories: []
@@ -50,7 +50,7 @@ questions:
     en: We now expect {guests} guests, more than your price covers. Could you send a revised quote?
     hi: अब हमें {guests} मेहमानों की उम्मीद है, जो आपकी क़ीमत में शामिल गिनती से ज़्यादा है। क्या आप नई क़ीमत भेज सकते हैं?
     basis: 'Planning assumption chosen by the author: a lump sum is never scaled up by the app, so the vendor is asked to quote again.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: date-reconfirmation
     categories: []
@@ -58,7 +58,7 @@ questions:
     en: Our date has changed to {date}. Can you still do it on that day, at the same price?
     hi: हमारी तारीख़ बदलकर {date} हो गई है। क्या आप उस दिन भी उसी क़ीमत पर काम कर पाएँगे?
     basis: 'Planning assumption chosen by the author: a booking made for one date is not assumed to hold for another.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: guest-count-reconfirmation
     categories: []
@@ -66,7 +66,7 @@ questions:
     en: Our guest count is now {guests}. Does your quote change?
     hi: हमारे मेहमान अब {guests} हैं। क्या आपकी क़ीमत बदलेगी?
     basis: 'Planning assumption chosen by the author: per-guest prices and bookings are re-confirmed whenever the guest count changes.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: venue-capacity
     categories: [venue]
@@ -74,7 +74,7 @@ questions:
     en: Guests are now {guests} and you booked for {capacity}. Can the venue take {guests}, and at what rate?
     hi: मेहमान अब {guests} हैं और आपने {capacity} लोगों के लिए बुक किया था। क्या आपके यहाँ {guests} लोग आ सकते हैं, और किस रेट पर?
     basis: 'Planning assumption chosen by the author: a hall booked for fewer guests than invited is a question for the venue, not something the app decides.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: live-counter-included
     categories: [catering]
@@ -82,7 +82,7 @@ questions:
     en: Is a live counter included? If not, what would it add?
     hi: क्या लाइव काउंटर शामिल है? अगर नहीं, तो उसका अलग से कितना लगेगा?
     basis: 'Planning assumption chosen by the author: a must-have missing from a quote changes its real total, so it is asked about.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: dhol-included
     categories: [music]
@@ -90,7 +90,7 @@ questions:
     en: Does your booking include dhol for the baraat?
     hi: क्या आपकी बुकिंग में बारात के लिए ढोल शामिल है?
     basis: 'Planning assumption chosen by the author: the family named dhol as a must-have, so the music vendor is asked to confirm it.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: step-free-access
     categories: [venue, catering]
@@ -98,7 +98,7 @@ questions:
     en: Is there step-free access, without stairs, to the hall and the serving area?
     hi: क्या हॉल और खाने की जगह तक बिना सीढ़ी का रास्ता है?
     basis: 'Planning assumption chosen by the author: a guest in a wheelchair needs both the hall and the food reachable without stairs.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: elderly-seating
     categories: [venue, decor]
@@ -106,7 +106,7 @@ questions:
     en: Can you arrange chairs near the stage and a quiet corner for elderly guests?
     hi: क्या आप बुज़ुर्ग मेहमानों के लिए स्टेज के पास कुर्सियाँ और एक शांत कोने का इंतज़ाम कर सकते हैं?
     basis: 'Planning assumption chosen by the author: elderly guests are most comfortable seated near the ceremony and away from loud music.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: children-dishes
     categories: [catering]
@@ -114,7 +114,7 @@ questions:
     en: Can you serve a few mild dishes for children?
     hi: क्या बच्चों के लिए कुछ कम मसाले वाले पकवान बन सकते हैं?
     basis: 'Planning assumption chosen by the author: young children often need milder food than the main menu.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: veg-only-menu
     categories: [catering]
@@ -122,7 +122,7 @@ questions:
     en: Can the whole menu be vegetarian, cooked in a vegetarian kitchen?
     hi: क्या पूरा मेन्यू शाकाहारी हो सकता है, और खाना शाकाहारी रसोई में ही बने?
     basis: 'Planning assumption chosen by the author: a vegetarian family usually wants the kitchen, not just the dishes, to be vegetarian.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: jain-menu
     categories: [catering]
@@ -130,7 +130,7 @@ questions:
     en: Can you make Jain food, without onion, garlic or root vegetables?
     hi: क्या आप जैन खाना बना सकते हैं, बिना प्याज़, लहसुन और ज़मीकंद के?
     basis: 'Planning assumption chosen by the author: Jain food rules exclude onion, garlic and root vegetables, which not every caterer handles.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: no-alcohol
     categories: [catering, venue]
@@ -138,7 +138,7 @@ questions:
     en: We want no alcohol served. Is that fine with your package?
     hi: हम शराब बिल्कुल नहीं परोसना चाहते। क्या आपके पैकेज में यह ठीक है?
     basis: 'Planning assumption chosen by the author: some venue and catering packages bundle a bar, so the family confirms it can be left out.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: indoor-only
     categories: [venue, decor]
@@ -146,7 +146,7 @@ questions:
     en: We need everything indoors. Is there an indoor space for every function?
     hi: हमें सारे कार्यक्रम अंदर ही करने हैं। क्या हर कार्यक्रम के लिए अंदर की जगह है?
     basis: 'Planning assumption chosen by the author: an indoor-only family needs the venue and decorator to plan without a lawn.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: music-curfew
     categories: [venue, music]
@@ -154,4 +154,4 @@ questions:
     en: What time must the music stop at the venue?
     hi: वेन्यू पर संगीत कितने बजे तक बंद करना होगा?
     basis: 'Planning assumption chosen by the author: a music curfew shapes the band booking and the programme, so both are asked.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"

@@ -13,13 +13,13 @@ thresholds:
     hi: इतने दिन से कम की गुंजाइश बचे तो काम ख़तरे में है
     days: 14
     basis: 'Planning assumption chosen by the author: two weeks of slack is the least that absorbs one vendor delay without touching the date.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
   dueSoonDays:
     en: Due this week when the latest start is this many days away or fewer
     hi: शुरू करने की आख़िरी तारीख़ इतने दिन के अंदर हो तो इसी हफ़्ते करना है
     days: 7
     basis: 'Planning assumption chosen by the author: a week is how far ahead a family looks when deciding what to do next.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
 tasks:
   - id: book-venue
@@ -34,7 +34,7 @@ tasks:
     books: venue
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: good halls go first in the season, so the venue is fixed more than three months ahead.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-caterer
     category: catering
@@ -48,7 +48,7 @@ tasks:
     books: catering
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: the caterer is chosen once the venue and its kitchen rules are known, about three months ahead.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-decorator
     category: decor
@@ -62,7 +62,7 @@ tasks:
     books: decor
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: the decorator needs the venue first and about ten weeks to plan sets.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: decor-sign-off
     category: decor
@@ -76,7 +76,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a month ahead leaves the decorator time to order flowers and fabric.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: mandap-design
     category: decor
@@ -90,7 +90,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: the mandap is built last from the signed-off decor plan, about three weeks ahead.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: final-walkthrough
     category: venue
@@ -104,7 +104,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: one visit a week ahead catches layout problems while they can still be fixed.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: finalise-guest-list
     category: invites
@@ -118,7 +118,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: collecting names from both sides of the family takes about two weeks.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: print-invitations
     category: invites
@@ -136,7 +136,7 @@ tasks:
       latestFinishDaysBefore: 52
       durationDays: 3
     basis: 'Planning assumption chosen by the author: design, proofs and printing take about three weeks, while e-invites take a few days.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: send-invitations
     category: invites
@@ -150,7 +150,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: six weeks notice lets outstation relatives book travel.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-dhol-or-band
     category: music
@@ -164,7 +164,7 @@ tasks:
     books: music
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: good bands, dhol players and DJs are booked out on season dates, so two months ahead.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-mehndi-artist
     category: decor
@@ -178,7 +178,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a mehndi artist is a short booking, about six weeks ahead in season.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: confirm-step-free-access
     category: venue
@@ -192,7 +192,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a ramp or lift must be arranged early enough to change venue plans if it is missing.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-photographer
     category: photo
@@ -206,7 +206,7 @@ tasks:
     books: photo
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: photographers book out early in season, about three months ahead.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: menu-tasting
     category: catering
@@ -220,7 +220,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a tasting a month ahead leaves time to change dishes.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: confirm-live-counter
     category: catering
@@ -234,7 +234,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: a live counter needs space and staff, so it is confirmed with the menu.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: book-choreographer
     category: music
@@ -248,7 +248,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: the family needs about six weeks of practice, so the choreographer is booked before that.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: haldi-arrangements
     category: decor
@@ -262,7 +262,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: haldi is a small home ceremony that needs a few days of preparation two weeks out.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: sangeet-programme
     category: music
@@ -276,7 +276,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: the running order and songs are fixed a month ahead so performers can practise.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: return-gifts
     category: invites
@@ -290,7 +290,7 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: bulk gifts need about ten days to order and pack, done three weeks out.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: final-headcount
     category: catering
@@ -304,4 +304,4 @@ tasks:
     books: null
     fasterAlternative: null
     basis: 'Planning assumption chosen by the author: caterers usually fix plate counts about a week before the event.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"

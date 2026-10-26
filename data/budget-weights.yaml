@@ -12,25 +12,25 @@ multipliers:
     hi: ज़्यादा ख़र्च करें
     percent: 125
     basis: 'Planning assumption chosen by the author: a quarter more weight is a visible shift without starving the other categories.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
   - priority: standard
     en: Standard
     hi: सामान्य
     percent: 100
     basis: 'Planning assumption chosen by the author: standard leaves the base weight unchanged.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
   - priority: save
     en: Save here
     hi: यहाँ बचत करें
     percent: 70
     basis: 'Planning assumption chosen by the author: about a third less weight is a real saving while the category still gets done.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
   - priority: unclear
     en: Not sure yet
     hi: अभी तय नहीं
     percent: 100
     basis: 'Planning assumption chosen by the author: an unanswered priority is treated as standard, never as a choice the family did not make.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
 
 profiles:
   - id: wedding
@@ -38,7 +38,7 @@ profiles:
     en: Wedding
     hi: शादी
     basis: 'Planning assumption chosen by the author: food is usually the largest share of a family wedding and the venue the second.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
     categories:
       - category: venue
         en: Venue
@@ -47,7 +47,7 @@ profiles:
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: the venue is the second largest share and only partly grows with guests, since a hall is booked whole.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: catering
         en: Catering
         hi: खाना-पीना
@@ -55,7 +55,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: food is the largest share and is priced per plate, so it grows fully with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: decor
         en: Decor
         hi: सजावट
@@ -63,7 +63,7 @@ profiles:
         perGuestSharePercent: 20
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: decor is a mid-sized share that grows a little with more tables and seating.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: photo
         en: Photo and video
         hi: फ़ोटो और वीडियो
@@ -71,7 +71,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: photography is priced by the day and crew, not by the number of guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: music
         en: Music and baraat
         hi: संगीत और बारात
@@ -79,7 +79,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a band or dhol is booked for the event, so it does not grow with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: invites
         en: Invitations and return gifts
         hi: न्योते और रिटर्न गिफ़्ट
@@ -87,7 +87,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: one card and one gift per invited family, so the share grows fully with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: contingency
         en: Contingency
         hi: अचानक के ख़र्च
@@ -95,14 +95,14 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: budget, percent: 5 }
         basis: 'Planning assumption chosen by the author: a tenth held back absorbs surprises, and at least a twentieth of the budget always stays in reserve.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: celebration
     occasions: [birthday, anniversary, puja, communityEvent, other]
     en: Small celebration
     hi: छोटा समारोह
     basis: 'Planning assumption chosen by the author: at a birthday, anniversary, puja or community event food is an even larger share and photos a smaller one than at a wedding.'
-    reviewed: ''
+    reviewed: "2026-10-26 AI-assisted review at the author's request"
     categories:
       - category: venue
         en: Venue or hall
@@ -111,7 +111,7 @@ profiles:
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a hall or home terrace is the second largest share and only partly grows with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: catering
         en: Food and drinks
         hi: खाना-पीना
@@ -119,7 +119,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: at a small celebration food is most of the cost and grows fully with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: decor
         en: Decor
         hi: सजावट
@@ -127,7 +127,7 @@ profiles:
         perGuestSharePercent: 20
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: balloons, a backdrop and a cake table make decor a slightly larger share than at a wedding.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: photo
         en: Photos
         hi: फ़ोटो
@@ -135,7 +135,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: one photographer for a few hours is a small share that does not grow with guests.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: music
         en: Music and entertainment
         hi: संगीत और मनोरंजन
@@ -143,7 +143,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a DJ, magician or games host is booked for the event, not per guest.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: invites
         en: Invitations and return gifts
         hi: न्योते और रिटर्न गिफ़्ट
@@ -151,7 +151,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: invitations are mostly digital at a small celebration, so the share is mainly return gifts.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: contingency
         en: Contingency
         hi: अचानक के ख़र्च
@@ -159,4 +159,4 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: budget, percent: 5 }
         basis: 'Planning assumption chosen by the author: the same reserve as a wedding, because surprises do not shrink with the event.'
-        reviewed: ''
+        reviewed: "2026-10-26 AI-assisted review at the author's request"

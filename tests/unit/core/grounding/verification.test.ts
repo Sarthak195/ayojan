@@ -148,6 +148,46 @@ describe('verifyClaim checks only the number the model returned', () => {
   });
 });
 
+describe('verifyClaim reads whole numbers around the match', () => {
+  describe.each<[string, string, Claim, string]>([
+    // name, text, claim, expected outcome
+    [
+      'a lakh figure the user wrote larger',
+      'Budget 18 lakh hai',
+      amountClaim('8 lakh', 800_000, BUDGET),
+      'unverified:quote-not-found',
+    ],
+    [
+      'a guest count the user wrote larger',
+      'about 1200 guests',
+      amountClaim('200 guests', 200, GUESTS),
+      'unverified:quote-not-found',
+    ],
+    [
+      'grouped digits cut after a comma',
+      'Rs 1,80,000 for venue',
+      amountClaim('80,000 for venue', 80_000, BUDGET),
+      'unverified:number-not-in-quote',
+    ],
+    [
+      'a decimal cut after its point',
+      'budget 1.9L hai',
+      amountClaim('9L hai', 900_000, BUDGET),
+      'unverified:number-not-in-quote',
+    ],
+    [
+      'the whole grouped figure',
+      'Rs 1,80,000 for venue',
+      amountClaim('1,80,000 for venue', 180_000, BUDGET),
+      'verified',
+    ],
+  ])('%s', (_name, text, claim, outcome) => {
+    it(`is ${outcome}`, () => {
+      expect(outcomeOf(verdictOf(text, claim))).toBe(outcome);
+    });
+  });
+});
+
 describe('verifyClaim lets the caller choose which numbers the quote must spell', () => {
   const DATE_TEXT = 'Shaadi 26 Feb 2027 ko';
 

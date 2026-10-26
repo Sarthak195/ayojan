@@ -128,12 +128,33 @@ describe('locateQuote refuses what it cannot ground', () => {
 
   it('accepts a quote of exactly the minimum length', () => {
     expect(QUOTE_MIN_CHARACTERS).toBe(3);
-    expect(outcomeOf(locate('budget 8L hai', '8L ' + 'h'))).toBe('found:exact');
+    expect(outcomeOf(locate('budget 8L hai', 'hai'))).toBe('found:exact');
   });
 
   it('counts the limit in code points, so 160 emoji are not too long', () => {
     const quote = PARTY.repeat(QUOTE_LIMIT_CHARACTERS);
     expect(outcomeOf(locate('budget', quote))).toBe('quote-too-short');
+  });
+});
+
+describe('locateQuote never starts or ends a match inside a word', () => {
+  describe.each<[string, string, string, string]>([
+    // name, text, quote, expected outcome
+    ['a lakh figure cut from a larger one', 'Budget 18 lakh hai', '8 lakh', 'quote-not-found'],
+    ['a guest count cut from a larger one', 'about 1200 guests', '200 guests', 'quote-not-found'],
+    ['a word cut short at its end', 'budget 8L hai', '8L h', 'quote-not-found'],
+    ['a word folded into another', 'Nonveg bhi chalega', 'veg bhi', 'quote-not-found'],
+    ['a Devanagari figure cut from a larger one', 'बजट १८ लाख', '८ लाख', 'quote-not-found'],
+    ['a whole word after a hyphen', 'non-veg nahi, veg only', 'veg only', 'found:exact'],
+  ])('%s', (_name, text, quote, outcome) => {
+    it(`is ${outcome}`, () => {
+      expect(outcomeOf(locate(text, quote))).toBe(outcome);
+    });
+  });
+
+  it('skips an occurrence inside a word and shows the next whole one', () => {
+    const match = locate('18 lakh nahi, 8 lakh', '8 lakh');
+    expect(match.kind === 'found' ? match.start : -1).toBe(14);
   });
 });
 

@@ -4,14 +4,16 @@
 //   1. exact: the canonical quote inside the canonical text;
 //   2. normalised: both case-folded with punctuation removed, mapped back through the
 //      canonical text to the original.
-// Several occurrences are fine for verification; the first is the one shown. Each pass is one
-// indexOf, so the worst case is O(n x m) with n at most 2,000 and m at most 160.
+// Several occurrences are fine for verification; the first one on word edges is shown. A match
+// that starts or ends inside a word of the user's text is skipped ("8 lakh" inside "18 lakh"),
+// so each pass is a run of indexOf calls, still O(n x m) with n at most 2,000 and m at most 160.
 
 import { QUOTE_LIMIT_CHARACTERS } from '@/schemas/readings/vocabulary';
 
 import { isPunctuation, isWhitespace } from './character-class';
 import type { CanonicalText } from './canonical-text';
 import { canonicalise, originalRange } from './canonical-text';
+import { firstOnWordEdges } from './word-edges';
 
 /** Below this many characters a quote such as "8" or "ok" would match almost any text. */
 export const QUOTE_MIN_CHARACTERS = 3;
@@ -100,7 +102,7 @@ function normalisedMatch(source: CanonicalText, quote: string): QuoteMatch | nul
   const foldedQuote = fold(quote).text;
   if (codePointLength(foldedQuote) < QUOTE_MIN_CHARACTERS) return null;
   const foldedSource = fold(source.text);
-  const at = foldedSource.text.indexOf(foldedQuote);
+  const at = firstOnWordEdges(foldedSource.text, foldedQuote);
   if (at < 0) return null;
   const first = foldedSource.origins[at] ?? 0;
   const last = foldedSource.origins[at + foldedQuote.length - 1] ?? first;
@@ -119,7 +121,7 @@ export function locateQuote(source: CanonicalText, quote: string): QuoteMatch {
   if (codePointLength(canonicalQuote) < QUOTE_MIN_CHARACTERS) {
     return { kind: 'refused', reason: 'quote-too-short' };
   }
-  const at = source.text.indexOf(canonicalQuote);
+  const at = firstOnWordEdges(source.text, canonicalQuote);
   if (at >= 0) return found(source, 'exact', at, at + canonicalQuote.length);
   return normalisedMatch(source, canonicalQuote) ?? { kind: 'refused', reason: 'quote-not-found' };
 }

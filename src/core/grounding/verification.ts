@@ -15,6 +15,7 @@ import type { CanonicalText } from './canonical-text';
 import { canonicalise } from './canonical-text';
 import type { QuoteRefusal } from './quote-match';
 import { locateQuote } from './quote-match';
+import { wholeWordSpan } from './word-edges';
 
 export type VerificationReason = QuoteRefusal | 'number-not-in-quote' | 'out-of-bounds';
 
@@ -96,8 +97,10 @@ export function verifyClaim(source: CanonicalText, claim: Claim): FieldVerdict {
   if (claim.presence === 'unclear') return { status: 'unclear', ...located };
   // Numbers are read from the user's words at the match, not from the model's copy, so a
   // quote that matched only after punctuation was dropped ("1.9L" against "19L") still has
-  // to spell the number the user wrote.
-  const quotedWords = source.text.slice(match.canonicalStart, match.canonicalEnd);
+  // to spell the number the user wrote. The span is widened to whole numbers first, so
+  // "80,000" cut from "1,80,000" reads as the 1,80,000 the user wrote.
+  const span = wholeWordSpan(source.text, match.canonicalStart, match.canonicalEnd);
+  const quotedWords = source.text.slice(span.start, span.end);
   const reason = numberReason(claim.numbers ?? [], quotedWords);
   return reason === null
     ? { status: 'verified', ...located }

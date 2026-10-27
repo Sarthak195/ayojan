@@ -66,7 +66,7 @@ export const en: ChangeDictionary = {
   readButton: 'Read the change',
   exampleButton: "Try the explainer's change",
   exampleNote:
-    'This sends the sample sentence: 50 more guests, a smaller budget and the event 2 weeks earlier. Nothing changes until you check what we read.',
+    'This sends the sample sentence: 50 more guests, the budget down a bit (no amount given) and the event 2 weeks earlier. Nothing changes until you check what we read.',
   formSummary: 'Use the form instead',
   formIntro: 'Leave a field empty, or on "No change", to keep it as it is.',
   guestsLabel: 'Guests (the new total)',
@@ -134,7 +134,7 @@ export const hi: ChangeDictionary = {
   readButton: 'बदलाव पढ़ें',
   exampleButton: 'एक्सप्लेनर वाला बदलाव आज़माइए',
   exampleNote:
-    'इससे नमूना वाक्य भेजा जाता है: 50 मेहमान और, बजट थोड़ा कम और कार्यक्रम 2 हफ़्ते पहले। जब तक आप पढ़ी गई बात जाँच न लें, कुछ नहीं बदलता।',
+    'इससे नमूना वाक्य भेजा जाता है: 50 मेहमान और, बजट थोड़ा कम (रक़म नहीं बताई गई) और कार्यक्रम 2 हफ़्ते पहले। जब तक आप पढ़ी गई बात जाँच न लें, कुछ नहीं बदलता।',
   formSummary: 'इसके बजाय फ़ॉर्म भरें',
   formIntro: 'जो नहीं बदला, उसे ख़ाली या "कोई बदलाव नहीं" पर छोड़ दें।',
   guestsLabel: 'मेहमान (नई कुल संख्या)',

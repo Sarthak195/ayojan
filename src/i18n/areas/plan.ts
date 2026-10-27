@@ -24,6 +24,8 @@ export interface PlanDictionary {
   readonly status: string;
   readonly withinBudget: string;
   readonly overBudget: string;
+  readonly notPriced: string;
+  readonly notPricedReason: string;
   readonly moneyHeading: string;
   readonly moneyCaption: string;
   readonly moneyCaptionNote: string;
@@ -70,6 +72,8 @@ export const en: PlanDictionary = {
   status: 'Status',
   withinBudget: 'Within budget',
   overBudget: 'Over budget',
+  notPriced: 'Not priced yet',
+  notPricedReason: 'add a quote or a booking to compare',
   moneyHeading: 'Money',
   moneyCaption: 'Where the money goes',
   moneyCaptionNote:
@@ -116,6 +120,8 @@ export const hi: PlanDictionary = {
   status: 'स्थिति',
   withinBudget: 'बजट के अंदर',
   overBudget: 'बजट से ज़्यादा',
+  notPriced: 'अभी दाम नहीं लगे',
+  notPricedReason: 'तुलना के लिए कोटेशन या बुकिंग जोड़ें',
   moneyHeading: 'पैसा',
   moneyCaption: 'पैसा कहाँ जाता है',
   moneyCaptionNote:

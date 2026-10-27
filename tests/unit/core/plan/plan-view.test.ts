@@ -78,7 +78,7 @@ describe('plan view: five different briefs (NFR-ALN-6)', () => {
     const { current } = view;
     expect(current.profile).toBe(profile);
     expect(current.headline.projected.inr).toBe(current.headline.budget.inr);
-    expect(current.headline.status).toBe('within-budget');
+    expect(current.headline.status).toBe('not-priced');
     expect(current.schedule.tasks.some((task) => task.id === 'mandap-design')).toBe(hasMandap);
     expect(view.banners.some((banner) => banner.kind === 'small-celebration-profile')).toBe(
       profile === 'celebration',

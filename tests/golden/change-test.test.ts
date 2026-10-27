@@ -196,7 +196,7 @@ describe('the change test (spec 5.2)', () => {
     const v1 = views[0];
     if (v1 === undefined) throw new Error('no v1');
     expect(v1.current.headline.projected.inr).toBe(800_000);
-    expect(v1.current.headline.status).toBe('within-budget');
+    expect(v1.current.headline.status).toBe('not-priced');
     const venue = task(v1, 'book-venue');
     expect([venue.latestFinish, venue.earliestFinish, venue.slackDays]).toEqual([
       '2026-11-18',

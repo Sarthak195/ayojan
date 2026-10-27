@@ -45,6 +45,12 @@ export interface AppliedLeverLine {
   readonly effect: Money;
 }
 
+/**
+ * `not-priced` while no category has a quote or a booking: the projection is then only the budget
+ * split by the planning weights, so "within budget" would be true by construction.
+ */
+export type HeadlineStatus = Projection['status'] | 'not-priced';
+
 export interface PlanHeadline {
   readonly budget: Money;
   readonly guests: number;
@@ -53,7 +59,7 @@ export interface PlanHeadline {
   readonly projected: Money;
   /** Projected minus budget: positive is over budget. */
   readonly gap: Money;
-  readonly status: Projection['status'];
+  readonly status: HeadlineStatus;
 }
 
 export interface PlanMoney {
@@ -175,6 +181,7 @@ export function planVersion(
   if (!comparisons.ok) return comparisons;
   const raisedInr = walk.value.raises.reduce((total, raise) => total + raise.amountInr, 0);
   const { projection } = application;
+  const priced = walk.value.quotes.length > 0 || evidence.bookings.length > 0;
   return planOk({
     version: inputs.ops.length,
     brief,
@@ -187,7 +194,8 @@ export function planVersion(
       venue: venueCapacityOf(walk.value.done, context.tasks, brief.venueCapacity),
       projected: projection.projectedTotal,
       gap: projection.gap,
-      status: projection.status,
+      // An overshoot is real even before pricing (a must-have floor), so it is never hidden.
+      status: !priced && projection.status === 'within-budget' ? 'not-priced' : projection.status,
     },
     money: {
       input,

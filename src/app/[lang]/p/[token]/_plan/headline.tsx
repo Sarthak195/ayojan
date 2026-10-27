@@ -34,6 +34,7 @@ export function Headline({
   const words = dictionaryFor(lang).plan;
   const { venue, gap } = headline;
   const over = headline.status === 'over-budget';
+  const unpriced = headline.status === 'not-priced';
   return (
     <section aria-labelledby="headline-heading" className="mt-6">
       <h2 id="headline-heading" className="text-xl font-semibold">
@@ -61,9 +62,10 @@ export function Headline({
         </Row>
         <Row term={words.status}>
           <span className="inline-flex items-center gap-1 font-medium">
-            <Icon name={over ? 'triangle' : 'check'} />
-            {over ? words.overBudget : words.withinBudget}
+            <Icon name={over ? 'triangle' : unpriced ? 'info' : 'check'} />
+            {over ? words.overBudget : unpriced ? words.notPriced : words.withinBudget}
           </span>
+          {unpriced ? <span>{` (${words.notPricedReason})`}</span> : null}
         </Row>
       </dl>
     </section>

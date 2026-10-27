@@ -262,6 +262,8 @@ The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network cal
 - **Accessibility** ([`tests/a11y/axe.test.ts`](tests/a11y/axe.test.ts)): every page and every problem page, in both languages, rendered in the real page shell and checked with axe-core.
 - **Security and hygiene** ([`tests/unit/security`](tests/unit/security), [`tests/unit/app`](tests/unit/app), [`tests/unit/scripts`](tests/unit/scripts)): the script policy, the fixed headers, the repository guards.
 
+A deployed URL is checked separately with `npm run smoke` (or `node scripts/smoke.mjs <url>`; the default is the Cloud Run service). [`scripts/smoke.mjs`](scripts/smoke.mjs) makes no model call: it checks the health route, distinct page titles in both languages, the fixed security headers, the form twin through to a plan page, a damaged plan link, a wrong method and the privacy sentence under the read button. It prints one PASS or FAIL line per check and exits non-zero on any failure. It needs a live URL, so it is not part of `verify` or CI.
+
 ## Performance, measured
 
 Page weight comes from [`scripts/measure-pages.mjs`](scripts/measure-pages.mjs), run on 26 Oct 2026 against a fresh standalone production build of commit `6a71328`, served locally with no model key (every page is reached through the form twin, so no model call is made):

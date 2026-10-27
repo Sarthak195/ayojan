@@ -19,6 +19,9 @@ const RaisedBy = z.discriminatedUnion('when', [
   z.strictObject({ when: z.literal('need'), need: GuestNeed }),
   z.strictObject({ when: z.literal('diet'), diet: Diet }),
   z.strictObject({ when: z.literal('venueLimit'), venueLimit: VenueLimit }),
+  // Asked before any quote (availability, what a price covers, cancellation), so only a first
+  // enquiry carries it; a vendor already quoting or booked has answered or agreed to these.
+  z.strictObject({ when: z.literal('beforeQuote') }),
 ]);
 
 export const QUESTION_PLACEHOLDERS: readonly string[] = ['guests', 'capacity', 'date'];

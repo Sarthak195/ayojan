@@ -1,6 +1,7 @@
 # Questions to ask a vendor, built into template messages. No prices: the vendor supplies those.
 # categories: the vendors the question is for (empty = any vendor with a quote or booking).
-# raisedBy: what in the plan makes the app ask it.
+# raisedBy: what in the plan makes the app ask it. beforeQuote rows go only in a first enquiry,
+# to a vendor the family has no quote or booking from yet.
 # {guests}, {capacity} and {date} are filled from the plan when the message is written.
 
 questions:
@@ -155,3 +156,27 @@ questions:
     hi: वेन्यू पर संगीत कितने बजे तक बंद करना होगा?
     basis: 'Planning assumption chosen by the author: a music curfew shapes the band booking and the programme, so both are asked.'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
+
+  - id: available-on-date
+    categories: []
+    raisedBy: { when: beforeQuote }
+    en: Are you free on that date?
+    hi: क्या आप उस तारीख़ को ख़ाली हैं?
+    basis: 'Planning assumption chosen by the author: a price means nothing if the vendor is already booked that day, so availability is asked first.'
+    reviewed: "2026-10-28 AI-assisted review at the author's request"
+
+  - id: price-includes
+    categories: []
+    raisedBy: { when: beforeQuote }
+    en: What exactly does your price include?
+    hi: आपकी क़ीमत में ठीक-ठीक क्या-क्या शामिल है?
+    basis: 'Planning assumption chosen by the author: two prices can only be compared once each says what it covers.'
+    reviewed: "2026-10-28 AI-assisted review at the author's request"
+
+  - id: cancellation-terms
+    categories: []
+    raisedBy: { when: beforeQuote }
+    en: If we cancel or move the date, what are your terms, and is the advance returned?
+    hi: अगर हमें बुकिंग रद्द करनी पड़े या तारीख़ बदलनी पड़े, तो आपकी क्या शर्तें हैं, और क्या एडवांस वापस मिलेगा?
+    basis: 'Planning assumption chosen by the author: family plans do change, so the terms for cancelling or rescheduling are known before any advance is paid.'
+    reviewed: "2026-10-28 AI-assisted review at the author's request"

@@ -63,6 +63,9 @@ export const questionIds = [
   'no-alcohol',
   'indoor-only',
   'music-curfew',
+  'available-on-date',
+  'price-includes',
+  'cancellation-terms',
 ] as const;
 export const QuestionId = z.enum(questionIds);
 export type QuestionId = z.infer<typeof QuestionId>;

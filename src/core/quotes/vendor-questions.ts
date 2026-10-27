@@ -77,6 +77,9 @@ function raised(
       return plan.diet.includes(cause.diet);
     case 'venueLimit':
       return plan.venueLimits.includes(cause.venueLimit);
+    case 'beforeQuote':
+      // Only a first enquiry asks these, and the plan layer picks them for it.
+      return false;
   }
 }
 

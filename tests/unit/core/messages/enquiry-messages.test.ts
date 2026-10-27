@@ -116,6 +116,14 @@ describe('enquiries before any quote', () => {
     ]) {
       expect(asked).not.toContain(id);
     }
+    // Every first enquiry opens with the date, what the price covers and the terms.
+    for (const enquiry of list) {
+      expect(enquiry.questionIds.slice(0, 3)).toEqual([
+        'available-on-date',
+        'price-includes',
+        'cancellation-terms',
+      ]);
+    }
     expect(byCategory(list, 'catering').questionIds).toEqual(
       expect.arrayContaining(['tax-rate', 'minimum-guarantee', 'step-free-access']),
     );
@@ -144,7 +152,11 @@ describe('enquiries before any quote', () => {
     expect(byCategory(list, 'catering').questionIds).toEqual(
       expect.arrayContaining(['live-counter-included', 'jain-menu', 'step-free-access']),
     );
-    expect(byCategory(list, 'catering').questionIds).toContain('minimum-guarantee');
+    // With six needs of its own the caterer has room for two general questions: the date first.
+    expect(byCategory(list, 'catering').questionIds.slice(0, 2)).toEqual([
+      'available-on-date',
+      'price-includes',
+    ]);
     expect(byCategory(list, 'venue').text).not.toContain('250');
     expect(byCategory(list, 'decor').text).not.toContain('250');
   });

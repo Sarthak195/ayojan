@@ -30,15 +30,18 @@ function forCategory(row: QuestionRow, category: Category): boolean {
   return row.categories.length === 0 || row.categories.includes(category);
 }
 
-// Before a quote only the tax and the caterer's minimum count read naturally; the others presume
-// a price already given, and the guest count is stated in the message.
+// Before a quote: the rows written for a first enquiry (the date, what a price covers, the
+// terms) lead, because a vendor busy that day makes the rest moot. Of the unclear-field rows
+// only the tax and the caterer's minimum read naturally; the others presume a price already
+// given, and the guest count is in the message.
 function generalQuestions(rows: readonly QuestionRow[], category: Category): VendorQuestion[] {
-  return rows
-    .filter(
-      (row) =>
-        row.raisedBy.when === 'unclearField' &&
-        (row.raisedBy.field === 'taxRate' || row.raisedBy.field === 'minimumGuests'),
-    )
+  const first = rows.filter((row) => row.raisedBy.when === 'beforeQuote');
+  const price = rows.filter(
+    (row) =>
+      row.raisedBy.when === 'unclearField' &&
+      (row.raisedBy.field === 'taxRate' || row.raisedBy.field === 'minimumGuests'),
+  );
+  return [...first, ...price]
     .filter((row) => forCategory(row, category))
     .filter((row) => !`${row.en}${row.hi}`.includes('{'))
     .map((row) => ({ id: row.id, en: row.en, hi: row.hi, raisedBy: row.raisedBy }));

@@ -243,8 +243,9 @@ value, not the rules.
   `npm ci`.
 - `npm audit --omit=dev --json`, run on 26 Oct 2026, reported 0 vulnerabilities at every level
   for the production dependencies. Next.js is 16.4.2.
-- **CI does not run `npm audit`.** The audit is a manual check, so a new advisory is not
-  caught until someone runs it. `package.json` lists dev tooling (including `jsdom` and
+- CI runs `npm audit --omit=dev --audit-level=high` right after `npm ci`, so a new high or
+  critical advisory in a production dependency fails the build. Lower severities and dev-only
+  packages are not gated. `package.json` lists dev tooling (including `jsdom` and
   `axe-core` for the accessibility tests) that is not shipped: the `Dockerfile` copies only the
   standalone build, static files and the data the app reads.
 - No third-party script, font, stylesheet or image host appears in a page, and the CSP lists

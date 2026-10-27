@@ -115,6 +115,10 @@ describe('the no-model path for a change (FR-40, G3)', () => {
     expect(html).toContain('id="change-form"');
     expect(html).toContain('The AI reader is unavailable right now (the daily quota is used up)');
     expect(html).toMatch(/<details[^>]*open=""/);
+    const formSummary =
+      /<summary[^>]*>Use the form instead[\s\S]*?<\/summary>/.exec(html)?.[0] ?? '';
+    expect(formSummary).toContain('underline');
+    expect(formSummary).toContain('<svg');
     expect(html).toContain('action="/en/enter/change"');
     expect(html).toContain('action="/en/read/change"');
     expect(html).toContain('Reading can take up to 40 seconds.');

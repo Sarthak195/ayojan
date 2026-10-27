@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 
 import { TextField } from '@/components/form/fields';
 import { PostForm, SubmitButton } from '@/components/form/post-form';
+import { DISCLOSURE_GROUP, DisclosureMarker, BUTTON_SUMMARY } from '@/components/layout/disclosure';
 import type { ScheduledTask } from '@/core/timeline/schedule-types';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
@@ -46,9 +47,10 @@ export function TaskControls({
             {words.markDone}
           </SubmitButton>
         ) : (
-          <details>
-            <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold">
+          <details className={DISCLOSURE_GROUP}>
+            <summary className={BUTTON_SUMMARY}>
               {words.markDone}
+              <DisclosureMarker />
               <span className="sr-only">: {task[lang]}</span>
             </summary>
             <TextField

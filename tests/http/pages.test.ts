@@ -101,6 +101,9 @@ describe('GET /[lang]/p/[token] (plan page)', () => {
 
   it('names each category in the page language in Why these numbers, with no doubled colon', async () => {
     const html = await planHtml('hi');
+    const whySummary = /<summary[^>]*>ये आँकड़े क्यों\?[\s\S]*?<\/summary>/.exec(html)?.[0] ?? '';
+    expect(whySummary).toContain('underline');
+    expect(whySummary).toContain('<svg');
     const why = /<details[\s\S]*?ये आँकड़े क्यों\?[\s\S]*?<\/details>/.exec(html)?.[0] ?? '';
     expect(why).toContain('<span lang="hi" class="font-medium">खाना-पीना</span>');
     expect(why).not.toContain('>Catering<');
@@ -112,7 +115,9 @@ describe('GET /[lang]/p/[token] (plan page)', () => {
     const tasks = /<section id="tasks"[\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
     const items = tasks.match(/<li/g) ?? [];
     expect(items.length).toBeGreaterThan(3);
-    expect((tasks.match(/<svg/g) ?? []).length).toBe(items.length);
+    // The Mark done disclosure markers are svgs too; the status icons are the rest.
+    const icons = tasks.replace(/<summary[\s\S]*?<\/summary>/g, '').match(/<svg/g) ?? [];
+    expect(icons.length).toBe(items.length);
     expect(tasks).toMatch(/On track|Due this week|At risk|Late|Done/);
   });
 

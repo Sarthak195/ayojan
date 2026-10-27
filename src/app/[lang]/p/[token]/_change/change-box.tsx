@@ -4,6 +4,7 @@ import { AiUnavailableBanner, type AiUnavailableReason } from '@/components/bann
 import { ChoiceGroup } from '@/components/form/choice-group';
 import { TextArea, TextField } from '@/components/form/fields';
 import { PostForm, ReadingHint, SubmitButton } from '@/components/form/post-form';
+import { DISCLOSURE_GROUP, DisclosureMarker, LINK_SUMMARY } from '@/components/layout/disclosure';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { Category } from '@/schemas/readings/vocabulary';
@@ -61,9 +62,10 @@ export function ChangeBox({
         <SubmitButton describedBy="change-reading-hint">{words.readButton}</SubmitButton>
         <ReadingHint lang={lang} id="change-reading-hint" />
       </PostForm>
-      <details className="mt-4" open={unavailable !== null}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold">
+      <details className={`mt-4 ${DISCLOSURE_GROUP}`} open={unavailable !== null}>
+        <summary className={LINK_SUMMARY}>
           {words.formSummary}
+          <DisclosureMarker />
         </summary>
         <PostForm lang={lang} route="enter/change" token={token}>
           <p className="mt-2 text-sm text-muted">{words.formIntro}</p>

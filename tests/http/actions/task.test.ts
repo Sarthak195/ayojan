@@ -99,6 +99,11 @@ describe('POST /[lang]/task', () => {
     expect(html).toContain('action="/en/task"');
     expect(html).toMatch(/name="amountInr"/);
     expect(html).toMatch(/name="capacity"/);
+    // The booking tasks' Mark done is a summary styled as the outlined button, with a marker.
+    const summary = /<summary[^>]*>\s*Mark done[\s\S]*?<\/summary>/.exec(html)?.[0] ?? '';
+    expect(summary).toContain('border border-foreground');
+    expect(summary).toContain('min-h-11');
+    expect(summary).toContain('<svg');
     const days = /<input[^>]*name="days"[^>]*>/.exec(html)?.[0] ?? '';
     expect(days).toContain('min="1"');
     expect(days).toContain('max="60"');

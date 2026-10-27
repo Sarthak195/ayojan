@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
 
+import { DISCLOSURE_GROUP, DisclosureMarker, LINK_SUMMARY } from '@/components/layout/disclosure';
 import type { MoneyTableRow } from '@/components/table/money-table';
 import { MoneyTable } from '@/components/table/money-table';
 import { sum } from '@/core/money/money';
@@ -61,9 +62,10 @@ export function MoneySection({
         rows={rows}
       />
       {profile === undefined ? null : (
-        <details className="my-2">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center font-medium">
+        <details className={`my-2 ${DISCLOSURE_GROUP}`}>
+          <summary className={LINK_SUMMARY}>
             {words.whyHeading}
+            <DisclosureMarker />
           </summary>
           {/* The basis is the author's stated assumption, written once in English (D37); the
               category keeps the page's own name, so it matches the table above. */}

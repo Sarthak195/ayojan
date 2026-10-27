@@ -5,6 +5,8 @@ import { deflateRawSync, inflateRawSync } from 'node:zlib';
 import { MAX_OPS } from '@/schemas/plan/op';
 import { StateToken } from '@/schemas/plan/state-token';
 
+import { isRecord } from '@/server/util/is-record';
+
 import { open, seal } from './seal';
 
 /** The link must survive chat apps and old browsers that truncate long URLs (spec 8). */
@@ -33,10 +35,6 @@ export type DecodeResult = { ok: true; state: StateToken } | { ok: false; reason
 
 export type EncodeRefusal = 'invalid-shape' | 'too-many-ops' | 'too-long';
 export type EncodeResult = { ok: true; token: string } | { ok: false; reason: EncodeRefusal };
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
 
 /**
  * Seals a state into the opaque path segment. A state the decoder would refuse is refused

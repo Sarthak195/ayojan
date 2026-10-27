@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # deps sees only the manifests, so editing source reuses the cached `npm ci` layer.
-FROM node:24-alpine AS deps
+FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 # Dev dependencies stay: the build needs TypeScript and Tailwind. They never reach the runner.
 RUN npm ci
 
-FROM node:24-alpine AS builder
+FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
@@ -18,7 +18,7 @@ RUN npm run build
 # The runner copies public/ by name, and a COPY of a missing directory fails the build.
 RUN mkdir -p public
 
-FROM node:24-alpine AS runner
+FROM node:24-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53 AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

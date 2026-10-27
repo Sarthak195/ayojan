@@ -2,7 +2,7 @@
   "name": "ayojan",
   "version": "0.1.0",
   "private": true,
-  "description": "Celebration and event planner (working title).",
+  "description": "Ayojan: a celebration and event planner where Gemini reads and code decides.",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=24"
@@ -20,10 +20,11 @@
     "check:size": "node scripts/check-file-size.mjs",
     "check:api": "node scripts/check-forbidden-apis.mjs",
     "check:repo": "node scripts/check-repo-size.mjs",
+    "smoke": "node scripts/smoke.mjs",
     "generate:ids": "tsx --conditions=react-server scripts/generate-ids.ts",
     "validate": "tsx --conditions=react-server scripts/validate-data.ts",
     "record:golden": "tsx --conditions=react-server scripts/record-golden.ts",
-    "verify": "npm run typecheck && npm run lint && npm run validate && npm run test && npm run check:size && npm run check:api && npm run check:repo"
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run validate && npm run test && npm run check:size && npm run check:api && npm run check:repo"
   },
   "dependencies": {
     "@google/genai": "2.31.0",

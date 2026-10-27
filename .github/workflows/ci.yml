@@ -14,13 +14,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           # Full history: the repository size check must see every object, and a shallow
           # clone would report a reassuring but meaningless number.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: npm
@@ -36,11 +36,15 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Format
+        run: npm run format:check
+
       - name: Validate the planning data
         run: npm run validate
 
-      - name: Test
-        run: npm run test
+      # One run both tests and measures src/core coverage, so the suite is not run twice.
+      - name: Test with coverage
+        run: npm run coverage
 
       - name: Enforce the 250-line file cap
         run: npm run check:size

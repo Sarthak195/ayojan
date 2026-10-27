@@ -19,17 +19,17 @@ export class SealKeyError extends Error {
   }
 }
 
-const EPHEMERAL = Symbol.for('ayojan.state.ephemeral-seal-key');
-type EphemeralHolder = Record<typeof EPHEMERAL, Buffer | undefined>;
+declare global {
+  var __ayojanEphemeralSealKey: Buffer | undefined;
+}
 
 // Memoised on globalThis, not in a module variable, because route handlers are bundled
 // separately: a per-module key would make a link sealed by one route unreadable by another.
 function ephemeralKey(): Buffer {
-  const holder = globalThis as unknown as EphemeralHolder;
-  const existing = holder[EPHEMERAL];
+  const existing = globalThis.__ayojanEphemeralSealKey;
   if (existing) return existing;
   const key = randomBytes(SEAL_KEY_BYTES);
-  holder[EPHEMERAL] = key;
+  globalThis.__ayojanEphemeralSealKey = key;
   process.emitWarning(
     `${SEAL_KEY_VARIABLE} is not set; using a key for this process only, so plan links stop working on restart.`,
     'SealKeyWarning',

@@ -1,4 +1,5 @@
 import 'server-only';
+import { isRecord } from '@/server/util/is-record';
 
 export interface DataProblem {
   readonly fileName: string;
@@ -24,10 +25,6 @@ export class DataFileError extends Error {
     this.name = 'DataFileError';
     this.problems = problems;
   }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function child(node: unknown, part: string | number): unknown {

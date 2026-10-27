@@ -3,6 +3,7 @@ import 'server-only';
 import { z } from 'zod';
 
 import { wrapUserText } from '@/server/prompts/shared/guardrails';
+import { isRecord } from '@/server/util/is-record';
 
 export type GeminiSchema = Readonly<Record<string, unknown>>;
 
@@ -23,10 +24,6 @@ export const PRUNED_SCHEMA_KEYWORDS: ReadonlySet<string> = new Set([
   'pattern',
   'format',
 ]);
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
 
 function pruneNode(node: unknown): unknown {
   if (Array.isArray(node)) return node.map((child: unknown) => pruneNode(child));

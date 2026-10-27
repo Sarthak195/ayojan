@@ -17,15 +17,6 @@ export const dataFiles = {
 
 export type DataFileKey = keyof typeof dataFiles;
 
-// Spelled out in load order rather than read from Object.keys, which would need a cast.
-export const dataFileKeys: readonly DataFileKey[] = [
-  'budgetWeights',
-  'tasks',
-  'levers',
-  'vendorQuestions',
-  'functions',
-];
-
 export type DataDocument<K extends DataFileKey> = z.infer<(typeof dataFiles)[K]['schema']>;
 
 export type DataDocuments = { readonly [K in DataFileKey]: DataDocument<K> };

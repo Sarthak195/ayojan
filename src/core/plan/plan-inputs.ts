@@ -28,8 +28,3 @@ export interface PlanInputs {
   /** The index in `ops` of the latest changeConfirmed, or null before any change. */
   readonly latestChange: number | null;
 }
-
-export function briefOpOf(inputs: PlanInputs): BriefOp | null {
-  const first = inputs.ops[0];
-  return first?.kind === 'briefConfirmed' ? first : null;
-}

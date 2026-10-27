@@ -183,6 +183,24 @@ await check('A damaged plan token answers 404', async () => {
   };
 });
 
+// A sub-page builds its title from [lang] alone, so a damaged link must not keep it: the
+// damaged-link page's own title has to be the one the browser shows (WCAG 2.4.2).
+await check('A damaged plan token shows the damaged-link title on every plan page', async () => {
+  const token = plan.token ?? 'x'.repeat(200);
+  const middle = Math.floor(token.length / 2);
+  const damaged =
+    token.slice(0, middle) + (token[middle] === 'A' ? 'B' : 'A') + token.slice(middle + 1);
+  const wrong = [];
+  for (const sub of ['', '/check', '/quotes', '/revision', '/messages']) {
+    const res = await call(`/en/p/${damaged}${sub}`);
+    const title = titleOf(res.text);
+    if (res.status !== 404 || title !== 'This link cannot be opened: Ayojan') {
+      wrong.push(`${sub || '/'} ${res.status || res.error} "${title}"`);
+    }
+  }
+  return { ok: wrong.length === 0, detail: wrong.join('; ') };
+});
+
 await check('GET on the POST-only /en/enter/brief answers 405', async () => {
   const res = await call('/en/enter/brief');
   return {

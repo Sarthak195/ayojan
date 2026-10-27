@@ -19,6 +19,7 @@ export interface PlanDictionary {
   readonly venueUnknown: string;
   readonly venueFromBooking: string;
   readonly projected: string;
+  readonly splitTotal: string;
   readonly overBy: string;
   readonly leftOver: string;
   readonly status: string;
@@ -67,6 +68,7 @@ export const en: PlanDictionary = {
   venueUnknown: 'Not given yet',
   venueFromBooking: 'from the venue booking',
   projected: 'Projected cost',
+  splitTotal: 'Your split adds up to',
   overBy: 'Over budget by',
   leftOver: 'Left in the budget',
   status: 'Status',
@@ -115,6 +117,7 @@ export const hi: PlanDictionary = {
   venueUnknown: 'अभी नहीं बताया',
   venueFromBooking: 'वेन्यू की बुकिंग से',
   projected: 'अनुमानित ख़र्च',
+  splitTotal: 'आपके बँटवारे का जोड़',
   overBy: 'बजट से ज़्यादा',
   leftOver: 'बजट में बचा',
   status: 'स्थिति',

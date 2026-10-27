@@ -65,6 +65,12 @@ body {
   line-height: 1.5;
 }
 
+/* Devanagari system fonts ship regular and bold only, and browsers synthesise bold at 600 or
+   more, so Tailwind's 500 labels look regular in Hindi. Unlayered, so it beats the utility. */
+:lang(hi) .font-medium {
+  font-weight: 600;
+}
+
 a {
   color: inherit;
   text-decoration: underline;
@@ -82,9 +88,53 @@ main:focus {
   outline: none;
 }
 
-/* Narrow tables stay tables and scroll inside their region (D35); the region itself takes focus. */
+/* Narrow tables stay tables and scroll inside their region (D35); the region itself takes focus.
+   The shadows need no script: the "local" gradients are opaque covers that scroll with the
+   content and hide the fixed shadows once an edge is reached, so a shadow shows only on the side
+   that still has columns to reveal. Both colours come from theme variables, so dark mode works. */
 .table-scroll {
+  --edge: color-mix(in srgb, var(--foreground) 30%, transparent);
   overflow-x: auto;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(to right, var(--background) 30%, transparent),
+    linear-gradient(to left, var(--background) 30%, transparent),
+    radial-gradient(farthest-side at 0 50%, var(--edge), transparent),
+    radial-gradient(farthest-side at 100% 50%, var(--edge), transparent);
+  background-position:
+    left center,
+    right center,
+    left center,
+    right center;
+  background-size:
+    2rem 100%,
+    2rem 100%,
+    0.75rem 100%,
+    0.75rem 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* The row label stays in view while the figures scroll under it. The cell needs its own opaque
+   background to hide what passes beneath, and an inset line stands in for the border that
+   border-collapse would not carry along with a sticky cell. */
+.table-scroll tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--background);
+  box-shadow: inset -1px 0 0 var(--line);
+}
+
+.table-scroll thead tr > :first-child {
+  background-color: var(--surface);
+}
+
+/* A long label would take most of a 360 px screen and leave no room for the figures. */
+@media (max-width: 40rem) {
+  .table-scroll tr > :first-child {
+    max-width: 8.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

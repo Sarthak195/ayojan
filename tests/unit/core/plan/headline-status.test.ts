@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
@@ -93,6 +95,36 @@ describe('headline status words and row', () => {
     },
   );
 
+  it.each(['en', 'hi'] as const)(
+    'labels the unpriced total as the split and leaves out the left-in-budget row in %s',
+    (lang) => {
+      const words = dictionaryFor(lang).plan;
+      const html = renderToStaticMarkup(
+        createElement(Headline, { headline: versionOf([briefOp()]).headline, lang }),
+      );
+      expect(html).toContain(`${words.splitTotal}:`);
+      expect(html).not.toContain(`${words.projected}:`);
+      expect(html).not.toContain(`${words.leftOver}:`);
+      expect(html).not.toContain(`${words.overBy}:`);
+    },
+  );
+
+  it.each(['en', 'hi'] as const)('keeps the projected and left rows once priced in %s', (lang) => {
+    const words = dictionaryFor(lang).plan;
+    const headline = versionOf([briefOp({ budgetInr: 2_000_000 }), VENUE_BOOKED]).headline;
+    const html = renderToStaticMarkup(createElement(Headline, { headline, lang }));
+    expect(html).toContain(`${words.projected}:`);
+    expect(html).toContain(`${words.leftOver}:`);
+    expect(html).not.toContain(`${words.splitTotal}:`);
+  });
+
+  it('keeps the over-by row for an unpriced overshoot', () => {
+    const headline = versionOf([briefOp(), EXPLAINER_CHANGE]).headline;
+    const html = renderToStaticMarkup(createElement(Headline, { headline, lang: 'en' }));
+    expect(html).toContain('Over budget by:');
+    expect(html).toContain('Projected cost:');
+  });
+
   it('keeps Within budget and the check icon once priced', () => {
     const headline = versionOf([briefOp({ budgetInr: 2_000_000 }), VENUE_BOOKED]).headline;
     const html = renderToStaticMarkup(createElement(Headline, { headline, lang: 'en' }));
@@ -110,5 +142,12 @@ describe('the revision page does not state a budget position for an unpriced pla
     const words = dictionaryFor(lang).revision;
     expect(html(lang)).toContain(words.statusNotPriced(view.current.version));
     expect(html(lang)).not.toContain(words.statusWithin(view.current.version, 'Rs 0'));
+  });
+});
+
+describe('Hindi labels are as strong as English ones', () => {
+  it('raises font-medium to a weight browsers can synthesise for Devanagari', () => {
+    const css = readFileSync('src/app/globals.css', 'utf8');
+    expect(css).toMatch(/:lang\(hi\) \.font-medium\s*\{\s*font-weight:\s*600;/);
   });
 });

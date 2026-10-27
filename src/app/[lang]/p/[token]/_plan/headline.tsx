@@ -53,13 +53,17 @@ export function Headline({
               ? `${countWords(venue.capacity)} (${words.venueFromBooking})`
               : countWords(venue.capacity)}
         </Row>
-        <Row term={words.projected}>
+        {/* With nothing priced the total is only the user's own split, so it is not called a cost. */}
+        <Row term={unpriced ? words.splitTotal : words.projected}>
           <Amount money={headline.projected} lang={lang} />
         </Row>
-        <Row term={over ? words.overBy : words.leftOver}>
-          {/* The gap is projected minus budget; room left is shown as a positive amount. */}
-          <Amount money={{ inr: Math.abs(gap.inr), provenance: gap.provenance }} lang={lang} />
-        </Row>
+        {/* Rs 0 left would read as a verdict the status below says is unknown. */}
+        {unpriced ? null : (
+          <Row term={over ? words.overBy : words.leftOver}>
+            {/* The gap is projected minus budget; room left is shown as a positive amount. */}
+            <Amount money={{ inr: Math.abs(gap.inr), provenance: gap.provenance }} lang={lang} />
+          </Row>
+        )}
         <Row term={words.status}>
           <span className="inline-flex items-center gap-1 font-medium">
             <Icon name={over ? 'triangle' : unpriced ? 'info' : 'check'} />

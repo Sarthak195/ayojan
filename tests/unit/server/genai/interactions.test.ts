@@ -35,6 +35,11 @@ describe('buildInteractionRequest', () => {
     expect(shaped.stream).toBe(false);
   });
 
+  it('asks the Interactions API not to keep the request or reply for later retrieval', () => {
+    expect(request('x').store).toBe(false);
+    expectTypeOf<InteractionRequest['store']>().toEqualTypeOf<false>();
+  });
+
   it('puts the user text inside the delimiter and the instruction after it', () => {
     const { input } = request('Pune, 200 guests');
     expect(input).toBe('<user_text>\nPune, 200 guests\n</user_text>\n\nINSTRUCTION LAST');

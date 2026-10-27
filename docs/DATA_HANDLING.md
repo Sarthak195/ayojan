@@ -63,10 +63,12 @@ like any other text; once a model's assumed daily allowance is 80 percent used t
 answered from a recording kept in `golden/llm/` instead. The form twin, every page load and
 every other step make no Gemini call.
 
-The request sets no sampling options and does not set the SDK's `store` option (which the
-SDK describes as whether to store the request and response for later retrieval). Ayojan never
-chains requests and never retrieves one afterwards. What Google keeps for a request is
-therefore governed by Google's terms, summarised next, not by anything Ayojan chooses.
+The request sets no sampling options and sets the SDK's `store` option to `false` (which the
+SDK describes as whether to store the request and response for later retrieval), so the
+Interactions API keeps no copy for later retrieval; a probe on 27 Oct 2026 with `store: false`
+got no interaction id back. Ayojan never chains requests and never retrieves one afterwards.
+This does not change how Google may use content under the terms of your key's tier: that is
+governed by Google's terms, summarised next, not by anything Ayojan chooses.
 
 ### Free-tier disclosure
 

@@ -257,7 +257,10 @@ reader on a deploy that has none.
 - The cache and counters are per instance. A request that lands on another instance, or after a
   cold start, can miss an earlier cached reading. A drafted family update lives only in the cache,
   so on a miss the messages page shows the template again with the "Write it with AI" button.
-- Text the user submits to a reader is sent to the Gemini Developer API. The server keeps no
+- Text the user submits to a reader is sent to the Gemini Developer API with `store: false`, so
+  the Interactions API keeps no copy for later retrieval (a probe on 27 Oct 2026 got no
+  interaction id back); this does not change how the free tier's terms let Google use content.
+  The server keeps no
   database: the plan, with the short quotes behind each value, lives in an encrypted link, and the
   app's log lines hold routes, status codes, durations, prompt ids, reason codes, counts and error class
   names, never the text.

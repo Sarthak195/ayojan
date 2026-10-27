@@ -80,6 +80,7 @@ export interface InteractionRequest {
   };
   readonly generation_config: GenerationConfig;
   readonly stream: false;
+  readonly store: false;
 }
 
 /** SDK retries are off because the ladder decides what happens after a failure, not the SDK. */
@@ -122,6 +123,8 @@ export function buildInteractionRequest(parts: RequestParts): InteractionRequest
     response_format: { type: 'text', mime_type: 'application/json', schema: parts.schema },
     generation_config: { thinking_level: 'low' },
     stream: false,
+    // Ayojan never chains interactions, so nothing needs keeping for later retrieval.
+    store: false,
   };
 }
 

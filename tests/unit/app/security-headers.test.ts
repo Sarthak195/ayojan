@@ -58,6 +58,17 @@ describe('fixed response headers (next.config.ts)', () => {
   });
 });
 
+describe('plan pages are kept out of search engines', () => {
+  it('sends X-Robots-Tag: noindex, nofollow on /:lang/p/:token and below only', async () => {
+    if (nextConfig.headers === undefined) throw new Error('next.config.ts sets no headers');
+    const rules: readonly HeaderRule[] = await nextConfig.headers();
+    const plan = rules.find((rule) => rule.source === '/:lang/p/:path*');
+    expect(plan?.headers).toContainEqual({ key: 'X-Robots-Tag', value: 'noindex, nofollow' });
+    // The start page stays indexable.
+    expect((await fixedHeaders()).has('x-robots-tag')).toBe(false);
+  });
+});
+
 describe('Content-Security-Policy as the proxy sends it', () => {
   // A set key keeps the link gate off its warn-and-improvise path for a missing one.
   beforeAll(() => {

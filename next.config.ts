@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // A plan link is a bearer token for someone's event, so a crawler that is handed one
+        // must neither list it nor follow its links into further plan states.
+        source: '/:lang/p/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
     ]);
   },
 };

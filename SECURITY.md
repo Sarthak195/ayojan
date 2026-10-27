@@ -115,6 +115,10 @@ widget or sign-in popup, and `connect-src` is already `'self'`. Adding any of th
 revisiting both headers. The tests pin all three values in
 `tests/unit/app/security-headers.test.ts`.
 
+Plan pages (`/:lang/p/:token` and everything below it) also carry `X-Robots-Tag: noindex,
+nofollow`, because a plan link is a bearer token: a crawler handed one must not list it or follow
+it into further plan states. The start page stays indexable. The same test file pins the rule.
+
 ## State sealing
 
 The plan is `{ schema, ops, pending? }`: inputs and confirmed steps, never computed numbers.

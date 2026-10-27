@@ -88,6 +88,27 @@ describe('MoneyTable', () => {
     expect(out).toContain('<caption id="split-caption"');
   });
 
+  it('says in words that the table scrolls sideways, on narrow screens only', () => {
+    expect(out).toMatch(
+      /<p class="[^"]*sm:hidden[^"]*"[^>]*>.*Scroll sideways to see the whole table\./,
+    );
+    // The hint sits before the region, so the region's accessible name stays the caption.
+    expect(out.indexOf('Scroll sideways')).toBeLessThan(out.indexOf('role="region"'));
+    expect(out).toMatch(/<span aria-hidden="true">↔ <\/span>/);
+  });
+
+  it('shows the hint in Hindi for a Hindi page', () => {
+    const hindi = html(
+      createElement(MoneyTable, { id: 'k', lang: 'hi', caption: 'c', columns: ['a'], rows: [] }),
+    );
+    expect(hindi).toContain('पूरी तालिका देखने के लिए बाएँ-दाएँ स्क्रॉल करें।');
+    expect(hindi).not.toContain('Scroll sideways');
+  });
+
+  it('marks the region for the scroll-shadow and sticky-column styles', () => {
+    expect(out).toMatch(/class="table-scroll [^"]*"/);
+  });
+
   it('keeps table semantics with scoped headers and a label in every amount cell', () => {
     expect(out).toContain('<th scope="col"');
     expect(out).toContain('<th scope="row"');

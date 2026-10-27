@@ -47,6 +47,7 @@ export function ComparisonTable({
       </h2>
       <ScrollTable
         id={`${headingId}-table`}
+        lang={lang}
         caption={words.comparisonHeading(categoryLabel, groupIndian(guests))}
         captionNote={
           <>

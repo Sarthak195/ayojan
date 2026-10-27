@@ -20,11 +20,12 @@ export function DiffTable({
   readonly names: Names;
 }): ReactElement {
   const words = dictionaryFor(names.lang).revision;
-  const head = 'border-b border-line px-3 py-2 font-semibold';
+  const head = 'border-b border-line bg-surface px-3 py-2 font-semibold';
   const cell = 'border-b border-line px-3 py-2 align-top';
   return (
     <ScrollTable
       id="diff-table"
+      lang={names.lang}
       caption={words.diffCaption(revision.beforeVersion, revision.afterVersion)}
       captionNote={words.diffNote}
     >

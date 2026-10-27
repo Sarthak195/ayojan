@@ -50,7 +50,7 @@ export function MoneyTable({
   rows,
 }: MoneyTableProps): ReactElement {
   return (
-    <ScrollTable id={id} caption={caption} captionNote={captionNote}>
+    <ScrollTable id={id} lang={lang} caption={caption} captionNote={captionNote}>
       <thead>
         <tr>
           {columns.map((column) => (

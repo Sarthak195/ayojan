@@ -278,5 +278,7 @@ describe('the family-update recording', () => {
         : `replay family-update-facts: template (${result.reasons.join(', ')})`,
     );
     expect(result.kind).toBe('draft');
+    // v4 asks for the event date and the guest count, so a recorded draft cites figures the check verifies.
+    if (result.kind === 'draft') expect(result.numbersChecked).toBeGreaterThanOrEqual(2);
   });
 });

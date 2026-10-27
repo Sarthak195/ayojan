@@ -152,7 +152,8 @@ recording is pending, the "First recordings" entry below records it.
   and hi, for the hand-pinned facts and the recorded fixture, that no known id and (in hi) no
   hyphenated Latin token reaches the model, and that a line copying `now.eventDate` and `now.guests`
   passes the draft check with 3 numbers; `tests/unit/server/prompts/guardrails.test.ts` checks the
-  new rule and that no question id is in the system text or the request. The v3 recording is left
-  as it is; the main session re-records it with one call
-  (`npm run record:golden -- --only family-update-facts`). Until then the promptVersion pin in
-  `tests/golden/replay.test.ts` fails (recording v3, prompt v4).
+  new rule and that no question id is in the system text or the request. Re-recorded on 28 Oct 2026
+  with one call (`npm run record:golden -- --only family-update-facts`, `gemini-3.5-flash-lite`, 1.7 s):
+  the Hindi draft names the new date (12 Feb 2027) and the 250 guests in plain words, names the tasks
+  by their Hindi titles with no id, and passes the draft check with "numbers checked against your
+  plan: 3 of 3", which `tests/golden/replay.test.ts` now asserts (at least 2 checked numbers).

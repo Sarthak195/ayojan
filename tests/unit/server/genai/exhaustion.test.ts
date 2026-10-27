@@ -50,6 +50,10 @@ describe('createExhaustionMemory', () => {
     expect(memory.keyOrder(LITE, 3)).toEqual([0, 1, 2]);
     expect(memory.keyOrder(OLD_LITE, 3)).toEqual([0, 1, 2]);
     expect(memory.keyOrder(LITE, 0)).toEqual([]);
+    // D46: one key is the deployed case, and it must stay first however often it is tried.
+    expect(memory.keyOrder(LITE, 1)).toEqual([0]);
+    memory.markTried(LITE, 0);
+    expect(memory.keyOrder(LITE, 1)).toEqual([0]);
   });
 
   it('counts calls per pair and actions per quota day, and starts again at the reset', () => {

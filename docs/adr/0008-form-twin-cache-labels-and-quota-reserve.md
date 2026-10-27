@@ -67,7 +67,8 @@ came from, and part of the quota is held back for text people type themselves.
   addresses gets many buckets, limits multiply by up to the number of instances, and a cold start
   resets the day's counts.
 - The reserve only keeps example texts out of the last fifth of an allowance. Typed text can still
-  spend all of it, so a flood of typed requests can exhaust the pool.
+  spend all of it, so a flood of typed requests can exhaust the pool. Amended 27 Oct 2026 (D46):
+  with one instance the multiplication applies only during a deploy overlap, and the pool is one key.
 - A cache miss on another instance spends a call again.
 
 ### Verified

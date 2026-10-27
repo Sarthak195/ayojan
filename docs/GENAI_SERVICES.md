@@ -116,7 +116,7 @@ recorded with an `-unconfirmed` suffix. The recorded id is kept in the reading's
 
 Keys come from `GEMINI_API_KEY` and any `GEMINI_API_KEY_*` variables, each split on commas and
 whitespace and de-duplicated (`src/server/config/key-pool.ts`). The deployed service had seven keys
-on 26 Oct 2026; from 27 Oct (D46) it runs on one key from one project, read from Secret Manager,
+on 26 Oct 2026; from the first deploy after 27 Oct (D46) it runs on one key from one project, read from Secret Manager,
 because pooling free-tier keys from several projects can read as getting around Google's
 documented usage limits. The pool code still accepts several keys. Within a model the gateway starts after the key the previous read used last,
 and it remembers failures in memory by key index, never by key:
@@ -128,6 +128,10 @@ and it remembers failures in memory by key index, never by key:
 | 404                                                               | Cool that model for six hours (a retired model is retired for all keys) |
 | Timeout, 408 or 5xx                                               | Cool that model for three minutes, move to the next model               |
 | 400 or 422, a reply that is not JSON, a reply that breaks schema  | Stop at once and show the form; this is our bug and repeats on any key  |
+
+With one key (D46), a rejected key (401/403) turns AI reading off for the whole service for six
+hours, or until a new instance starts, and the page names quota as the reason; a 429 on a model
+sends every read to the next model for an hour.
 
 When no rung can answer, the reader returns one of three closed reasons, `quota`, `timeout` or
 `nokey`, and the user is sent to the form twin of that step with a banner naming the reason. An
@@ -192,14 +196,14 @@ by AI (cached)" with the reason, and is never shown as a fresh read.
 
 **Budget per instance** (`src/server/genai/exhaustion.ts`, `src/server/ratelimit/`). Working values,
 not measured: about 20 requests a day per model per key project, one project (one key, D46),
-three models and one instance give 60 model actions a day, the whole service's budget. Past that,
+three models and one instance (from the next deploy; the serving revision allows three) give 60 model actions a day, the whole service's budget. Past that,
 the rate limiter refuses further model actions with a page that names the wait, and the gateway
 starts no more ladders. A model action also counts against the client: a burst of three, six a
 minute and 20 a day. Counters live in memory, so they are per instance and a cold start resets them.
 
 **Reserve for typed text.** Above 80 percent of the assumed allowance for a model and key pair,
 that pair is no longer used for the three sample texts, so the last fifth is kept for text a
-visitor types. Typed text can still use the whole pool.
+visitor types. Typed text can still use the whole allowance.
 
 **Example readings.** The start page and the quotes page offer three sample texts: the sample
 brief and two sample quotes. Each has a committed recording in `golden/llm/`, made once with
@@ -232,7 +236,7 @@ reader on a deploy that has none.
 | `generateContent` (the legacy call)                   | The Interactions API is the current surface; `npm run check:api` fails the build on the legacy call.                                                   |
 | Setting `temperature` and other sampling knobs        | Reasoning is controlled by `thinking_level`; the request type forbids the knobs.                                                                       |
 | Vertex AI or Gemini Enterprise                        | Needs billing and a service-account credential. The Developer API with keys held in Secret Manager does the job. No paid key was added.                |
-| A paid last rung on the ladder                        | Considered and not built. Without it, an exhausted pool sends the user to a form, which gives the same plan.                                           |
+| A paid last rung on the ladder                        | Considered and not built. Without it, an exhausted allowance sends the user to a form, which gives the same plan.                                      |
 | Gemini File Search                                    | Adds a store, a quota and a failure mode, while the reference data is small and exact in `data/`.                                                      |
 | Document AI, PDF or image reading                     | The app reads pasted text only and accepts no uploads.                                                                                                 |
 | Search grounding                                      | The model supplies no prices or facts. Every figure comes from `data/` with its stated basis, and market prices are out of scope.                      |

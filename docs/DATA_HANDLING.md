@@ -78,7 +78,7 @@ Ayojan is treated as a free-tier Gemini client, and tells its users so. As check
 the Cloud Run project has billing enabled, but the Gemini API (`generativelanguage.googleapis.com`)
 is not enabled in it, so none of the 7 working Gemini keys can come from that billed project. The
 projects the keys do come from were not inspected, so this page does not claim that each key was
-verified to be on the free tier. From 27 Oct 2026 (D46) the service runs on one key, and that
+verified to be on the free tier. From the first deploy after 27 Oct 2026 (D46) the service runs on one key, and that
 key is one of those seven, so the check of 26 Oct still holds for it: it cannot come from the
 billed project. No paid key was added: a paid fallback key was offered and declined. The UI carries the notice since commit `8ab00a3` (live since revision `ayojan-00003-lx6`): under
 every read button (the start page brief and its examples, the vendor quote box and the plan change box) it says

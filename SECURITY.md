@@ -30,7 +30,7 @@ beside it. What data leaves the app, and for how long it lives, is in
 | Clickjacking, MIME sniffing, referrer leak           | `frame-ancestors 'none'` and `X-Frame-Options: DENY`; `nosniff`; `Referrer-Policy: same-origin`; `Permissions-Policy` refusing the features it names                                                                            | `next.config.ts`, `src/security/content-security-policy.ts`                                                                                      | `tests/unit/app/security-headers.test.ts`                                                                                                                                           |
 | Reading or editing a plan's state                    | AES-256-GCM seal with authenticated data; length and charset checked before decoding; bounded inflate; Zod after decrypt                                                                                                        | `src/server/state/seal.ts`, `src/server/state/token-codec.ts`                                                                                    | `tests/unit/server/state/seal.test.ts`, `tests/unit/server/state/token-codec.test.ts`                                                                                               |
 | Malformed or oversized request                       | Rate limit, then content type, size, encoding and shape, in that order, before any work                                                                                                                                         | `src/server/http/post-step.ts`, `src/server/http/form-body.ts`, `src/schemas/forms/`                                                             | `tests/unit/server/http/form-body.test.ts`, `tests/unit/server/http/post-step.test.ts`                                                                                              |
-| Quota draining, request floods                       | Token buckets and daily counters checked before the body is read; a 40 s model budget; Cloud Run `max-instances` 1                                                                                                              | `src/server/ratelimit/`, `src/server/genai/gateway.ts`, `src/server/genai/exhaustion.ts`                                                         | `tests/unit/server/ratelimit/`, `tests/unit/server/genai/gateway.test.ts`, `tests/unit/server/genai/gateway-reserve.test.ts`                                                        |
+| Quota draining, request floods                       | Token buckets and daily counters checked before the body is read; a 40 s model budget; Cloud Run `max-instances` 1 from the next deploy (D46); the serving revision still allows 3, see docs/DEPLOYMENT.md                      | `src/server/ratelimit/`, `src/server/genai/gateway.ts`, `src/server/genai/exhaustion.ts`                                                         | `tests/unit/server/ratelimit/`, `tests/unit/server/genai/gateway.test.ts`, `tests/unit/server/genai/gateway-reserve.test.ts`                                                        |
 | Slow input (regex or parser blow-up)                 | Single-pass scanners, no nested-quantifier regular expressions, a timing test on adversarial text                                                                                                                               | `src/core/rupees/`, `src/core/grounding/`                                                                                                        | `tests/unit/core/rupees/parse-timing.test.ts`, `tests/unit/core/grounding/grounding-timing.test.ts`                                                                                 |
 | Open redirect                                        | Every `Location` is assembled from fixed route words, a token re-checked against its charset and closed lists, then matched against a final shape                                                                               | `src/server/http/see-other.ts`                                                                                                                   | `tests/unit/server/http/see-other.test.ts`, `tests/unit/app/proxy.test.ts`                                                                                                          |
 | Secret leakage                                       | Keys read from the environment at call time, never logged or put in an error message; `.env*` ignored; empty `.env.example`; nothing secret in any image layer; a scanner over every tracked text file                          | `src/server/config/key-pool.ts`, `src/server/state/seal-key.ts`, `.gitignore`, `.dockerignore`, `Dockerfile`, `scripts/check-forbidden-apis.mjs` | `tests/unit/server/config/key-pool.test.ts`, `tests/unit/server/state/seal-key.test.ts`                                                                                             |
@@ -190,20 +190,20 @@ before the body is read, so a refused request costs no parsing.
   test machine's step allowance on one instance for under 30 seconds.
 - **Gemini quota.** `src/server/genai/gateway.ts` tries `gemini-3.5-flash-lite`, then
   `gemini-3.1-flash-lite`, then `gemini-3.5-flash`, with a 40 second budget for the whole read
-  against Cloud Run's 60 second timeout. Rate-limit and auth failures cool down the model and
-  key pair that failed. Identical requests are served from a cache for up to 24 hours. Example
+  against Cloud Run's 60 second timeout. Rate-limit failures cool down the model and key
+  pair that failed; auth failures cool the key for every model. Identical requests are served from a cache for up to 24 hours. Example
   texts stop spending live calls once a model and key pair has used 80 percent of its assumed
   daily allowance (`RESERVE_SHARE`), which keeps the last fifth for typed text. The allowance is
-  an assumption (20 calls a day per model and key), not a measured figure. From 27 Oct 2026
-  (D46) the service runs on one key from one project, because pooling free-tier keys from
+  an assumption (20 calls a day per model and key), not a measured figure. From the first deploy
+  after 27 Oct 2026 (D46) the service runs on one key from one project, because pooling free-tier keys from
   several projects can read as getting around Google's documented usage limits. One key, three
   models and 20 calls each give about 60 model calls a day in total.
 
 What this cannot stop:
 
 - **Many source addresses get many buckets.** The per-client bound is advisory.
-- **Counts are per instance.** The service runs at most one instance, which owns the whole
-  60-action budget, so the service-wide ceiling is that budget, bounded in the end by the
+- **Counts are per instance.** From that deploy the service runs at most one instance, which owns the
+  whole 60-action budget (until then the serving revision allows three), so the service-wide ceiling is that budget, bounded in the end by the
   Gemini quota itself. During a deploy an old and a new revision can overlap briefly, each with
   its own counters. A cold start (the service scales to zero) resets the counters, so a "daily"
   budget lasts as long as an instance does.
@@ -211,7 +211,7 @@ What this cannot stop:
   fresh one. The table size is bounded on purpose.
 - **GET pages have no limiter.** Each plan page decrypts its token, and the 4,000-character
   cap bounds that work.
-- **The typed-text reserve is not a hard guarantee.** Typed text can still spend the whole pool.
+- **The typed-text reserve is not a hard guarantee.** Typed text can still spend the whole allowance.
 - **A rate-limit burst from one machine can briefly block that machine's other requests** to
   the same instance, as the measurement above showed.
 

@@ -193,7 +193,7 @@ starting a new plan is the way out. The measurement is
 Ayojan is treated as a free-tier Gemini client, and from commit `8ab00a3` (live since revision `ayojan-00003-lx6`) its read pages tell users so. On 26 Oct 2026 the
 Cloud Run project had billing enabled but the Gemini API was not enabled in it, so none of the 7
 working keys can come from that billed project; the projects the keys do come from were not
-inspected. From 27 Oct 2026 (D46) the service runs on one of those keys only, because pooling
+inspected. From the first deploy after 27 Oct 2026 (D46) the service runs on one of those keys only, because pooling
 free-tier keys from several projects can read as getting around Google's documented usage
 limits. No paid key was added: a paid last step on the model ladder was offered and declined,
 so none was built. Text a user submits for reading goes to Gemini under
@@ -212,7 +212,11 @@ seconds. These are observations, not benchmarks.
 To keep some capacity for people typing their own text, the example texts are served from
 their recorded readings (labelled as recorded) once a model and key pair is above 80 percent of
 its assumed allowance. That reserve protects only the examples. Text a user types can spend the
-whole pool.
+whole allowance.
+
+With one key (D46), a rejected key (401/403) turns AI reading off for the whole service for six
+hours, or until a new instance starts, and the page names quota as the reason; a 429 on a model
+sends every read to the next model for an hour.
 
 ### Rate limits are per instance and advisory
 
@@ -226,7 +230,7 @@ The limits live in each instance's memory ([rate-limit.ts](../src/server/ratelim
 
 What that does not give you:
 
-- **A brief overlap during a deploy.** Cloud Run runs one instance, but during a deploy an
+- **A brief overlap during a deploy.** From the next deploy (D46) Cloud Run runs one instance (the serving revision still allows three), but during a deploy an
   old and a new revision can overlap briefly, each counting alone.
 - **A daily budget that lasts as long as an instance.** With no minimum instance, a cold start
   resets the counters.

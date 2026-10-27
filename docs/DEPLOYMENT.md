@@ -97,11 +97,11 @@ The flags, and why:
 - `--min-instances=0`: the service scales to zero when idle, so an idle service holds no
   instance. The price is a cold start on the first request after a quiet period.
 - `--max-instances=1`: a flood cannot start a second instance, and the one instance owns the
-  whole daily model budget of 60 actions (one key, three models, about 20 calls each). From
-  27 Oct 2026 (D46) the service runs on one Gemini key from one project, because pooling
+  whole daily model budget of 60 actions (one key, three models, about 20 calls each). From the
+  first deploy after 27 Oct 2026 (D46) the service runs on one Gemini key from one project, because pooling
   free-tier keys from several projects can read as getting around Google's documented usage
-  limits; the limits in [LIMITATIONS.md](LIMITATIONS.md) are sized for that. Earlier
-  revisions ran with a maximum of 3.
+  limits; the limits in [LIMITATIONS.md](LIMITATIONS.md) are sized for that. Revisions up to `ayojan-00004-4vl`
+  ran with a maximum of 3.
 - `--timeout=60`: the app's own budget for one model action is 40 seconds
   (`ACTION_BUDGET_MS` in [gateway.ts](../src/server/genai/gateway.ts)), so a slow model fails
   with the app's own message inside Cloud Run's limit and not with a bare 504.
@@ -118,9 +118,8 @@ The flags, and why:
 The project's default compute service account holds `roles/secretmanager.secretAccessor` on
 both. On 26 Oct 2026 `gemini-api-key` had two enabled versions and `state-seal-key` had one.
 `/api/health` reported 7 keys in the pool that day (the public output was trimmed later and no
-longer shows the key count; see the health endpoint section). On 27 Oct 2026 the service moved
-to one key (D46): `gemini-api-key` gets a version holding one key, and the deploy above sets
-one instance.
+longer shows the key count; see the health endpoint section). The move to one key (D46) takes effect at the next deploy:
+`gemini-api-key` gets a version holding one key, and the deploy above sets one instance.
 
 - **Changing the Gemini key** is `gcloud secrets versions add gemini-api-key --data-file=-`
   with the new key (or comma-separated list) on standard input (`printf`, not `echo`, so there is no
@@ -170,8 +169,8 @@ status and counts, an empty reading cache and no model action yet on that instan
 The endpoint is public and unauthenticated, so the public answer is limited to what an operator
 needs from outside. The key count and the per-key quota counters, which would show how much model
 capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
-The numbers describe one instance. With `--max-instances=1` that is the service, except
-briefly during a deploy, when an old and a new revision can both answer.
+The numbers describe one instance. With `--max-instances=1` (from the next deploy; revision `ayojan-00004-4vl` allows 3) that is
+the service, except briefly during a deploy, when an old and a new revision can both answer.
 
 ## Verifying a deploy
 
@@ -246,7 +245,8 @@ is unchanged and the seal key is the same, which a rollback does not change.
   and the first-byte figure above is a warm one. A page carries about 132 KiB of gzip JavaScript
   (see [scripts/measure-pages.mjs](../scripts/measure-pages.mjs)), but how long a cold start
   adds is not known.
-- **Behaviour at three running instances under load** has not been seen. The 90-request burst
+- **Behaviour with more than one running instance under load** (revisions up to
+  `ayojan-00004-4vl` allowed three) was not seen; from D46 the service runs one. The 90-request burst
   above ran against whichever instance Cloud Run chose.
 - **The client address on direct `run.app` traffic** is taken to be the entry Google's front end
   appends to `X-Forwarded-For`, from Google's documented behaviour and the made-up-header test

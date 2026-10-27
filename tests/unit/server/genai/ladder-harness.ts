@@ -59,12 +59,13 @@ export function harness(
   overrides: Partial<GatewayDeps> = {},
 ): Harness {
   let nowMs = T0;
+  const keyList: readonly string[] = overrides.keys?.() ?? KEYS;
   const calls: Call[] = [];
   const memory = createExhaustionMemory();
   const cache = createReadingCache();
   const clientFor = (apiKey: string): InteractionsClient => ({
     create(request, options) {
-      const keyIndex = KEYS.findIndex((key) => key === apiKey);
+      const keyIndex = keyList.findIndex((key) => key === apiKey);
       const startedAt = nowMs;
       calls.push({
         model: request.model,

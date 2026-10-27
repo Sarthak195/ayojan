@@ -149,32 +149,53 @@ export function lookupPrefix(normalized: string): Prefix | undefined {
 
 // Words that join the two ends of a range ("do ya teen lakh", "do se teen lakh").
 const RANGE_WORDS: ReadonlySet<string> = new Set(
-  ['ya', 'se', 'aur', 'or', 'या', 'से', 'और'].map((word) => normalizeWord(word)),
+  ['ya', 'yaa', 'se', 'aur', 'or', 'to', 'athva', 'या', 'से', 'और', 'अथवा'].map((word) =>
+    normalizeWord(word),
+  ),
 );
-const HYPHEN = 0x2d;
-const EN_DASH = 0x2013;
-const SLASH = 0x2f;
+const EITHER_WORDS: ReadonlySet<string> = new Set(
+  ['ya', 'yaa', 'या'].map((word) => normalizeWord(word)),
+);
+// "ya phir" and "ya fir" are one joiner ("do ya phir teen lakh").
+const AFTER_EITHER: ReadonlySet<string> = new Set(
+  ['phir', 'fir', 'फिर'].map((word) => normalizeWord(word)),
+);
+// Hyphen, slash, tilde and every dash a keyboard or phone produces (the grounding DASHES set),
+// written as numbers because the repository bans the em dash character in source.
+const RANGE_MARKS: ReadonlySet<number> = new Set([
+  0x2d, 0x2f, 0x7e, 0x2010, 0x2011, 0x2012, 0x2013, 0x2014, 0x2015, 0x2212, 0xfe58, 0xfe63, 0xff0d,
+]);
+// A join is blanks, a joiner and blanks; a wider gap is no join, and the cap keeps a stale
+// bare word from being rescanned for every later amount.
+const MAX_JOIN_GAP = 32;
+
+function wordAfter(text: string, index: number, to: number): { word: string; end: number } | null {
+  if (index >= to || !isWordCharacter(text.charCodeAt(index))) return null;
+  const end = readWord(text, index);
+  return { word: normalizeWord(text.slice(index, end)), end };
+}
 
 /**
  * True when a bare number word between `from` and `to` and its neighbouring amount are the two
- * ends of one range. A joiner (a hyphen, an en dash, a slash, or ya, se, aur, or) links them
+ * ends of one range. A joiner (a run of dashes or slashes, or ya, se, aur, or, to) links them
  * whatever the amount looks like; blanks alone link a word before an amount only when the
  * amount is spelled in words ("do teen lakh"), because before digits the word is usually not a
  * number at all: "ke saath 200 log" is "with 200 people" and "we can do 8 lakh" is English.
  */
 export function joinsRange(text: string, from: number, to: number, inWords: boolean): boolean {
+  if (to - from > MAX_JOIN_GAP) return false;
   let index = skipBlanks(text, from);
   let joined = false;
-  const code = text.charCodeAt(index);
-  if (code === HYPHEN || code === EN_DASH || code === SLASH) {
+  while (index < to && RANGE_MARKS.has(text.charCodeAt(index))) {
     index = skipBlanks(text, index + 1);
     joined = true;
-  } else if (index < to && isWordCharacter(code)) {
-    const end = readWord(text, index);
-    if (RANGE_WORDS.has(normalizeWord(text.slice(index, end)))) {
-      index = skipBlanks(text, end);
-      joined = true;
-    }
+  }
+  const joiner = joined ? null : wordAfter(text, index, to);
+  if (joiner !== null && RANGE_WORDS.has(joiner.word)) {
+    index = skipBlanks(text, joiner.end);
+    joined = true;
+    const next = EITHER_WORDS.has(joiner.word) ? wordAfter(text, index, to) : null;
+    if (next !== null && AFTER_EITHER.has(next.word)) index = skipBlanks(text, next.end);
   }
   return index === to && (joined || inWords);
 }

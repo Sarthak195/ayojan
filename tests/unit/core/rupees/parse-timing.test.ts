@@ -19,6 +19,7 @@ const GENERATORS: readonly (readonly [string, string])[] = [
   ['digits and dots', '1.'.repeat(5_000)],
   ['emoji run', '🎉'.repeat(5_000)],
   ['Devanagari digits and words', '८ लाख '.repeat(1_400)],
+  ['stale bare word before many amounts', `do${' '.repeat(5_000)}x${' 5 lakh'.repeat(714)}`],
 ];
 
 // Catastrophic backtracking on 10,000 characters takes seconds or never ends, while a linear

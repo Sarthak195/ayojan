@@ -19,6 +19,18 @@ describe('a bare number word beside an amount is a range, never one figure (D44)
     ['Devanagari ya', '\u0926\u094B \u092F\u093E \u0924\u0940\u0928 \u0932\u093E\u0916'],
     ['digits on both ends', '2-3 lakh'],
     ['a word after the amount', 'teen lakh do'],
+    ['to', 'do to teen lakh'],
+    ['to before sau', 'do to teen sau log'],
+    ['yaa', 'do yaa teen lakh'],
+    ['ya fir', 'teen ya fir chaar lakh'],
+    ['ya phir', 'do ya phir teen lakh'],
+    ['athva', 'do athva teen lakh'],
+    ['two hyphens', 'do--teen lakh'],
+    ['spaced hyphens', 'do - - teen lakh'],
+    ['em dash', 'do—teen lakh'],
+    ['minus sign', 'do−teen lakh'],
+    ['Unicode hyphen', 'do‐teen lakh'],
+    ['tilde', 'do~teen lakh'],
   ])('%s: %s asks how much', (_name, text) => {
     expect(parseAmount(text)).toEqual(SEVERAL);
   });

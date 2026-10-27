@@ -40,13 +40,16 @@ function fillQuestion(
   return filled.includes('{') || filled.includes('}') ? null : filled;
 }
 
-function messageFor(
+/**
+ * The questions one vendor is asked, filled and in order. The family-update draft reads the same
+ * list, so the family hears exactly what the vendor will be asked, never an internal id.
+ */
+export function askedQuestions(
   vendor: VendorFact,
   facts: MessageFacts,
   questions: ReadonlyMap<string, QuestionText>,
   language: Language,
-): VendorMessage | null {
-  const pack = packFor(language);
+): { id: QuestionId; text: string }[] {
   const asked: { id: QuestionId; text: string }[] = [];
   for (const id of vendor.questionIds) {
     const row = questions.get(id);
@@ -54,6 +57,23 @@ function messageFor(
       row === undefined ? null : fillQuestion(localized(row, language), facts, vendor, language);
     if (text !== null) asked.push({ id, text });
   }
+  return asked;
+}
+
+export function questionsById(
+  questions: readonly QuestionText[],
+): ReadonlyMap<string, QuestionText> {
+  return new Map(questions.map((question) => [question.id, question] as const));
+}
+
+function messageFor(
+  vendor: VendorFact,
+  facts: MessageFacts,
+  questions: ReadonlyMap<string, QuestionText>,
+  language: Language,
+): VendorMessage | null {
+  const pack = packFor(language);
+  const asked = askedQuestions(vendor, facts, questions, language);
   if (asked.length === 0) return null;
   const date = dateText(facts.now.eventDate, language);
   const occasion = pack.occasion[facts.occasion];
@@ -77,7 +97,7 @@ export function vendorMessages(
   questions: readonly QuestionText[],
   language: Language,
 ): VendorMessage[] {
-  const byId = new Map(questions.map((question) => [question.id, question] as const));
+  const byId = questionsById(questions);
   return facts.vendors.flatMap((vendor) => {
     const message = messageFor(vendor, facts, byId, language);
     return message === null ? [] : [message];

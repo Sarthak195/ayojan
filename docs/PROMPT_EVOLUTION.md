@@ -12,7 +12,7 @@ recording is pending, the "First recordings" entry below records it.
 | `brief`        | `src/server/prompts/brief.ts`             | `BriefReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | `quote`        | `src/server/prompts/quote.ts`             | `QuoteReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | `change`       | `src/server/prompts/change.ts`            | `ChangeReading`     | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
-| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 3               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
+| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 4               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | shared         | `src/server/prompts/shared/guardrails.ts` | n/a                 | 1               | 26 Oct 2026 | n/a                                   |
 
 ## Before the first recordings
@@ -128,3 +128,31 @@ recording is pending, the "First recordings" entry below records it.
 - Evidence: prompt and fact tests, then a v3 re-record on 28 Oct 2026 (one call,
   `npm run record:golden -- --only family-update-facts`, answered by `gemini-3.5-flash-lite` in
   1.6 s). An earlier commit had only relabelled the v2 reply as v3; the re-record replaced it.
+
+### familyUpdate v3 to v4 (28 Oct 2026)
+
+- Before (v3): the model was sent the built facts with their internal ids: `vendors[].questionIds`
+  (such as `step-free-access`, `tax-rate`, `rate-above-minimum`), `unclearQuotes[].fields`, lever
+  and task ids, and the occasion, diet and venue-limit codes. The request mapped each re-confirmation
+  id to its topic word. No rule asked for the event date or the guest count.
+- After (v4): `factsForModel(facts, language, questions)` sends a projection built by
+  `src/core/messages/model-facts.ts`, in the page's language and with no id: each vendor's follow-ups
+  as the filled question wording the vendor message uses (`data/vendor-questions.yaml`), tasks as
+  the template's attention items, levers as a label with `savesInr` or `addsInr`, unclear quote
+  fields, diet and venue limits as the phrase-pack words, dates as the template writes them, and
+  `mustMention` with the topic words the draft check needs. One new system rule asks the draft to
+  state the event date (`now.eventDate`) and the guest count (`now.guests`) exactly as the facts
+  write them; both are fact numbers, so the existing check counts and verifies them. The golden
+  recorder now sends the same projection as the app.
+- Why: a Hindi draft echoed the ids transliterated ("स्टेप-फ्री-एक्सेस, टैक्स-रेट, रेट-अबोव-मिनिमम"),
+  because a model repeats what it is given; given only readable words it can only echo readable
+  words. The same draft cited no figure ("checked 0 of 0") although the plan has a date and a guest
+  count.
+- Evidence: tests, not yet a recording. `tests/unit/core/messages/model-facts.test.ts` checks, in en
+  and hi, for the hand-pinned facts and the recorded fixture, that no known id and (in hi) no
+  hyphenated Latin token reaches the model, and that a line copying `now.eventDate` and `now.guests`
+  passes the draft check with 3 numbers; `tests/unit/server/prompts/guardrails.test.ts` checks the
+  new rule and that no question id is in the system text or the request. The v3 recording is left
+  as it is; the main session re-records it with one call
+  (`npm run record:golden -- --only family-update-facts`). Until then the promptVersion pin in
+  `tests/golden/replay.test.ts` fails (recording v3, prompt v4).

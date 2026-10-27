@@ -9,6 +9,7 @@ import {
 import type { MessageFacts } from '@/core/messages/fact-types';
 import { reconfirmationQuestionIds } from '@/core/messages/message-facts';
 import { familyUpdateTemplate, type FamilyUpdateTemplate } from '@/core/messages/templates';
+import type { QuestionText } from '@/core/messages/vendor-messages';
 import type { Language } from '@/core/rupees/format';
 import type { QuestionId } from '@/schemas/generated/ids';
 import { FamilyUpdateDraft } from '@/schemas/readings/family-update-draft';
@@ -24,6 +25,8 @@ import { stableJson } from './stable-json';
 export interface FamilyUpdateInput {
   readonly facts: MessageFacts;
   readonly language: Language;
+  /** The vendor question rows, so the model reads each follow-up as its wording, not its id. */
+  readonly questions: readonly QuestionText[];
 }
 
 /** Why the template is shown instead of a draft. */
@@ -145,7 +148,7 @@ function resultOf(
 // draft, so they key it too. The GET of the messages page rebuilds exactly these inputs (D08).
 function requestInputs(input: FamilyUpdateInput): { text: string; cacheInputs: string[] } {
   return {
-    text: stableJson(familyUpdate.factsForModel(input.facts)),
+    text: stableJson(familyUpdate.factsForModel(input.facts, input.language, input.questions)),
     cacheInputs: [input.language, familyUpdate.register],
   };
 }

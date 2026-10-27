@@ -7,9 +7,10 @@ import {
   type FamilyUpdateInput,
 } from '@/server/pipeline/draft-family-update';
 import { stableJson } from '@/server/pipeline/stable-json';
+import * as familyUpdate from '@/server/prompts/family-update';
 
 import type { FakeReply } from '../../../fakes/llm-gateway';
-import { makeFacts } from '../../core/messages/facts-fixture';
+import { dataQuestions, makeFacts } from '../../core/messages/facts-fixture';
 import { harness } from '../genai/ladder-harness';
 import { gatewayAnswering } from './readings';
 
@@ -27,7 +28,7 @@ const INVENTED = ['The budget is now Rs 17,00,000.', ...TOPICS];
 const draftOf = (lines: readonly string[]) => ({ lines: lines.map((text) => ({ text })) });
 
 function input(facts: MessageFacts = makeFacts()): FamilyUpdateInput {
-  return { facts, language: 'en' };
+  return { facts, language: 'en', questions: dataQuestions() };
 }
 
 async function draftWith(reply: FakeReply) {
@@ -48,7 +49,8 @@ describe('draftFamilyUpdate with the fake gateway', () => {
       source: 'ai',
       answeredBy: 'gemini-fake',
     });
-    expect(gateway.calls).toEqual([{ promptId: 'familyUpdate', text: stableJson(makeFacts()) }]);
+    const text = stableJson(familyUpdate.factsForModel(makeFacts(), 'en', dataQuestions()));
+    expect(gateway.calls).toEqual([{ promptId: 'familyUpdate', text }]);
   });
 
   it('rejects a draft with an invented number and shows the template with the reason', async () => {

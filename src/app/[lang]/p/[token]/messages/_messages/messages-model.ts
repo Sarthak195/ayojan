@@ -47,6 +47,10 @@ export function messagesModel(
     template: familyUpdateTemplate(facts, lang),
     vendors: vendorTemplates(facts, data.vendorQuestions.questions, lang),
     enquiries: enquiryTemplates(enquiryInput(view.current, data), lang),
-    drafted: cachedFamilyUpdate({ facts, language: lang }, cache, nowMs),
+    drafted: cachedFamilyUpdate(
+      { facts, language: lang, questions: data.vendorQuestions.questions },
+      cache,
+      nowMs,
+    ),
   };
 }

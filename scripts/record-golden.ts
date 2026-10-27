@@ -23,6 +23,7 @@ import { todayInIndia } from '@/server/config/clock';
 import { loadKeyPool } from '@/server/config/key-pool';
 import { GatewayBugError } from '@/server/genai/classify';
 import { defaultGateway } from '@/server/genai/gateway';
+import { knowledge } from '@/server/knowledge/repository';
 import type { LlmGateway, PromptSpec } from '@/server/pipeline/llm-gateway';
 import { SCHEMA_VERSIONS } from '@/server/pipeline/schema-versions';
 import { stableJson } from '@/server/pipeline/stable-json';
@@ -66,8 +67,12 @@ const ROUTES: Readonly<Record<PromptId, Route>> = {
     prompt: familyUpdate.promptFor(DRAFT_LANGUAGE),
     schema: FamilyUpdateDraft,
     cacheInputs: [DRAFT_LANGUAGE, familyUpdate.register],
-    // The app sends the built facts with sorted keys (stableJson), so the fixture does too.
-    toText: (raw) => stableJson(buildMessageFacts(JSON.parse(raw) as MessageFactsInput)),
+    // The app sends the model-facing facts with sorted keys (stableJson), so the fixture does too.
+    toText: (raw) => {
+      const facts = buildMessageFacts(JSON.parse(raw) as MessageFactsInput);
+      const { questions } = knowledge().all().vendorQuestions;
+      return stableJson(familyUpdate.factsForModel(facts, DRAFT_LANGUAGE, questions));
+    },
   },
 };
 
@@ -191,10 +196,8 @@ async function recordOne(
     reply: result.value,
   };
   const path = recordingPath(promptId, fixture);
-  const json = await format(JSON.stringify(recording), {
-    ...(await resolveConfig(path)),
-    filepath: path,
-  });
+  const options = { ...(await resolveConfig(path)), filepath: path };
+  const json = await format(JSON.stringify(recording), options);
   // Belt and braces: nothing above comes from the environment, but a key must never be committed.
   if (keys.some((key) => json.includes(key)))
     throw new Error(`${fixture}: a key reached the recording; nothing written.`);
@@ -205,9 +208,8 @@ async function recordOne(
 }
 
 async function main(argv: readonly string[]): Promise<number> {
-  if (ROUTED_IDS.some((id) => ROUTES[id].prompt.id !== id)) {
+  if (ROUTED_IDS.some((id) => ROUTES[id].prompt.id !== id))
     throw new Error('A recorder route names a different prompt than its registry id.');
-  }
   const fixtures = listFixtures();
   const parsed = parseArgs(argv, new Set(fixtures.keys()));
   if (!parsed.ok) {

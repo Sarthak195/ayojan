@@ -45,7 +45,8 @@ export function messageStep(deps: MessageDeps): StepSpec<typeof DraftForm> {
       const { view } = opened.plan;
       if (view === null) return { kind: 'problem', problem: 'cannot-apply', status: 422 };
       const facts = buildMessageFacts(view.messageFacts);
-      const result = await draftFamilyUpdate(deps.gateway, { facts, language: lang });
+      const questions = deps.data().vendorQuestions.questions;
+      const result = await draftFamilyUpdate(deps.gateway, { facts, language: lang, questions });
       const unavailable = unavailableOf(result);
       const token = form.token;
       return {

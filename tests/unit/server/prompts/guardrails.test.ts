@@ -4,11 +4,12 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 
+import { QuestionId } from '@/schemas/generated/ids';
 import { BriefReading } from '@/schemas/readings/brief-reading';
 import { ChangeReading } from '@/schemas/readings/change-reading';
 import { FamilyUpdateDraft } from '@/schemas/readings/family-update-draft';
 import { QuoteReading } from '@/schemas/readings/quote-reading';
-import { REVISED, makeFacts } from '../../core/messages/facts-fixture';
+import { REVISED, dataQuestions, makeFacts } from '../../core/messages/facts-fixture';
 import { buildInteractionRequest } from '@/server/genai/interactions';
 import type { PromptSpec } from '@/server/pipeline/llm-gateway';
 import * as brief from '@/server/prompts/brief';
@@ -172,8 +173,25 @@ describe('family-update prompt', () => {
 
   it('leaves the projection out of the facts it sends while nothing is priced', () => {
     const facts = makeFacts({ now: { ...REVISED.now, priced: false }, before: null });
-    expect(JSON.stringify(familyUpdate.factsForModel(facts))).not.toContain('projectedInr');
-    expect(familyUpdate.factsForModel(makeFacts())).toEqual(makeFacts());
+    const sent = (value: typeof facts) => familyUpdate.factsForModel(value, 'en', dataQuestions());
+    expect(JSON.stringify(sent(facts))).not.toContain('projectedInr');
+    expect(JSON.stringify(sent(makeFacts()))).toContain('"projectedInr":1650000');
+  });
+
+  it('asks the draft to state the event date and the guest count from the facts', () => {
+    expect(familyUpdate.version).toBe(4);
+    expect(familyUpdate.system).toContain(
+      'State the event date (now.eventDate) and the guest count (now.guests)',
+    );
+  });
+
+  it('names follow-ups by readable words, never by question id, in en and hi', () => {
+    for (const language of ['en', 'hi'] as const) {
+      const request = `${familyUpdate.system}
+${familyUpdate.instruction(language)}`;
+      expect(request).toContain('mustMention');
+      for (const id of QuestionId.options) expect(request).not.toContain(id);
+    }
   });
 
   it('names the requested language and the simple register', () => {

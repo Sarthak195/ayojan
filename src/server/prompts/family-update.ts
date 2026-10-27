@@ -1,15 +1,15 @@
 import 'server-only';
 
-import type { Headline, MessageFacts } from '@/core/messages/fact-types';
-import { topicWords } from '@/core/messages/required-mentions';
-import type { QuestionId } from '@/schemas/generated/ids';
+import type { MessageFacts } from '@/core/messages/fact-types';
+import { modelFacts } from '@/core/messages/model-facts';
+import type { QuestionText } from '@/core/messages/vendor-messages';
 
 import { composeSystem } from './shared/guardrails';
 
 export type FamilyUpdateLanguage = 'en' | 'hi';
 
 export const id = 'familyUpdate';
-export const version = 3;
+export const version = 4;
 
 // Part of the draft's cache key: a different register is a different draft for the same facts.
 export const register = 'simple';
@@ -29,47 +29,30 @@ export const system = composeSystem(
     `- Register: ${register}. Write as a family member would on WhatsApp: warm, respectful, plain everyday words, short sentences, no jargon, no official tone, no emoji.`,
     '- In English, write plain conversational English. In Hindi, write in Devanagari script using the respectful aap form and everyday spoken Hindi rather than formal or Sanskritised words; numbers keep their digits exactly as in the facts.',
     '- Read the facts in any language they arrive in; write only in the requested language.',
+    '- State the event date (now.eventDate) and the guest count (now.guests), copied exactly as the facts write them.',
     '- If now.priced is false, say nothing is priced yet and state no spending figure. atRisk lists the most urgent tasks only; moreAtRiskCount is how many more there are, so say "and N more" with that number and name no other task.',
-    '- vendors[].questionIds name what the family will ask each vendor again because the plan changed. The family must hear about each of them, so the lines on what needs attention name every such topic once, with the topic word the request gives for it.',
+    '- vendors[].questions are what the family will ask each vendor; say what they are about in plain words, never as a code or label. Each word in mustMention must appear in the lines on what needs attention, exactly as written there.',
     '',
     'Fill the FamilyUpdateDraft schema. Its field, named exactly as the schema names it:',
     '- lines: at most 6 entries, each with text, one short line of the message. Open with a greeting, then what changed, then what needs attention, then a short closing line.',
   ].join('\n'),
 );
 
-// Before any price the projection is the budget itself, so handing it over invites "planned
-// spending equals the budget" beside "nothing is priced".
-function withoutUnpricedProjection(headline: Headline): unknown {
-  if (headline.priced) return headline;
-  const { budgetInr, guests, eventDate, priced } = headline;
-  return { budgetInr, guests, eventDate, priced };
+/** The facts as the model sees them: in the page's language, with no internal id (model-facts). */
+export function factsForModel(
+  facts: MessageFacts,
+  language: FamilyUpdateLanguage,
+  questions: readonly QuestionText[],
+): unknown {
+  return modelFacts(facts, questions, language);
 }
-
-/** The facts as the model sees them. */
-export function factsForModel(facts: MessageFacts): unknown {
-  return {
-    ...facts,
-    now: withoutUnpricedProjection(facts.now),
-    before: facts.before === null ? null : withoutUnpricedProjection(facts.before),
-  };
-}
-
-// The draft check (core/messages/required-mentions) accepts a follow-up only when its topic word
-// is in the draft, so the request names the same words rather than a paraphrase of them.
-const FOLLOW_UPS: readonly QuestionId[] = [
-  'date-reconfirmation',
-  'guest-count-reconfirmation',
-  'venue-capacity',
-  'guest-cap-exceeded',
-];
 
 /**
  * The request that follows the facts block. The facts are not passed here: the gateway wraps
  * them in the delimiter itself (interactions.ts), so they reach the model exactly once.
  */
 export function instruction(language: FamilyUpdateLanguage): string {
-  const topics = FOLLOW_UPS.map((id) => `${id}: ${topicWords(id, language)[0] ?? id}`).join('; ');
-  return `Write the family update from the facts above in ${LANGUAGE_NAMES[language]}, in the ${register} register, as the FamilyUpdateDraft schema. Use only the numbers in the facts. For each of these that appears in vendors[].questionIds, use its topic word: ${topics}.`;
+  return `Write the family update from the facts above in ${LANGUAGE_NAMES[language]}, in the ${register} register, as the FamilyUpdateDraft schema. Use only the numbers in the facts. Use every word in mustMention.`;
 }
 
 /**

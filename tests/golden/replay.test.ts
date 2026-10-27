@@ -16,6 +16,7 @@ import { BriefReading } from '@/schemas/readings/brief-reading';
 import { ChangeReading } from '@/schemas/readings/change-reading';
 import { FamilyUpdateDraft } from '@/schemas/readings/family-update-draft';
 import { QuoteReading } from '@/schemas/readings/quote-reading';
+import { knowledge } from '@/server/knowledge/repository';
 import { draftFamilyUpdate } from '@/server/pipeline/draft-family-update';
 import { createExampleBook, RecordingFile } from '@/server/pipeline/example-readings';
 import type { LlmGateway } from '@/server/pipeline/llm-gateway';
@@ -269,6 +270,7 @@ describe('the family-update recording', () => {
     const result = await draftFamilyUpdate(replaying('familyUpdate', reply), {
       facts,
       language: 'hi',
+      questions: knowledge().all().vendorQuestions.questions,
     });
     say(
       result.kind === 'draft'

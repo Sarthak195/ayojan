@@ -31,6 +31,11 @@ describe('a bare number word beside an amount is a range, never one figure (D44)
     ['minus sign', 'do−teen lakh'],
     ['Unicode hyphen', 'do‐teen lakh'],
     ['tilde', 'do~teen lakh'],
+    ['an unread near end', 'pachees-tees hazaar'],
+    ['an unread near end and a blank', 'pachees tees hazaar'],
+    ['an unread Devanagari near end', 'पच्चीस-तीस हज़ार'],
+    ['an unread thirty-five', 'paintees-chalis hazaar'],
+    ['an unread eleven before sau', 'gyarah-bees sau'],
   ])('%s: %s asks how much', (_name, text) => {
     expect(parseAmount(text)).toEqual(SEVERAL);
   });
@@ -50,5 +55,13 @@ describe('a bare number word beside an amount is a range, never one figure (D44)
     expect(parseAmount('do log, teen lakh')).toEqual({ kind: 'amount', inr: 300_000 });
     expect(parseAmount('do din ka function, teen lakh')).toEqual({ kind: 'amount', inr: 300_000 });
     expect(amountsIn('teen lakh, do din')).toEqual([300_000]);
+    // A label before a dash is a list item, not the near end of a range.
+    expect(parseAmount('venue - do lakh')).toEqual({ kind: 'amount', inr: 200_000 });
+  });
+
+  it('never reads an unread number word as a figure', () => {
+    expect(amountsIn('pachees log aayenge')).toEqual([]);
+    expect(amountsIn('budget pachees-tees hazaar')).toEqual([]);
+    expect(parseAmount('pachpan saath hazaar')).toEqual({ kind: 'unclear', reason: 'no-amount' });
   });
 });

@@ -22,6 +22,7 @@ import {
   readWord,
   skipBlanks,
 } from './number-words';
+import { isUnreadNumeral } from './unread-numerals';
 
 export type UnusableReason = 'too-large' | 'fractional' | 'several-amounts';
 
@@ -92,6 +93,24 @@ function wordAt(text: string, start: number): { word: string; end: number } {
   return { word: normalizeWord(text.slice(start, end)), end };
 }
 
+function severalAmounts(start: number, end: number): ScanHit {
+  return { kind: 'unusable', reason: 'several-amounts', start, end };
+}
+
+// A second unit straight after the first ("do sau hazaar", "nabbe crore crore") makes a figure
+// the scanner cannot read; dropping it would report the first unit alone, which the user did
+// not write, so the whole run is several amounts.
+function unitEnded(text: string, start: number, unitEnd: number, hit: ScanHit): Scanned {
+  const after = skipBlanks(text, unitEnd);
+  if (isWordCharacter(text.charCodeAt(after))) {
+    const next = wordAt(text, after);
+    if (lookupUnit(next.word) !== undefined) {
+      return { hit: severalAmounts(start, next.end), next: next.end };
+    }
+  }
+  return { hit, next: unitEnd };
+}
+
 function scanNumeric(text: string, start: number): Scanned {
   const token = readNumber(text, start);
   const attached = isWordCharacter(text.charCodeAt(token.end));
@@ -100,7 +119,12 @@ function scanNumeric(text: string, start: number): Scanned {
     const { word, end } = wordAt(text, unitStart);
     const unit = attached ? lookupAttachedUnit(word) : lookupUnit(word);
     if (unit !== undefined) {
-      return { hit: exactRupees(token.integer, token.fraction, unit, start, end), next: end };
+      return unitEnded(
+        text,
+        start,
+        end,
+        exactRupees(token.integer, token.fraction, unit, start, end),
+      );
     }
   }
   return { hit: exactRupees(token.integer, token.fraction, 1, start, token.end), next: token.end };
@@ -131,7 +155,7 @@ function quartersHit(
   const unit = lookupUnit(word);
   if (unit === undefined) return null;
   // Every unit is divisible by four, so quarters of it are whole rupees.
-  return { hit: exactRupees(String(quarters), '', unit / 4, start, end), next: end };
+  return unitEnded(text, start, end, exactRupees(String(quarters), '', unit / 4, start, end));
 }
 
 function scanHindiWords(text: string, start: number): Scanned {
@@ -143,7 +167,8 @@ function scanHindiWords(text: string, start: number): Scanned {
     return read ?? { ...skip, bare: true };
   }
   const prefix = lookupPrefix(first.word);
-  if (prefix === undefined) return skip;
+  // An unread number word ("pachees") still joins a range like a table word, but is no figure.
+  if (prefix === undefined) return isUnreadNumeral(first.word) ? { ...skip, bare: true } : skip;
   const whole = readWholeAfterPrefix(text, skipBlanks(text, first.end));
   if (whole === null) return skip;
   const quarters = whole.value * 4 + prefix.offsetQuarters;
@@ -151,10 +176,6 @@ function scanHindiWords(text: string, start: number): Scanned {
 }
 
 /** Every amount in `text`, in order, with its position. Unreadable ones are reported as such. */
-function severalAmounts(start: number, end: number): ScanHit {
-  return { kind: 'unusable', reason: 'several-amounts', start, end };
-}
-
 export function scanAmounts(text: string): ScanHit[] {
   const hits: ScanHit[] = [];
   let bareStart = -1;

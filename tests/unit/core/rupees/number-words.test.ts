@@ -86,6 +86,10 @@ describe('sau and the tens join the closed table (D44)', () => {
     ['दो सौ पचास', 'Devanagari'],
     ['bees-tees hazaar', 'a range of tens'],
     ['das hazaar paanch sau', 'two amounts'],
+    ['do sau hazaar', 'a second unit'],
+    ['do sau hazaar log', 'a second unit before a noun'],
+    ['nabbe crore crore', 'a repeated unit'],
+    ['5 lakh crore', 'digits and two units'],
   ])('%s (%s) is several amounts, never one guessed figure', (text) => {
     expect(parseAmount(text)).toEqual({ kind: 'unclear', reason: 'several-amounts' });
   });

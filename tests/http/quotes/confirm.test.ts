@@ -77,7 +77,7 @@ describe('POST /[lang]/confirm for a read quote', () => {
     const withoutCategory = without(CATERER_A_CHECK, 'category');
     const response = await confirmWith(pendingToken, { ...withoutCategory, rateInr: '1100' });
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
     const state = stateOf(tokenOf(response));
     expect(state.ops).toEqual([BRIEF_OP]);
     expect(state.pending?.kind).toBe('quote');
@@ -88,7 +88,7 @@ describe('POST /[lang]/confirm for a read quote', () => {
   it('asks again when the advance is above 100 percent', async () => {
     const pendingToken = await readToken(CATERER_A_READING, CATERER_A_TEXT);
     const response = await confirmWith(pendingToken, { ...CATERER_A_CHECK, advancePercent: '150' });
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
     const advance = stateOf(tokenOf(response)).pending?.fields.find(
       (field) => field.field === 'advancePercent',
     );

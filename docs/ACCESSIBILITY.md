@@ -35,11 +35,12 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - **Language switch.** The other language is a plain link to the same page with the same link
   token ([language-switch.tsx](../src/components/layout/language-switch.tsx)). Each language
   name carries its own `lang` attribute.
-- **Hindi interface.** Every user-facing string exists in English and Hindi. Both are
+- **Hindi interface.** Every interface string exists in English and Hindi. Both are
   typed against the same interface for each area, so a missing Hindi key fails the type check, and the
   planning data (tasks, levers, questions) requires both languages on every label
   ([dictionary.ts](../src/i18n/dictionary.ts),
-  [planning-row.ts](../src/schemas/data/planning-row.ts)).
+  [planning-row.ts](../src/schemas/data/planning-row.ts)). The source notes in the planning
+  data (where a figure came from) are English only.
 - **Hinglish and Devanagari input.** The brief box accepts Hindi, English or Hinglish, and says
   so next to the field. Quotes that the model returns are checked against the user's own words
   and are never translated, so what is shown can still be found in what was typed.
@@ -86,8 +87,8 @@ automated and tool-based, and the gaps section lists what they cannot show.
   section (`#tasks`, `#change-form`, `#quote-form`), and that section opens with a
   `role="status"` sentence saying what happened, such as the new plan version and whether the
   plan is over budget ([status-summary.tsx](../src/components/layout/status-summary.tsx),
-  [see-other.ts](../src/server/http/see-other.ts)). A screen reader announces it without focus
-  moving. The sentence is computed from the plan, so no user text travels in the redirect.
+  [see-other.ts](../src/server/http/see-other.ts)). A screen reader should announce it without
+  focus moving, but that is not heard-tested (see Known gaps). The sentence is computed from the plan, so no user text travels in the redirect.
 - Reload and the back button are safe, because the state is in the link and the POST is
   answered by a redirect.
 

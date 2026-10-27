@@ -110,6 +110,28 @@ describe('POST /[lang]/task', () => {
     expect(days).toContain('required');
   });
 
+  it('names the task inside every Done and Save button, so the 14 of each differ', () => {
+    const html = planHtml(BRIEF_TOKEN, null);
+    const buttons = [...html.matchAll(/<button[^>]*>([\s\S]*?)<\/button>/g)].map(
+      (match) => match[1] ?? '',
+    );
+    for (const label of ['Mark done', 'Save']) {
+      const named = buttons.filter((text) => text.startsWith(label));
+      expect(named.length).toBeGreaterThan(1);
+      for (const text of named) expect(text).toMatch(/<span class="sr-only">: [^<]+<\/span>/);
+      expect(new Set(named.map((text) => text.replace(/<[^>]+>/g, ''))).size).toBe(named.length);
+    }
+  });
+
+  it('links the change box, quotes, trade-offs and messages from the Jump to nav', () => {
+    const html = planHtml(BRIEF_TOKEN, null);
+    const nav = /<nav[^>]*>[\s\S]*?<\/nav>/.exec(html)?.[0] ?? '';
+    expect(nav).toMatch(/href="#change-form"[^>]*>What changed\?/);
+    expect(nav).toContain(`href="/en/p/${BRIEF_TOKEN}/quotes"`);
+    expect(nav).toContain(`href="/en/p/${BRIEF_TOKEN}/revision#levers"`);
+    expect(nav).toContain(`href="/en/p/${BRIEF_TOKEN}/messages"`);
+  });
+
   it.each(['0', '61', '2.5', 'ten'])('refuses a delay of %s days with a 400', async (days) => {
     const response = await send({
       token: BRIEF_TOKEN,

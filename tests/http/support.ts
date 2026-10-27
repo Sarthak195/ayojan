@@ -64,7 +64,7 @@ export function location(response: Response): string {
   return response.headers.get('location') ?? '';
 }
 
-const PLAN_LOCATION = /^\/(?:en|hi)\/p\/([A-Za-z0-9_-]+)(\/check)?$/;
+const PLAN_LOCATION = /^\/(?:en|hi)\/p\/([A-Za-z0-9_-]+)(\/check)?(?:#check-summary)?$/;
 
 /** The token of a 303 to a plan or check page; throws on any other Location. */
 export function tokenOf(response: Response): string {

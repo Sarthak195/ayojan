@@ -90,7 +90,7 @@ describe('POST /[lang]/enter/quote (the quote form twin)', () => {
 
   it('goes to the check page when the advance is above 100 percent', async () => {
     const response = await enterQuote({ ...CATERER_B_FORM, advancePercent: '150' });
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
     const state = stateOf(tokenIn(response));
     expect(state.ops).toHaveLength(1);
     expect(state.pending?.readBy.source).toBe('form');

@@ -40,7 +40,7 @@ function readLine(row: LedgerRow | undefined, lang: Lang): string | null {
     : words.readByAi(readBy.matched, readBy.total);
 }
 
-const SECTIONS = ['money', 'tasks', 'ledger', 'next'] as const;
+const SECTIONS = ['money', 'tasks', 'change-form', 'ledger', 'next'] as const;
 
 /** The plan (spec 6.4): everything on it is derived from the ops in the link. */
 export function PlanPageView({
@@ -64,9 +64,17 @@ export function PlanPageView({
   const jump: Readonly<Record<(typeof SECTIONS)[number], string>> = {
     money: words.moneyHeading,
     tasks: words.tasksHeading,
+    'change-form': dict.change.boxHeading,
     ledger: words.ledgerHeading,
     next: words.nextHeading,
   };
+  // The change box sits below every task form, and the other pages are only linked at the foot,
+  // so the nav reaches both without a long scroll.
+  const pages: readonly (readonly [string, string])[] = [
+    ['quotes', words.quotesLink],
+    ['revision#levers', words.leversLink],
+    ['messages', words.messagesLink],
+  ];
   return (
     <div>
       <h1 className="text-2xl font-bold">
@@ -88,6 +96,11 @@ export function PlanPageView({
         {SECTIONS.map((section) => (
           <a key={section} href={`#${section}`} className="mr-3 inline-flex min-h-11 items-center">
             {jump[section]}
+          </a>
+        ))}
+        {pages.map(([path, label]) => (
+          <a key={path} href={`${base}/${path}`} className="mr-3 inline-flex min-h-11 items-center">
+            {label}
           </a>
         ))}
       </nav>

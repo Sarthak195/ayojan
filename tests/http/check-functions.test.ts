@@ -39,7 +39,7 @@ async function checkPageFor(occasion: string): Promise<{ token: string; html: st
     context({ lang: 'en', kind: 'brief' }),
     deps(),
   );
-  expect(location(response)).toMatch(/\/check$/);
+  expect(location(response)).toMatch(/\/check#check-summary$/);
   const token = tokenOf(response);
   const { pending } = stateOf(token);
   if (pending?.kind !== 'brief') throw new Error('expected a pending brief');

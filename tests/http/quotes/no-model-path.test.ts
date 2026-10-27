@@ -61,7 +61,7 @@ describe('the quote reader when no model call succeeds (FR-40)', () => {
         QUOTE,
         deps,
       );
-      expect(location(response)).toMatch(/\/check$/);
+      expect(location(response)).toMatch(/\/check#check-summary$/);
       expect(gateway.calls).toHaveLength(1);
       const state = stateOf(tokenIn(response));
       expect(state.ops).toEqual([BRIEF_OP]);

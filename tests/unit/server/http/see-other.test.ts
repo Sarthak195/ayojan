@@ -22,7 +22,10 @@ describe('locationOf', () => {
       destination: { to: 'plan', lang: 'hi', token: TOKEN, anchor: 'tasks' },
       location: `/hi/p/${TOKEN}#tasks`,
     },
-    { destination: { to: 'check', lang: 'en', token: TOKEN }, location: `/en/p/${TOKEN}/check` },
+    {
+      destination: { to: 'check', lang: 'en', token: TOKEN },
+      location: `/en/p/${TOKEN}/check#check-summary`,
+    },
     {
       destination: {
         to: 'quotes',
@@ -112,7 +115,7 @@ describe('seeOther', () => {
     const response = seeOther({ to: 'check', lang: 'en', token: TOKEN });
     expect(response.status).toBe(303);
     const location = response.headers.get('location') ?? '';
-    expect(location).toBe(`/en/p/${TOKEN}/check`);
+    expect(location).toBe(`/en/p/${TOKEN}/check#check-summary`);
     expect(location.startsWith('/')).toBe(true);
     expect(location).not.toContain('//');
     expect(location).not.toMatch(/^[a-z]+:/i);

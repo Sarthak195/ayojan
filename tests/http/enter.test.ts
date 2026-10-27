@@ -72,7 +72,7 @@ describe('POST /[lang]/enter/brief', () => {
   it('sends a value that needs a question to the check page, marked "Entered by form"', async () => {
     const response = await enterBrief({ ...HINGLISH_FORM, budget: '4999' });
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
     const state = stateOf(tokenOf(response));
     expect(state.ops).toEqual([]);
     const { pending } = state;

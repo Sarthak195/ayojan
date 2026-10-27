@@ -74,7 +74,9 @@ export function CheckView({
   const questions = openQuestions(pending, today, weights);
   return (
     <div>
-      <h1 className="text-2xl font-bold">{words.title}</h1>
+      <h1 id="check-summary" tabIndex={-1} className="text-2xl font-bold">
+        {words.title}
+      </h1>
       <ReadSource readBy={readBy} label={sourceLabel(readBy, recordedOn, lang)} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{words.matched(readBy.matched, readBy.total)}</p>

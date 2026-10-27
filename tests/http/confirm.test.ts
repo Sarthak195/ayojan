@@ -56,7 +56,7 @@ describe('POST /[lang]/confirm', () => {
     const token = await readToken();
     const response = await confirmWith(token, { ...HINGLISH_ANSWERS, eventDate: '' });
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
     const state = stateOf(tokenOf(response));
     expect(state.ops).toEqual([]);
     expect(state.pending?.kind).toBe('brief');
@@ -79,7 +79,7 @@ describe('POST /[lang]/confirm', () => {
       eventDate: '2026-10-01',
     });
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/\/check$/);
+    expect(location(response)).toMatch(/\/check#check-summary$/);
   });
 
   it('cancels a first brief back to the start page', async () => {

@@ -38,7 +38,7 @@ describe('POST /[lang]/read/quote', () => {
     );
 
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    expect(location(response)).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check#check-summary$/);
     expect(gateway.calls).toHaveLength(1);
     const state = stateOf(tokenOf(response));
     // A read appends nothing (NFR-ALN-7): the brief is still the only op.
@@ -79,7 +79,7 @@ describe('POST /[lang]/read/quote', () => {
     const target = response === undefined ? '' : location(response);
     // The sealed token is random base64url, so it can spell a short word like "gst" by chance;
     // the shape check proves it is the only variable part, and the words are sought elsewhere.
-    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check#check-summary$/);
     const fixedParts = target.replace(/\/p\/[A-Za-z0-9_-]+\//, '/p/<token>/');
     // Only the structured log lines: the test runner may write its own output meanwhile.
     const logLines = stdout.split('\n').filter((line) => line.startsWith('{"severity"'));

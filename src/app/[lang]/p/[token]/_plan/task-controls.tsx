@@ -35,6 +35,8 @@ export function TaskControls({
   const dict = dictionaryFor(lang);
   const words = dict.tasks;
   const name = <span className="sr-only">{task[lang]}: </span>;
+  // The buttons repeat for every task, so each name carries the task to tell them apart.
+  const forTask = <span className="sr-only">: {task[lang]}</span>;
   const describedBy = taskNameId(task);
   const daysId = `task-${task.id}-days`;
   return (
@@ -45,13 +47,14 @@ export function TaskControls({
         {task.books === null ? (
           <SubmitButton variant="secondary" describedBy={describedBy}>
             {words.markDone}
+            {forTask}
           </SubmitButton>
         ) : (
           <details className={DISCLOSURE_GROUP}>
             <summary className={BUTTON_SUMMARY}>
               {words.markDone}
               <DisclosureMarker />
-              <span className="sr-only">: {task[lang]}</span>
+              {forTask}
             </summary>
             <TextField
               name="amountInr"
@@ -83,7 +86,10 @@ export function TaskControls({
                 hint={words.capacityHint}
               />
             ) : null}
-            <SubmitButton describedBy={describedBy}>{words.markDone}</SubmitButton>
+            <SubmitButton describedBy={describedBy}>
+              {words.markDone}
+              {forTask}
+            </SubmitButton>
           </details>
         )}
       </PostForm>
@@ -111,6 +117,7 @@ export function TaskControls({
           </div>
           <SubmitButton variant="secondary" describedBy={describedBy}>
             {words.save}
+            {forTask}
           </SubmitButton>
         </div>
         <p id={`${daysId}-hint`} className="mt-1 text-sm text-muted">

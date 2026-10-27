@@ -12,7 +12,7 @@ import { LeverId } from '@/schemas/generated/ids';
 export type Lang = 'en' | 'hi';
 export type PlanPage = 'plan' | 'check' | 'quotes' | 'revision' | 'messages';
 /** Sections a 303 lands on, so focus context survives the round trip (arch 8). */
-export type Anchor = 'tasks' | 'change-form' | 'quote-form';
+export type Anchor = 'tasks' | 'change-form' | 'quote-form' | 'check-summary';
 /** Why the AI reader was unavailable; the banner on the form names it (D18). */
 export type UnavailableReason = 'quota' | 'timeout' | 'nokey';
 
@@ -42,7 +42,7 @@ const PLAN_SUFFIX: Readonly<Record<PlanPage, string>> = {
   revision: '/revision',
   messages: '/messages',
 };
-const ANCHORS: readonly Anchor[] = ['tasks', 'change-form', 'quote-form'];
+const ANCHORS: readonly Anchor[] = ['tasks', 'change-form', 'quote-form', 'check-summary'];
 const REASONS: readonly UnavailableReason[] = ['quota', 'timeout', 'nokey'];
 const PAGES: readonly PlanPage[] = ['plan', 'check', 'quotes', 'revision', 'messages'];
 // Matches the token codec's own refusal, so only something it could decode is ever echoed.
@@ -86,9 +86,10 @@ export function locationOf(destination: Destination): string {
     if (!TOKEN_SHAPE.test(destination.token)) throw new UnsafeLocationError('Not a token.');
     const suffix = PLAN_SUFFIX[oneOf(destination.to, PAGES, 'page')];
     path += `/p/${destination.token}${suffix}`;
-    if (destination.anchor !== undefined) {
-      anchor = `#${oneOf(destination.anchor, ANCHORS, 'section')}`;
-    }
+    // A reading always lands on the check page's heading, so a keyboard or screen reader user
+    // starts at what was read instead of at the top of the page.
+    const target = destination.anchor ?? (destination.to === 'check' ? 'check-summary' : undefined);
+    if (target !== undefined) anchor = `#${oneOf(target, ANCHORS, 'section')}`;
   }
   const location = `${path}${query(destination)}${anchor}`;
   if (!LOCATION_SHAPE.test(location)) throw new UnsafeLocationError('Unexpected location shape.');

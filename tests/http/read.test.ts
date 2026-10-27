@@ -21,7 +21,7 @@ describe('POST /[lang]/read/brief', () => {
     const response = await read(post('/en/read/brief', { brief: HINGLISH_TEXT }), BRIEF, deps);
 
     expect(response.status).toBe(303);
-    expect(location(response)).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    expect(location(response)).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check#check-summary$/);
     expect(gateway.calls).toHaveLength(1);
 
     const state = stateOf(tokenOf(response));
@@ -40,7 +40,7 @@ describe('POST /[lang]/read/brief', () => {
     const target = location(response);
     // The sealed token is random base64url and can spell a short word by chance, so the shape
     // check proves it is the only variable part and the words are sought in the rest.
-    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check$/);
+    expect(target).toMatch(/^\/en\/p\/[A-Za-z0-9_-]+\/check#check-summary$/);
     const fixedParts = target.replace(/\/p\/[A-Za-z0-9_-]+\//, '/p/<token>/');
     for (const word of ['shaadi', 'lakh', 'Indore', 'budget', '200', 'Dhol']) {
       expect(fixedParts.toLowerCase()).not.toContain(word.toLowerCase());
@@ -54,7 +54,7 @@ describe('POST /[lang]/read/brief', () => {
       context({ lang: 'hi', kind: 'brief' }),
       deps,
     );
-    expect(location(response)).toMatch(/^\/hi\/p\/[A-Za-z0-9_-]+\/check$/);
+    expect(location(response)).toMatch(/^\/hi\/p\/[A-Za-z0-9_-]+\/check#check-summary$/);
   });
 
   it.each([

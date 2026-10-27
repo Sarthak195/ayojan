@@ -53,6 +53,12 @@ describe('GET /[lang]/p/[token]/check', () => {
     expect(gateway.calls).toHaveLength(1);
   });
 
+  it('makes the heading the target of the redirect fragment, so focus starts on it', async () => {
+    const { token } = await readSample();
+    const html = await checkHtml(token);
+    expect(/<h1[^>]*>/.exec(html)?.[0]).toMatch(/id="check-summary"[^>]*tabindex="-1"/);
+  });
+
   it('shows each value beside its highlighted quote, the count and the source', async () => {
     const { token } = await readSample();
     const html = await checkHtml(token);

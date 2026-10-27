@@ -2,8 +2,8 @@
 // Hindi number words of D34 and D44 (ek to das, the tens bees to nabbe, dedh, dhai, sava,
 // saadhe, paune). It is a fixed table on purpose. A word outside it, such as English "eight"
 // or Hindi "pachpan", is left unread so the user is asked instead of the scanner guessing a
-// figure. A number word counts only with a unit after it, so "ke saath" (with) and English
-// "do" stay ordinary words.
+// figure. A number word counts only with a unit after it, so English "do" stays an ordinary
+// word; Latin "saath" is not in the table at all (see the tens below).
 
 const DEVANAGARI_START = 0x0900;
 const DEVANAGARI_MARKS_END = 0x0963;
@@ -104,7 +104,9 @@ const NUMERALS = table<number>([
   [['tees', 'tis', 'तीस'], 30],
   [['chalis', 'chaalis', 'chalees', 'chaalees', 'चालीस'], 40],
   [['pachaas', 'pachas', 'पचास'], 50],
-  [['saath', 'sath', 'साठ'], 60],
+  // Latin "saath" is both 60 and a common spelling of saat (7), and also means "with", so
+  // only the unambiguous Devanagari is read; the Latin word is asked.
+  [['साठ'], 60],
   [['sattar', 'सत्तर'], 70],
   [['assi', 'assee', 'अस्सी'], 80],
   [['nabbe', 'nabbey', 'नब्बे'], 90],

@@ -22,8 +22,6 @@ describe('sau and the tens join the closed table (D44)', () => {
     ['pachaas hazaar', 50_000],
     ['pachas hazaar', 50_000],
     ['पचास हज़ार', 50_000],
-    ['saath hazaar', 60_000],
-    ['sath hazaar', 60_000],
     ['साठ हजार', 60_000],
     ['sattar hazaar', 70_000],
     ['सत्तर हजार', 70_000],
@@ -69,6 +67,16 @@ describe('sau and the tens join the closed table (D44)', () => {
   it('leaves a word outside the table unread', () => {
     expect(amountOf('pachpan hazaar')).toBe('unclear');
     expect(amountOf('fifty thousand')).toBe('unclear');
+  });
+
+  // Latin "saath" may be 60 or 7 (saat) and also means "with"; only Devanagari 60 is read.
+  it('asks about Latin saath instead of reading it as 60', () => {
+    expect(amountOf('saath hazaar')).toBe('unclear');
+    expect(amountOf('sath hazaar')).toBe('unclear');
+    expect(amountOf('saath lakh')).toBe('unclear');
+    expect(amountOf('papa ke saath do lakh')).toBe(200_000);
+    expect(amountOf('ke sath do lakh')).toBe(200_000);
+    expect(amountOf('ke saath do sau log')).toBe(200);
   });
 
   it.each([

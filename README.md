@@ -124,10 +124,10 @@ The canonical account is [`docs/GENAI_SERVICES.md`](docs/GENAI_SERVICES.md). If 
 **The ladder** ([`src/server/genai/gateway.ts`](src/server/genai/gateway.ts)). One action has a 40 second budget, against a 60 second Cloud Run timeout:
 
 1. `gemini-3.5-flash-lite`, 20 s
-2. `gemini-3.1-flash-lite`, 12 s
+2. `gemini-3.1-flash-lite`, 18 s
 3. `gemini-3.5-flash`, only if at least 15 s of the budget remain
 
-A call is not started with less than 6 s left. The gateway tries the configured keys in turn, cools a key or a model after a rate-limit, auth or overload error, and keeps an in-memory cache of readings so a repeat costs no call (shown as "read by AI (cached)"). An example text falls back to its committed recording when its share of quota runs low, and is labelled as a recording.
+A call is not started with less than 6 s left, so if the first two run to their timeouts the third is skipped and a read ends at 38 s. The gateway tries the configured keys in turn, cools a key or a model after a rate-limit, auth or overload error, and keeps an in-memory cache of readings so a repeat costs no call (shown as "read by AI (cached)"). An example text falls back to its committed recording when its share of quota runs low, and is labelled as a recording.
 
 **Considered and rejected.**
 
@@ -302,7 +302,7 @@ node scripts/measure-pages.mjs http://127.0.0.1:3600
 - The plan page takes the time of one decrypt and one fold. The link holds the whole plan, so no request waits on a database.
 - One read of a Hinglish brief on the live app took 5.2 s and matched 5 of 5 values. That is a single observation, not a benchmark. The live app answered page requests in about 100 to 150 ms to first byte from the author's machine on 26 Oct 2026, over the author's own network.
 - A model action has a 40 s budget and starts no call with under 6 s left, so a slow model cannot hold a request for the full Cloud Run timeout.
-- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; from the next deploy (D46) the service runs on one Gemini key and one instance, which spends at most 60 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
+- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; since revisions `ayojan-00006-nhx` (one instance) and `ayojan-00008-mr7` (one key) the service runs on one Gemini key and one instance (D46), which spends at most 60 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
 
 ### Live site: Lighthouse, headers and model calls
 

@@ -62,7 +62,7 @@ export interface LeverNow {
 export function leverOptions(
   context: LeverContext,
   projection: Projection,
-  now: LeverNow = { gapInr: projection.gap.inr, chosen: [] },
+  now: LeverNow,
 ): BudgetResult<readonly LeverOption[]> {
   if (projection.status === 'within-budget') return succeed([]);
   const options: LeverOption[] = [];

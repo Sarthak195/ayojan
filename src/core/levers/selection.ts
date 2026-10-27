@@ -85,10 +85,16 @@ export function previewSelection(input: SelectionInput): SelectionResult {
   const plain: ProjectionInput = { ...input.base, evidence: withoutLevers(input.base.evidence) };
   const baseline = projectSpend(plain);
   if (!baseline.ok) return refuse({ kind: 'budget', reason: baseline.reason });
-  const options = leverOptions(input, baseline.value);
+  const chosen = new Set(input.selected);
+  const application = applyLevers({ base: plain, levers: input.levers, selected: [...chosen] });
+  if (!application.ok) return refuse({ kind: 'budget', reason: application.reason });
+  // The raise is priced on the gap left once the selection is in, as the plan page prices it.
+  const options = leverOptions(input, baseline.value, {
+    gapInr: application.value.projection.gap.inr,
+    chosen: [...chosen],
+  });
   if (!options.ok) return refuse({ kind: 'budget', reason: options.reason });
   const showAnyway = new Set(input.showAnyway);
-  const chosen = new Set(input.selected);
   for (const id of chosen) {
     if (!input.levers.some((row) => row.id === id)) return refuse({ kind: 'unknown-lever', id });
     const refusal = checkOne(
@@ -98,8 +104,6 @@ export function previewSelection(input: SelectionInput): SelectionResult {
     );
     if (refusal !== null) return refuse(refusal);
   }
-  const application = applyLevers({ base: plain, levers: input.levers, selected: [...chosen] });
-  if (!application.ok) return refuse({ kind: 'budget', reason: application.reason });
   const { projection } = application.value;
   const onOffer = options.value.filter(
     (option) => option.status === 'offered' && option.effect !== 'raiseBudget',

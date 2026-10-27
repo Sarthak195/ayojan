@@ -8,6 +8,7 @@ import { LeverSection, selectionOf } from '@/app/[lang]/p/[token]/revision/_leve
 import type { Op } from '@/schemas/plan/op';
 import { openPlan } from '@/server/view/plan-page';
 
+import { FORM_READ } from '../../fixtures/plan-readings';
 import { context, DATA, deps, location, post, sources, TODAY, type Fields } from '../support';
 import {
   BRIEF_TOKEN,
@@ -15,6 +16,7 @@ import {
   OVER_BUDGET_OPS,
   OVER_BUDGET_TOKEN,
   planLocation,
+  tokenFor,
 } from './actions-support';
 
 const EN = context({ lang: 'en' });
@@ -178,6 +180,31 @@ describe('POST /[lang]/levers intent=apply', () => {
     expect(lastOp(response)).toEqual({
       kind: 'leversApplied',
       leverIds: all,
+      raiseBudgetInr: null,
+    });
+  });
+
+  it('keeps the other ticks of a stale form whose raise went away once the gap closed', async () => {
+    // Budget Rs 9,00,000: the plan is over by Rs 57,000 until these two cuts bring it under.
+    const raised: Op = {
+      kind: 'changeConfirmed',
+      guests: null,
+      budgetInr: 900_000,
+      eventDate: null,
+      reallocate: null,
+      priorities: null,
+      sources: [],
+      readBy: FORM_READ,
+    };
+    const start = tokenFor([...OVER_BUDGET_OPS, raised]);
+    const first = await send({ token: start, intent: 'apply', lever: BOTH });
+    const { token } = planLocation(first);
+    expect(sectionHtml(token)).not.toContain('value="raise-budget"');
+    const second = await send({ token, intent: 'apply', lever: ['simpler-decor', 'raise-budget'] });
+    expect(second.status).toBe(303);
+    expect(lastOp(second)).toEqual({
+      kind: 'leversApplied',
+      leverIds: ['simpler-decor'],
       raiseBudgetInr: null,
     });
   });

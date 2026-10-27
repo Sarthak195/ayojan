@@ -50,6 +50,9 @@ export function checkTicked(
   for (const id of ticked) {
     if (isChosen(current, id)) continue;
     const option = current.money.options.find((each) => each.id === id);
+    // The raise drops off the list once the levers in force close the gap; a stale form that
+    // still ticks it keeps its other ticks, and candidateOp prices no raise on a closed gap.
+    if (option === undefined && id === RAISE_BUDGET_ID) continue;
     if (option === undefined || option.status === 'disabled') return { ok: false };
     if (option.status === 'not-applicable') return { ok: false };
     if (option.status === 'refused' && !(option.showAnywayAllowed && showAnyway.includes(id))) {

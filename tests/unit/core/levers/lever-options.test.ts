@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { leverOptions } from '@/core/levers/lever-options';
+import { leverOptions, type LeverNow } from '@/core/levers/lever-options';
 import type { LeverOption as Option } from '@/core/levers/lever-types';
 import { projectSpend } from '@/core/budget/projection';
 import type { ProjectionInput } from '@/core/budget/projection';
@@ -11,7 +11,7 @@ import { afterTheChange, context, leverRows, overBudget } from './lever-data';
 function optionsFor(input: ProjectionInput, forContext = context()): ReadonlyMap<string, Option> {
   const view = projectSpend(input);
   if (!view.ok) throw new Error(view.reason);
-  const options = leverOptions(forContext, view.value);
+  const options = leverOptions(forContext, view.value, { gapInr: view.value.gap.inr, chosen: [] });
   if (!options.ok) throw new Error(options.reason);
   return new Map(options.value.map((option) => [option.id, option]));
 }
@@ -188,7 +188,10 @@ describe('leverOptions edge cases', () => {
     const view = projectSpend(overBudget());
     if (!view.ok) throw new Error(view.reason);
     const before = JSON.stringify(view.value);
-    expect(leverOptions(context(), view.value)).toEqual(leverOptions(context(), view.value));
+    const now = { gapInr: view.value.gap.inr, chosen: [] };
+    expect(leverOptions(context(), view.value, now)).toEqual(
+      leverOptions(context(), view.value, now),
+    );
     expect(JSON.stringify(view.value)).toBe(before);
   });
 
@@ -203,7 +206,7 @@ describe('leverOptions edge cases', () => {
 describe('raising the budget after levers already in force', () => {
   const view = projectSpend(overBudget());
   if (!view.ok) throw new Error(view.reason);
-  const ids = (now: Parameters<typeof leverOptions>[2]): readonly Option[] => {
+  const ids = (now: LeverNow): readonly Option[] => {
     const options = leverOptions(context(['dhol']), view.value, now);
     if (!options.ok) throw new Error(options.reason);
     return options.value;
@@ -231,7 +234,9 @@ describe('raising the budget after levers already in force', () => {
   });
 
   it('leaves every other lever measured on the plan before the levers', () => {
-    const before = ids(undefined).filter((option) => option.id !== 'raise-budget');
+    const before = ids({ gapInr: view.value.gap.inr, chosen: [] }).filter(
+      (option) => option.id !== 'raise-budget',
+    );
     expect(ids({ gapInr: -220, chosen: [] })).toEqual(before);
   });
 });

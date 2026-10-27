@@ -92,7 +92,7 @@ reasons behind the larger choices are in the [decision records](adr).
 | D32 | The revision page compares the latest change with the version just before it, while the lever section always works on the current plan.                                                                                            | `src/core/plan/plan-version.ts`, `src/core/plan/diff.ts`                    |
 | D33 | The golden recorder keeps model calls few: it records the family-update draft in one language only, Hindi.                                                                                                                         | `scripts/record-golden.ts`                                                  |
 | D34 | Hindi number words (ek to das, dedh, dhai, sava and so on), in Latin and Devanagari script, are parsed when a unit (hazaar, lakh, crore) follows; English number words are not.                                                    | `src/core/rupees/number-words.ts`                                           |
-| D35 | A narrow table stays a table inside a focusable, labelled scroll region, and the section a post lands on opens with a status line saying what changed.                                                                             | `src/components/table/scroll-table.tsx`                                     |
+| D35 | A narrow table stays a table inside a focusable, labelled scroll region, and a post lands on its section, and a status line near the top of the page says what changed.                                                            | `src/components/table/scroll-table.tsx`                                     |
 | D36 | A quote longer than 160 characters makes that one field unverified (`quote-too-long`) and the reading continues; it is not a failed reply.                                                                                         | `src/core/grounding/quote-match.ts`                                         |
 | D37 | A data row's `basis` is the author's stated assumption, and no source, survey or link is named as where a figure came from.                                                                                                        | `src/schemas/data/planning-row.ts`                                          |
 | D38 | The start page speaks of "your event" with an occasion picker, and each occasion maps to exactly one budget profile in `data/budget-weights.yaml`.                                                                                 | `src/schemas/data/budget-weights.ts`                                        |
@@ -111,6 +111,11 @@ reasons behind the larger choices are in the [decision records](adr).
 
 - `G1` to `G4` are the four model calls: G1 reads a brief, G2 reads a vendor quote, G3 reads a
   change message and G4 drafts the family update. See [GENAI_SERVICES.md](GENAI_SERVICES.md).
+- "arch n" is short for "architecture n" (see the table below), for example "arch 8" is the
+  anchors a redirect lands on, described in [ACCESSIBILITY.md](ACCESSIBILITY.md).
+- "spec section 7" (older comments) is the rule that every rupee figure carries a provenance
+  label and that money follows the guest count by fixed rules; read
+  [ADR 0001](adr/0001-pure-core.md) and [ADR 0003](adr/0003-planning-knowledge-as-data.md).
 - `C4` to `C8` and "spec n" or "spec n.n" (for example "spec 6.5") name capabilities and sections of a
   product specification that is not published. What each one does is described in the [README](../README.md).
 

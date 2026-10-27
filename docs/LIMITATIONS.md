@@ -165,6 +165,16 @@ and a brief's budget, guest count and venue capacity must be the only amount in 
 - **Dates are Indian dates.** Statuses are worked out against today's date in India when a page
   is opened, so a plan link opened a month later shows tasks as later, not as they were.
 
+### A vendor cancels or a task reopens
+
+A plan only moves forward. There is no step for a vendor that cancels after a booking, and none
+for a task marked done that has to be reopened: a booked category stays booked at its amount and a
+done task stays done (marking it done again keeps the later date). The way back is "Undo last
+step", which drops only the newest step, or starting a new plan. A family whose venue falls through
+has to undo back to before the booking or begin again. This is a known limit of a plan that is a
+fold of confirmed steps ([ADR 0005](adr/0005-sealed-state-in-the-link.md)); a cancel step would
+need rules for the quotes, the dependants and the Kept list, and is not built.
+
 ## Hard limits in the code
 
 A step that would cross one of these is refused with a plain page and the plan is unchanged. A

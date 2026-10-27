@@ -1,4 +1,4 @@
-// How a category's money follows the guest count (architecture 4.2, spec section 7):
+// How a category's money follows the guest count (architecture 4.2, ADR 0003):
 //   alloc + roundHalfUp(alloc x share x (guests_now - guests_at_split) / (100 x guests_at_split))
 // `share` is the data's percent, so 100 grows the category fully with guests and 0 not at all.
 

@@ -1,5 +1,5 @@
 // The projected cost per category, the total, and the gap against the current budget
-// (architecture 4.2, spec section 7). One rule, in this order, per category:
+// (architecture 4.2, ADR 0003). One rule, in this order, per category:
 //   a lever-adjusted amount, else the booked amount, else the cheapest comparable quote
 //   total, else the allocation scaled for the guest count.
 // The allocation is the frozen one plus any Move-money delta, and the gap uses the budget as

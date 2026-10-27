@@ -97,11 +97,14 @@ automated and tool-based, and the gaps section lists what they cannot show.
 ### Announcements after a submit
 
 - Every step is a form POST that answers a 303 redirect. The redirect lands on the changed
-  section (`#tasks`, `#change-form`, `#quote-form`), and that section opens with a
-  `role="status"` sentence saying what happened, such as the new plan version and whether the
-  plan is over budget ([status-summary.tsx](../src/components/layout/status-summary.tsx),
-  [see-other.ts](../src/server/http/see-other.ts)). A screen reader should announce it without
-  focus moving, but that is not heard-tested (see Known gaps). The sentence is computed from the plan, so no user text travels in the redirect.
+  section (`#tasks`, `#change-form`, `#quote-form`, or `#check-summary` on a check page;
+  [see-other.ts](../src/server/http/see-other.ts)). The `role="status"` sentence saying what
+  happened, such as the new plan version and whether the plan is over budget, is not at that
+  anchor: it renders near the top of the page, under the heading
+  ([status-summary.tsx](../src/components/layout/status-summary.tsx)). So the page opens with
+  the status and the anchor moves the view to the section that changed. Because the page is
+  freshly loaded, whether a screen reader reads the status aloud is not guaranteed and is not
+  heard-tested (see Known gaps). The sentence is computed from the plan, so no user text travels in the redirect.
 - Reload and the back button are safe, because the state is in the link and the POST is
   answered by a redirect.
 

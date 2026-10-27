@@ -1,5 +1,5 @@
 // Every rupee figure the app shows is a Money, so a figure without a provenance label
-// cannot type-check (spec section 7). Amounts are whole rupees: paise never enter the
+// cannot type-check (ADR 0001). Amounts are whole rupees: paise never enter the
 // plan, which keeps every sum exact and every golden file stable.
 
 export type Provenance = 'your-number' | 'your-split' | 'from-quote' | 'computed' | 'assumption';

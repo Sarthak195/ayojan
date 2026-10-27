@@ -60,6 +60,8 @@ export interface PlanHeadline {
   /** Projected minus budget: positive is over budget. */
   readonly gap: Money;
   readonly status: HeadlineStatus;
+  /** Whether any category has a comparable quote or booking; false means the total is only the split. */
+  readonly priced: boolean;
 }
 
 export interface PlanMoney {
@@ -199,6 +201,7 @@ export function planVersion(
       // A guest increase or a budget cut can push the split past the budget before any pricing,
       // so an overshoot is never hidden.
       status: !priced && projection.status === 'within-budget' ? 'not-priced' : projection.status,
+      priced,
     },
     money: {
       input,

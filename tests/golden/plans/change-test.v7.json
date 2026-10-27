@@ -58,7 +58,8 @@
         "inr": -15600,
         "provenance": "computed"
       },
-      "status": "within-budget"
+      "status": "within-budget",
+      "priced": true
     },
     "money": {
       "input": {

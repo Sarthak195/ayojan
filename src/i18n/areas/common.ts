@@ -90,7 +90,7 @@ export const en: CommonDictionary = {
   privacyHint:
     "Gemini's free tier may use what you send to improve Google's products, so leave out names and phone numbers.",
   optional: '(optional)',
-  scrollTableHint: 'Scroll sideways to see the whole table.',
+  scrollTableHint: 'If the table is cut off, scroll sideways to see the rest.',
 };
 
 export const hi: CommonDictionary = {
@@ -136,5 +136,5 @@ export const hi: CommonDictionary = {
   privacyHint:
     'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर बनाने के लिए इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न डालें।',
   optional: '(वैकल्पिक)',
-  scrollTableHint: 'पूरी तालिका देखने के लिए बाएँ-दाएँ स्क्रॉल करें।',
+  scrollTableHint: 'तालिका कटी दिखे तो बाक़ी देखने के लिए बाएँ-दाएँ स्क्रॉल करें।',
 };

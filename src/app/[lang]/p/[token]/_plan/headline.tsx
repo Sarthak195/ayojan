@@ -53,8 +53,9 @@ export function Headline({
               ? `${countWords(venue.capacity)} (${words.venueFromBooking})`
               : countWords(venue.capacity)}
         </Row>
-        {/* With nothing priced the total is only the user's own split, so it is not called a cost. */}
-        <Row term={unpriced ? words.splitTotal : words.projected}>
+        {/* With nothing priced the total is only the user's own split, so it is not called a cost, even
+           when a change has pushed it over budget. */}
+        <Row term={headline.priced ? words.projected : words.splitTotal}>
           <Amount money={headline.projected} lang={lang} />
         </Row>
         {/* Rs 0 left would read as a verdict the status below says is unknown. */}

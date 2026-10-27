@@ -89,30 +89,26 @@ main:focus {
 }
 
 /* Narrow tables stay tables and scroll inside their region (D35); the region itself takes focus.
-   The shadows need no script: the "local" gradients are opaque covers that scroll with the
-   content and hide the fixed shadows once an edge is reached, so a shadow shows only on the side
-   that still has columns to reveal. Both colours come from theme variables, so dark mode works. */
+   The right-edge shadow needs no script: the "local" gradients are opaque covers that scroll with
+   the content and hide the fixed shadow once the end is reached, so it shows only while there is
+   more to scroll. The pinned label column always carries a small shadow of its own, because the
+   region's background would sit under that opaque cell. Colours come from theme variables, so
+   dark mode works. */
 .table-scroll {
   --edge: color-mix(in srgb, var(--foreground) 30%, transparent);
   overflow-x: auto;
   background-color: var(--background);
   background-image:
-    linear-gradient(to right, var(--background) 30%, transparent),
     linear-gradient(to left, var(--background) 30%, transparent),
-    radial-gradient(farthest-side at 0 50%, var(--edge), transparent),
     radial-gradient(farthest-side at 100% 50%, var(--edge), transparent);
   background-position:
-    left center,
     right center,
-    left center,
     right center;
   background-size:
     2rem 100%,
-    2rem 100%,
-    0.75rem 100%,
     0.75rem 100%;
   background-repeat: no-repeat;
-  background-attachment: local, local, scroll, scroll;
+  background-attachment: local, scroll;
 }
 
 /* The row label stays in view while the figures scroll under it. The cell needs its own opaque
@@ -123,17 +119,22 @@ main:focus {
   left: 0;
   z-index: 1;
   background-color: var(--background);
-  box-shadow: inset -1px 0 0 var(--line);
+  box-shadow:
+    inset -1px 0 0 var(--line),
+    6px 0 6px -6px var(--edge);
 }
 
 .table-scroll thead tr > :first-child {
   background-color: var(--surface);
 }
 
-/* A long label would take most of a 360 px screen and leave no room for the figures. */
+/* A long label would take most of a 360 px screen and leave no room for the figures. Table cells
+   ignore max-width in auto layout, so the width is set and long words may break instead. */
 @media (max-width: 40rem) {
   .table-scroll tr > :first-child {
-    max-width: 8.5rem;
+    width: 8.5rem;
+    min-width: 6rem;
+    overflow-wrap: anywhere;
   }
 }
 

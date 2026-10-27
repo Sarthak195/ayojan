@@ -58,7 +58,8 @@
         "inr": 0,
         "provenance": "computed"
       },
-      "status": "not-priced"
+      "status": "not-priced",
+      "priced": false
     },
     "money": {
       "input": {

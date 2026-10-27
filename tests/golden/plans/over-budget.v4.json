@@ -58,7 +58,8 @@
         "inr": 157000,
         "provenance": "computed"
       },
-      "status": "over-budget"
+      "status": "over-budget",
+      "priced": true
     },
     "money": {
       "input": {

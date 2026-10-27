@@ -90,10 +90,10 @@ describe('MoneyTable', () => {
 
   it('says in words that the table scrolls sideways, on narrow screens only', () => {
     expect(out).toMatch(
-      /<p class="[^"]*sm:hidden[^"]*"[^>]*>.*Scroll sideways to see the whole table\./,
+      /<p class="[^"]*sm:hidden[^"]*"[^>]*>.*If the table is cut off, scroll sideways to see the rest\./,
     );
     // The hint sits before the region, so the region's accessible name stays the caption.
-    expect(out.indexOf('Scroll sideways')).toBeLessThan(out.indexOf('role="region"'));
+    expect(out.indexOf('If the table is cut off')).toBeLessThan(out.indexOf('role="region"'));
     expect(out).toMatch(/<span aria-hidden="true">↔ <\/span>/);
   });
 
@@ -101,8 +101,8 @@ describe('MoneyTable', () => {
     const hindi = html(
       createElement(MoneyTable, { id: 'k', lang: 'hi', caption: 'c', columns: ['a'], rows: [] }),
     );
-    expect(hindi).toContain('पूरी तालिका देखने के लिए बाएँ-दाएँ स्क्रॉल करें।');
-    expect(hindi).not.toContain('Scroll sideways');
+    expect(hindi).toContain('तालिका कटी दिखे तो बाक़ी देखने के लिए बाएँ-दाएँ स्क्रॉल करें।');
+    expect(hindi).not.toContain('scroll sideways');
   });
 
   it('marks the region for the scroll-shadow and sticky-column styles', () => {

@@ -1,11 +1,13 @@
 import type { ReactElement } from 'react';
 
 /**
- * Class names for a `<summary>` that must read as clickable. The default marker is gone because
- * the summaries are inline-flex (a 44 px target), so each style brings its own marker. The
+ * Class names for a `<summary>` that must read as clickable. The native marker is hidden
+ * (inline-flex removes it in Chrome and Firefox; the WebKit pseudo-element needs its own rule),
+ * so each style brings its own. The
  * focus ring comes from the global :focus-visible rule.
  */
-const BASE = 'inline-flex min-h-11 cursor-pointer items-center gap-2';
+const BASE =
+  'inline-flex min-h-11 cursor-pointer items-center gap-2 list-none [&::-webkit-details-marker]:hidden';
 
 /** The same outline as the secondary buttons beside it, so a disclosure reads as a button. */
 export const BUTTON_SUMMARY = `${BASE} min-w-11 justify-center rounded border border-foreground bg-background px-4 font-semibold text-foreground`;

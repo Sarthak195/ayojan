@@ -122,7 +122,7 @@ describe('headline status words and row', () => {
     const headline = versionOf([briefOp(), EXPLAINER_CHANGE]).headline;
     const html = renderToStaticMarkup(createElement(Headline, { headline, lang: 'en' }));
     expect(html).toContain('Over budget by:');
-    expect(html).toContain('Projected cost:');
+    expect(html).toContain('Your split adds up to:');
   });
 
   it('keeps Within budget and the check icon once priced', () => {

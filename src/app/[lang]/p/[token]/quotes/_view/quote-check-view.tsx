@@ -113,7 +113,9 @@ export function QuoteCheckView({
         : words.addAs(quoteLabel({ category: values.category, id: slot }, lang));
   return (
     <div>
-      <h1 className="text-2xl font-bold">{dict.check.title}</h1>
+      <h1 id="check-summary" tabIndex={-1} className="text-2xl font-bold">
+        {dict.check.title}
+      </h1>
       <ReadSource readBy={readBy} label={source} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{dict.check.matched(readBy.matched, readBy.total)}</p>

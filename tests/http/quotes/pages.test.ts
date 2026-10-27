@@ -146,6 +146,8 @@ describe('GET /[lang]/p/[token]/check for a quote', () => {
   it('shows each value beside the vendor words and offers "Add as Caterer A"', async () => {
     const html = await checkHtml(CATERER_A_READING, CATERER_A_TEXT);
     expect(html.match(/<h1/g)).toHaveLength(1);
+    // The 303 fragment lands on the heading, so focus starts on the summary.
+    expect(/<h1[^>]*>/.exec(html)?.[0]).toMatch(/id="check-summary"[^>]*tabindex="-1"/);
     expect(html).toContain('Read by AI');
     expect(html).toContain('<q>1300/plate</q>');
     expect(html).toContain('<q>GST extra</q>');

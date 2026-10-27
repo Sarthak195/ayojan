@@ -142,7 +142,9 @@ export function ChangeCheckView({
         : check.source[readBy.source];
   return (
     <div>
-      <h1 className="text-2xl font-bold">{check.title}</h1>
+      <h1 id="check-summary" tabIndex={-1} className="text-2xl font-bold">
+        {check.title}
+      </h1>
       <ReadSource readBy={readBy} label={source} lang={lang} />
       {readBy.source === 'form' ? null : (
         <p className="mt-1">{check.matched(readBy.matched, readBy.total)}</p>

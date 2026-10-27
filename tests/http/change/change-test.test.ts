@@ -89,6 +89,8 @@ describe('the change test through HTTP (spec 5.2, FR-23 to FR-27)', () => {
   it('shows the reading and asks "By how much?" with nothing chosen', async () => {
     const html = checkHtml(await readExplainer());
     expect(html.match(/<h1/g)).toHaveLength(1);
+    // The 303 fragment lands on the heading, so focus starts on the summary.
+    expect(/<h1[^>]*>/.exec(html)?.[0]).toMatch(/id="check-summary"[^>]*tabindex="-1"/);
     expect(html).toContain('+50, so 250 guests');
     expect(html).toContain('Moves to 12 Feb 2027');
     expect(html).toContain('2 weeks earlier');

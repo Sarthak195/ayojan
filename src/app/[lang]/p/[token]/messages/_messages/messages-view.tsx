@@ -6,6 +6,7 @@ import { CopyButton } from '@/components/islands/copy-button.client';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
+import { boxRows } from './box-rows';
 import type { MessagesModel } from './messages-model';
 
 const BOX =
@@ -38,7 +39,7 @@ function MessageBox({
         id={id}
         readOnly
         defaultValue={text}
-        rows={Math.min(14, text.split('\n').length + 1)}
+        rows={boxRows(text)}
         aria-describedby={`${id}-label ${id}-hint`}
         className={BOX}
       />
@@ -99,7 +100,7 @@ export function MessagesView({
           <PostForm lang={lang} route="messages" token={token}>
             <SubmitButton describedBy="write-hint">{words.writeWithAi}</SubmitButton>
             <p id="write-hint" className="mt-2 text-sm text-muted">
-              {words.writeHint}
+              {words.writeHint} {dict.common.privacyHint}
             </p>
           </PostForm>
         ) : (

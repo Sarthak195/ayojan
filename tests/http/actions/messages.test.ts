@@ -6,7 +6,9 @@ import { POST as messages } from '@/app/[lang]/messages/route';
 import type { MessageDeps } from '@/app/[lang]/messages/message-step';
 import { messagesModel } from '@/app/[lang]/p/[token]/messages/_messages/messages-model';
 import { MessagesView } from '@/app/[lang]/p/[token]/messages/_messages/messages-view';
+import { boxRows } from '@/app/[lang]/p/[token]/messages/_messages/box-rows';
 import type { AiUnavailableReason } from '@/components/banner/banners';
+import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { createReadingCache, type ReadingCache } from '@/server/genai/reading-cache';
 
@@ -70,6 +72,30 @@ describe('GET /[lang]/p/[token]/messages (spec 6.7, FR-34)', () => {
     expect(html).toContain(label);
     expect(html).toMatch(/<textarea[^>]*id="family-text"[^>]*readOnly/);
     expect(html).toContain(`action="/${lang}/messages"`);
+  });
+
+  it.each(['en', 'hi'] as const)(
+    'puts the write hint and the privacy sentence in the element the button names (%s)',
+    (lang) => {
+      const html = pageHtml(lang);
+      const { messages: words, common } = dictionaryFor(lang);
+      const described = /<button[^>]*aria-describedby="([^"]*)"/.exec(html)?.[1] ?? '';
+      expect(described.split(' ')).toContain('write-hint');
+      const hint = /<p id="write-hint"[^>]*>(.*?)<\/p>/.exec(html)?.[1] ?? '';
+      const text = hint.replace(/&#x27;/g, "'").replace(/&amp;/g, '&');
+      expect(text).toContain(words.writeHint);
+      expect(text).toContain(common.privacyHint);
+    },
+  );
+
+  it.each(['en', 'hi'] as const)('sizes every message box to hold its whole text (%s)', (lang) => {
+    const html = pageHtml(lang);
+    const boxes = [...html.matchAll(/<textarea[^>]*rows="(\d+)"[^>]*>([^<]*)<\/textarea>/g)];
+    expect(boxes).toHaveLength(1 + model(lang).vendors.length);
+    for (const [, rows, body] of boxes) {
+      const text = (body ?? '').replace(/&#x27;/g, "'").replace(/&amp;/g, '&');
+      expect(Number(rows)).toBe(boxRows(text));
+    }
   });
 
   it('shows one read-only message per vendor, from the vendor questions', () => {

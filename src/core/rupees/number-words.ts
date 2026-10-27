@@ -156,9 +156,9 @@ const SLASH = 0x2f;
 /**
  * True when a bare number word between `from` and `to` and its neighbouring amount are the two
  * ends of one range. A joiner (a hyphen, an en dash, a slash, or ya, se, aur, or) links them
- * whatever the amount looks like; blanks alone link them only to an amount spelled in words
- * ("do teen lakh"), because beside digits the word is usually not a number at all: "ke saath
- * 200 log" is "with 200 people" and "we can do 8 lakh" is English.
+ * whatever the amount looks like; blanks alone link a word before an amount only when the
+ * amount is spelled in words ("do teen lakh"), because before digits the word is usually not a
+ * number at all: "ke saath 200 log" is "with 200 people" and "we can do 8 lakh" is English.
  */
 export function joinsRange(text: string, from: number, to: number, inWords: boolean): boolean {
   let index = skipBlanks(text, from);

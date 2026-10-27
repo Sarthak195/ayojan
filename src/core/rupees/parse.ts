@@ -171,8 +171,8 @@ export function scanAmounts(text: string): ScanHit[] {
     }
     const last = hits.at(-1);
     if (scanned.bare === true) {
-      const inWords = last !== undefined && isWordCharacter(text.charCodeAt(last.start));
-      if (last !== undefined && joinsRange(text, last.end, index, inWords)) {
+      // A word after any amount is a compound or the far end of a range ("5 sau pachaas").
+      if (last !== undefined && joinsRange(text, last.end, index, true)) {
         hits[hits.length - 1] = severalAmounts(last.start, scanned.next);
       }
       bareStart = index;

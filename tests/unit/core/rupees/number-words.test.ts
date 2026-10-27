@@ -74,6 +74,7 @@ describe('sau and the tens join the closed table (D44)', () => {
   it.each([
     ['do sau pachaas', 'a ten after sau'],
     ['do sau-pachaas', 'a hyphen'],
+    ['5 sau pachaas', 'digits before sau'],
     ['दो सौ पचास', 'Devanagari'],
     ['bees-tees hazaar', 'a range of tens'],
     ['das hazaar paanch sau', 'two amounts'],

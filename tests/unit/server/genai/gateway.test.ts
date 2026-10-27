@@ -220,8 +220,8 @@ describe('when nothing answers', () => {
     expect(calls).toHaveLength(1);
   });
 
-  it('defaults to the one shared instance budget, derived from the D17 working value', async () => {
-    expect(INSTANCE_DAILY_ACTIONS).toBe(120);
+  it('defaults to the one shared instance budget, derived from the D17 working value and D46', async () => {
+    expect(INSTANCE_DAILY_ACTIONS).toBe(60);
     expect(LADDER).toHaveLength(LADDER_MODEL_COUNT);
 
     const { gateway, memory } = harness(() => answer(LITE));

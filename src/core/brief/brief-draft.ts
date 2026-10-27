@@ -6,14 +6,14 @@
 import type { BriefForm } from '@/schemas/forms/brief-form';
 import { BUDGET_MAX_INR, BUDGET_MIN_INR, type FunctionAnswer } from '@/schemas/plan/brief';
 import type { PendingReading } from '@/schemas/plan/state-token';
-import type {
-  Category,
-  Diet,
-  FunctionName,
-  GuestNeed,
+import {
   MustHave,
-  Priority,
-  VenueLimit,
+  type Category,
+  type Diet,
+  type FunctionName,
+  type GuestNeed,
+  type Priority,
+  type VenueLimit,
 } from '@/schemas/readings/vocabulary';
 
 /** The values a brief reading kept: unbounded integers, so a typo survives to be asked about. */
@@ -113,7 +113,9 @@ export function inputFromForm(form: BriefForm): BriefInput {
       invites: form.priorityInvites,
       contingency: form.priorityContingency,
     },
-    mustHaves: form.mustHave,
+    // Vocabulary order, not tick order: the form lists wedding must-haves in their own fold, so
+    // the order posted differs from before, and it would change the sealed token bytes.
+    mustHaves: MustHave.options.filter((each) => form.mustHave.includes(each)),
     needs: form.need,
     diet: form.diet,
     venueLimits: form.venueLimit,

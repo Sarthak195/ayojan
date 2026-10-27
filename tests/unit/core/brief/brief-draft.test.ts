@@ -112,6 +112,15 @@ describe('one resolver for the reader and the form twin (FR-5)', () => {
     expect(read).toEqual(typed);
   });
 
+  it('keeps must-haves in vocabulary order however the two form groups are posted', () => {
+    // The wedding-only fold comes first in the document, so its ticks are posted first.
+    const posted: BriefForm['mustHave'] = ['choreographer', 'mehndiArtist', 'liveCounter', 'dhol'];
+    const { draft } = inputFromForm({ ...FORM, mustHave: posted });
+    expect(draft.mustHaves).toEqual(['dhol', 'mehndiArtist', 'liveCounter', 'choreographer']);
+    const brief = resolveFormBrief({ ...FORM, mustHave: ['mehndiArtist', 'dhol'] }, CONTEXT);
+    expect(brief.ok && brief.brief.mustHaves).toEqual(['dhol', 'mehndiArtist']);
+  });
+
   it('turns an invalid form field into a question and keeps the valid ones', () => {
     const result = resolveFormBrief({ ...FORM, guests: '0', budget: 'dedh lakh' }, CONTEXT);
     expect(asked(result)).toEqual([{ field: 'guests', reason: 'out-of-range' }]);

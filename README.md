@@ -117,7 +117,7 @@ The canonical account is [`docs/GENAI_SERVICES.md`](docs/GENAI_SERVICES.md). If 
 | `change`       | Read a change message                      | `ChangeReading`     | [`src/server/prompts/change.ts`](src/server/prompts/change.ts)               |
 | `familyUpdate` | Draft a family WhatsApp update, on request | `FamilyUpdateDraft` | [`src/server/prompts/family-update.ts`](src/server/prompts/family-update.ts) |
 
-**How a call is made.** `client.interactions.create` from `@google/genai`, pinned to exactly 2.31.0 ([`src/server/genai/interactions.ts`](src/server/genai/interactions.ts)). Reasoning is set with `generation_config.thinking_level` (always `low`); `temperature` is typed as `never`. The stable system prompt goes first, the untrusted text sits inside a delimiter, and the instruction comes last. Schemas are kept shallow. Every call sets `timeout_ms`, and the SDK's own retries are off. The answering model is the id the API reports in `interaction.model`, shown on the check page, not the id that was requested; a reply with no id is shown as the requested id marked unconfirmed.
+**How a call is made.** `client.interactions.create` from `@google/genai`, pinned to exactly 2.31.0 ([`src/server/genai/interactions.ts`](src/server/genai/interactions.ts)). Reasoning is set with `generation_config.thinking_level` (always `low`); `temperature` is typed as `never`. The stable system prompt goes first, the untrusted text sits inside a delimiter, and the instruction comes last. Schemas are kept shallow. Every call sets `timeout_ms` and `store: false` (so the Interactions API keeps no copy for later retrieval), and the SDK's own retries are off. The answering model is the id the API reports in `interaction.model`, shown on the check page, not the id that was requested; a reply with no id is shown as the requested id marked unconfirmed.
 
 **The ladder** ([`src/server/genai/gateway.ts`](src/server/genai/gateway.ts)). One action has a 40 second budget, against a 60 second Cloud Run timeout:
 
@@ -244,12 +244,12 @@ npm run dev              # http://localhost:3000
 
 ## Testing
 
-On 26 Oct 2026, `npx vitest run` at commit `6a71328` ended with:
+On 27 Oct 2026, `npx vitest run` at commit `28c5d95` ended with:
 
 ```
- Test Files  116 passed (116)
-      Tests  2402 passed (2402)
-   Duration  33.83s
+ Test Files  117 passed (117)
+      Tests  2427 passed (2427)
+   Duration  31.31s
 ```
 
 The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network call throw. What the main groups prove:

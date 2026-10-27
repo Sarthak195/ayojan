@@ -127,9 +127,12 @@ of about 15 Hindi number words ("do lakh", "dedh lakh"). Any other number word, 
   category or one that is booked, quoted, a must-have, or touched by a chosen trade-off.
 - **Nothing is chosen for the family.** Trade-offs are offered with their consequences and
   applied only when the user ticks them.
-- **A new plan reads "Within budget" before anything is priced.** At version 1 the projected
-  cost is the user's own split, which adds up to the budget, so the headline says little until a
-  booking or a quote arrives. The tables label the figures; the headline sentence does not.
+- **Fixed on 27 Oct 2026 (`7074a9b`, `dde3477`, `9112b0c`): a plan with nothing priced says so.** Until a comparable
+  quote or a booking exists, the projected cost is only the user's own split, which adds up to the
+  budget, so "Within budget" would be true by construction. The headline now reads "Not priced yet"
+  (with "add a quote or a booking to compare"), on the plan page, the revision page and the trade-off
+  section. An unclear or over-cap quote does not count as priced, and an overshoot caused by more
+  guests or a smaller budget is still shown as over budget.
 - **Quotes are compared with each other only.** Quotes in the same category are put on one
   basis using the user's guest count and ordered by total before any tax whose rate is unknown
   ([ranking.ts](../src/core/quotes/ranking.ts)). That order is arithmetic on the user's own

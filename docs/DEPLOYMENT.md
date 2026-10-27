@@ -11,8 +11,8 @@ setting below was read back from the running service with `gcloud run services d
 | Fact (as read on 28 Oct 2026) | Value                                                                                                                                                                                                                                                                                                                                                                                 |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                                                                                                                                                                                      |
-| Revision serving traffic      | `ayojan-00009-v7q` at 100 percent of traffic; `ayojan-00008-tes`, the `3ff942e` image without the Gemini secret, carries the tag `nokey` at 0 percent; the earlier revisions, `ayojan-00001-jxf` to `ayojan-00008-mr7`, are kept for rollback                                                                                                                                         |
-| Source of that revision       | commit `1abc9f6` on `main`                                                                                                                                                                                                                                                                                                                                                            |
+| Revision serving traffic      | `ayojan-00013-992` at 100 percent of traffic (the revision the first submission was made from); `ayojan-00020-kim`, the same image without the Gemini secret, carries the tag `nokey` at 0 percent; the earlier revisions are kept for rollback                                                                                                                                       |
+| Source of that revision       | commit `52c1611` on `main`                                                                                                                                                                                                                                                                                                                                                            |
 | Request timeout               | 60 seconds                                                                                                                                                                                                                                                                                                                                                                            |
 | Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 1 (since `ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3)                                                                                                                                                                                                                     |
 | Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                                                                                                                                                                                          |
@@ -48,6 +48,13 @@ The later revisions, all on 27 and 28 Oct 2026:
 - `ayojan-00009-v7q`, 28 Oct 2026 at about 00:10 IST, from `1abc9f6`: the ladder's second rung
   waits 18 s instead of 12 s, and each model call writes one log line (see
   [DATA_HANDLING.md](DATA_HANDLING.md)). Maximum 1 instance, one key, 100 percent of traffic.
+- `ayojan-00010-bxr`, about 01:05 IST, from `c461585`: vendor enquiries before any quote and the
+  planning notes in Hindi on Hindi pages.
+- `ayojan-00011-n5t`, about 02:05 IST, from `93ca7e1`: cross-site POSTs refused, the one-click
+  tries, field-border contrast, named Copy buttons, coverage thresholds and the bundle-size gate.
+- `ayojan-00013-992`, about 03:35 IST, from `52c1611`: the raise-budget trade-off priced on the gap
+  that is left, the family update v4 prompt (readable topics, date and guests), and the first
+  submission. The keyless twin `ayojan-00020-kim` runs the same image.
 
 A `--no-traffic` deploy pins traffic to the revision serving at that moment, by name. So after
 the `nokey` deploy of `ayojan-00005-zaz`, the next plain deploy, `ayojan-00006-nhx`, was built and
@@ -108,8 +115,9 @@ reported "Building using Dockerfile", created the revision `ayojan-00001-jxf`, a
 percent of traffic to it. The second deploy, the same evening, used the archive of `a9184fe`
 and created `ayojan-00002-7hr`, which took all traffic. The third, from the archive of `eb37d0d`,
 created `ayojan-00003-lx6`; the fourth, from the archive of `e632246`, created `ayojan-00004-4vl`. The main deploys since
-then, from the archives of `3ff942e` and `1abc9f6`, created `ayojan-00006-nhx`, `ayojan-00008-mr7`
-and `ayojan-00009-v7q`, each routed by name as described above.
+then, from the archives of `3ff942e`, `1abc9f6`, `c461585`, `93ca7e1` and `52c1611`, created
+`ayojan-00006-nhx`, `ayojan-00008-mr7`, `ayojan-00009-v7q`, `ayojan-00010-bxr`, `ayojan-00011-n5t`
+and `ayojan-00013-992`, each routed by name as described above.
 
 Why a git archive and not `--source .`:
 
@@ -266,6 +274,14 @@ that goes over still says so); and after a venue booking the status became a bud
 What was checked against `ayojan-00009-v7q` on 28 Oct 2026: `npm run smoke` passed 18 of 18
 against the live address, and `/api/health` answered `ok` with `ai: "available"`.
 
+What was checked against `ayojan-00013-992` on 28 Oct 2026 at about 03:38 IST, with no model call:
+`npm run smoke` passed 22 of 22, the change loop and Undo included; a foreign `Origin`, a `null`
+`Origin` and `Sec-Fetch-Site: cross-site` each got 403 while a same-origin POST and a POST with no
+`Origin` got 303; a real browser posting the plain form succeeded on both service hostnames; plan
+pages send `X-Robots-Tag: noindex, nofollow` and the start page does not; `/api/health` answered
+`ok` with `ai: "available"` and an empty reading cache, and the keyless twin answered
+`ai: "unavailable"`.
+
 ## Cold start
 
 Measured on 28 Oct 2026 at 02:36 IST against the keyless twin (`ayojan-00017-miw`, tag `nokey`, the
@@ -310,8 +326,8 @@ is unchanged and the seal key is the same, which a rollback does not change.
   `gemini-api-key` was added on 27 Oct 2026 and read by a newly deployed revision (see Secrets).
 - **The size of the source upload** was not recorded.
 - **A billing budget or alert** was not inspected. A budget alerts and never caps spending.
-- **The keyless twin** (tag `nokey`, now `ayojan-00017-miw`) has one check recorded on this page,
-  the cold start above, and no other.
+- **The keyless twin** (tag `nokey`, now `ayojan-00020-kim`) has two checks recorded on this page:
+  the cold start above (on `ayojan-00017-miw`, the same code) and its health answer.
 - **A throwaway service named `pw5-deploy-check`** (a ten-line Node server, used on 26 Oct 2026
   to prove Cloud Build, the public URL and the secret binding before the app was deployed) was
   deleted on 26 Oct 2026 at about 20:30 IST, with the owner's okay. It was not part of Ayojan.

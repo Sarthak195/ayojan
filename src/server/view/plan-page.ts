@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 
 import type { IsoDate } from '@/core/calendar/day-number';
 import { viewOfOps, type PlanView } from '@/core/plan/plan-view';
@@ -81,6 +82,13 @@ export function openPlan(token: string, sources: PlanSources = defaultPlanSource
   return { ok: true, plan: { token, state, view: view.value, data, today } };
 }
 
+/**
+ * generateMetadata and the page both open the same link; within one request this decrypts,
+ * inflates and folds once. Keyed on the token string, not the params promise, whose identity
+ * the two callers do not share.
+ */
+const openCached = cache((token: string): OpenResult => openPlan(token));
+
 export interface LangPage {
   readonly lang: Lang;
   readonly dict: Dictionary;
@@ -101,11 +109,12 @@ export async function loadLangPage(params: Promise<{ lang: string }>): Promise<L
  */
 export async function loadPlanPage(
   params: Promise<{ lang: string; token: string }>,
-  sources: PlanSources = defaultPlanSources(),
+  sources?: PlanSources,
 ): Promise<PlanPage> {
   const { lang, token } = await params;
   if (!isLang(lang)) notFound();
-  const opened = openPlan(token, sources);
+  // Injected sources (tests) bypass the per-request memo, so a test never sees a stale open.
+  const opened = sources === undefined ? openCached(token) : openPlan(token, sources);
   if (!opened.ok) notFound();
   return { ...opened.plan, lang, dict: dictionaryFor(lang) };
 }

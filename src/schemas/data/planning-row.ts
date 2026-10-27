@@ -5,6 +5,8 @@ import { z } from 'zod';
 // prices" defect one level up. `reviewed` records a review for people; no plan or page uses it.
 
 export const BASIS_PREFIX = 'Planning assumption chosen by the author: ';
+// The same phrase in Hindi, fixed so every Hindi note opens the way its English note does.
+export const BASIS_PREFIX_HI = 'योजना के लिए लेखक का चुना हुआ अनुमान: ';
 
 const DEVANAGARI = /[ऀ-ॿ]/;
 const CITATION = /https?:|www\.|\bsurvey|\breport|\bstudy|\bstudies|according to|\bsource\b/i;
@@ -28,13 +30,31 @@ export const Basis = z
   .refine((text) => !text.includes('\n'), 'The basis must be one line.')
   .refine((text) => !CITATION.test(text), 'The basis must not cite a source, survey or link.');
 
+// Optional, because a row without one falls back to the English note on a Hindi page; once
+// written it must say something, in Devanagari, under the same rules as the English note.
+export const BasisHi = Hindi.refine(
+  (text) => text.startsWith(BASIS_PREFIX_HI) && text.length > BASIS_PREFIX_HI.length,
+  `The Hindi basis must read "${BASIS_PREFIX_HI}" followed by one line of reasoning.`,
+)
+  .refine((text) => !text.includes('\n'), 'The Hindi basis must be one line.')
+  .refine(
+    (text) => !CITATION.test(text),
+    'The Hindi basis must not cite a source, survey or link.',
+  );
+
 export const Reviewed = z.string();
 
 export const RowId = z
   .string()
   .regex(/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/, 'Ids are lower-case words joined by hyphens.');
 
-export const planningRow = { en: English, hi: Hindi, basis: Basis, reviewed: Reviewed };
+export const planningRow = {
+  en: English,
+  hi: Hindi,
+  basis: Basis,
+  basisHi: BasisHi.optional(),
+  reviewed: Reviewed,
+};
 
 export const Percent = z.number().int().min(0).max(100);
 

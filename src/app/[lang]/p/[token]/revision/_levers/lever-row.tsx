@@ -2,6 +2,7 @@ import type { ReactElement, ReactNode } from 'react';
 
 import { Amount } from '@/components/money/amount';
 import type { LeverOption } from '@/core/levers/lever-types';
+import { basisNote } from '@/i18n/basis-note';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
@@ -60,6 +61,7 @@ export function LeverRow({
     option.status === 'not-applicable' ||
     (option.status === 'refused' && !option.showAnywayAllowed);
   const reason = blockedReason(option, lang);
+  const note = basisNote(option, lang);
   return (
     <li className="py-3">
       <label htmlFor={id} className="flex min-h-11 items-start gap-3 font-medium">
@@ -110,7 +112,9 @@ export function LeverRow({
           {words.whyThisNumber}
           <span className="sr-only">: {option.label[lang]}</span>
         </summary>
-        <p className="text-sm text-muted">{option.basis}</p>
+        <p lang={note.lang} className="text-sm text-muted">
+          {note.text}
+        </p>
       </details>
     </li>
   );

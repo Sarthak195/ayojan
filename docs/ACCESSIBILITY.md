@@ -45,8 +45,12 @@ automated and tool-based, and the gaps section lists what they cannot show.
   typed against the same interface for each area, so a missing Hindi key fails the type check, and the
   planning data (tasks, levers, questions) requires both languages on every label
   ([dictionary.ts](../src/i18n/dictionary.ts),
-  [planning-row.ts](../src/schemas/data/planning-row.ts)). The source notes in the planning
-  data (where a figure came from) are English only.
+  [planning-row.ts](../src/schemas/data/planning-row.ts)). The notes that explain a figure
+  ("Why these numbers?" on the plan, "Why this number?" on a lever) show in Hindi on Hindi
+  pages, marked `lang="hi"`; a row with no Hindi note yet shows its English note marked
+  `lang="en"` ([basis-note.ts](../src/i18n/basis-note.ts)). The Hindi notes are AI-assisted
+  and have not been reviewed by a person. Notes that no page shows (task timings, functions,
+  thresholds, priority multipliers, vendor questions) are English only.
 - **Hinglish and Devanagari input.** The brief box accepts Hindi, English or Hinglish, and says
   so next to the field. Quotes that the model returns are checked against the user's own words
   and are never translated, so what is shown can still be found in what was typed.

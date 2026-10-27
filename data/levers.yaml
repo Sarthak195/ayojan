@@ -18,6 +18,7 @@ levers:
       en: Fewer flowers and lights, and a plainer stage.
       hi: फूल और लाइटें कम होंगी, और स्टेज सादा रहेगा।
     basis: 'Planning assumption chosen by the author: dropping fresh-flower walls and extra lighting removes roughly a third of a decor plan.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: ताज़े फूलों की दीवारें और ज़्यादा लाइटें हटाने से सजावट का लगभग एक तिहाई ख़र्च कम हो जाता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: e-invites
@@ -33,6 +34,7 @@ levers:
       en: No printed cards, and a smaller gift for each family.
       hi: छपे कार्ड नहीं होंगे, और हर परिवार को छोटा गिफ़्ट मिलेगा।
     basis: 'Planning assumption chosen by the author: skipping printing and choosing a smaller gift removes a large part of this category.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: कार्ड न छपवाने और छोटा गिफ़्ट चुनने से इस हिस्से का बड़ा भाग कम हो जाता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: leaner-photo
@@ -48,6 +50,7 @@ levers:
       en: One camera crew instead of two, and no drone or long film.
       hi: दो की जगह एक कैमरा टीम, और ड्रोन या लंबी फ़िल्म नहीं।
     basis: 'Planning assumption chosen by the author: one crew instead of two and no extras cuts about a quarter of a photo package.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: दो की जगह एक टीम और कोई अतिरिक्त चीज़ नहीं, इससे फ़ोटो पैकेज का लगभग एक चौथाई ख़र्च कम हो जाता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: simpler-menu
@@ -63,6 +66,7 @@ levers:
       en: Fewer dishes and starters, and no extra counters.
       hi: पकवान और स्टार्टर कम होंगे, और अलग काउंटर नहीं होंगे।
     basis: 'Planning assumption chosen by the author: fewer dishes trims a per-plate rate only modestly, because the base meal stays.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: पकवान कम करने से प्रति प्लेट दाम थोड़ा ही घटता है, क्योंकि मुख्य खाना वही रहता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: smaller-band
@@ -78,6 +82,7 @@ levers:
       en: A smaller band or DJ booking, with fewer players and hours.
       hi: छोटा बैंड या DJ, कम बजाने वाले और कम घंटे।
     basis: 'Planning assumption chosen by the author: halving players and hours roughly halves a band booking.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: बजाने वाले और घंटे आधे करने से बैंड का ख़र्च लगभग आधा हो जाता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: half-contingency
@@ -91,6 +96,7 @@ levers:
       en: Less money held back for surprises on the day.
       hi: आयोजन के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।
     basis: 'Planning assumption chosen by the author: half the reserve is the most that can be spent while still keeping some cover.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: अचानक के ख़र्च के लिए रखी रक़म में से आधी तक ही ख़र्च की जा सकती है, ताकि कुछ सहारा बचा रहे।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: raise-budget
@@ -103,4 +109,5 @@ levers:
       en: The family spends more than first planned.
       hi: परिवार पहले सोचे गए बजट से ज़्यादा ख़र्च करेगा।
     basis: 'Planning assumption chosen by the author: raising the budget by exactly the gap is always an honest option to show.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: बजट को ठीक कमी जितना बढ़ाना हमेशा दिखाने लायक एक ईमानदार विकल्प है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"

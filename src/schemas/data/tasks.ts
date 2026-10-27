@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { Category, FunctionName, GuestNeed, MustHave } from '../readings/vocabulary';
 import {
   Basis,
+  BasisHi,
   Days,
   DurationDays,
   English,
@@ -27,7 +28,12 @@ const LeadTime = { latestFinishDaysBefore: Days, durationDays: DurationDays };
 // The small-celebration profile's own day counts (D40): a birthday planned seven weeks out
 // would show every task Late against a wedding's three-month lead times. Null only on a
 // wedding-only task, which that profile drops anyway (checked by the knowledge validator).
-const CelebrationTiming = z.strictObject({ ...LeadTime, basis: Basis, reviewed: Reviewed });
+const CelebrationTiming = z.strictObject({
+  ...LeadTime,
+  basis: Basis,
+  basisHi: BasisHi.optional(),
+  reviewed: Reviewed,
+});
 
 const FasterAlternative = z.strictObject({
   en: English,

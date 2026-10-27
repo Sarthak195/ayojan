@@ -27,6 +27,8 @@ export interface LeverOption {
   readonly consequence: { readonly en: string; readonly hi: string };
   /** The data row's one-line reasoning, for the "Why this number?" disclosure. */
   readonly basis: string;
+  /** The same reasoning in Hindi, or null where none is written yet (the page shows English). */
+  readonly basisHi: string | null;
   readonly category: Category | null;
   /** The percent of the category's projected amount, for a percent lever. */
   readonly percent: number | null;

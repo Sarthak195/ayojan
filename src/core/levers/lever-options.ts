@@ -68,6 +68,7 @@ export function leverOptions(
       label: { en: row.en, hi: row.hi },
       consequence: row.consequence,
       basis: row.basis,
+      basisHi: row.basisHi ?? null,
       category,
       percent: row.effect === 'percentOfCategory' ? row.percent : null,
       status,

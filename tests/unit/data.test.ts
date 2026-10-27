@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { parse, stringify } from 'yaml';
 
-import { BASIS_PREFIX } from '@/schemas/data/planning-row';
+import { BASIS_PREFIX, BASIS_PREFIX_HI } from '@/schemas/data/planning-row';
 import { Category, Diet, MustHave, Occasion, VenueLimit } from '@/schemas/readings/vocabulary';
 import { absoluteRupeeProblems } from '@/server/knowledge/absolute-rupees';
 import { createKnowledgeRepository, readFromDirectory } from '@/server/knowledge/repository';
@@ -154,6 +154,17 @@ describe('referential-integrity', () => {
       expect(String(row.basis)).not.toMatch(/https?:|www\.|survey|report|study|according to/i);
       // Empty until the user signs the row off; a sign-off must not turn CI red.
       expect(typeof row.reviewed).toBe('string');
+    }
+  });
+
+  it('has a Hindi note, opening with the fixed Hindi phrase, on every note a page shows', () => {
+    const shown = [
+      ...levers.levers,
+      ...budgetWeights.profiles.flatMap((profile) => [profile, ...profile.categories]),
+    ];
+    for (const row of shown) {
+      expect(row.basisHi?.startsWith(BASIS_PREFIX_HI), row.basis).toBe(true);
+      expect(row.basisHi).not.toContain('\n');
     }
   });
 });
@@ -382,6 +393,40 @@ const plantedFaults: readonly [string, string, Mutation, RegExp][] = [
       byId(d, 'functions', 'mehndi').basis = `${BASIS_PREFIX}a wedding survey says so.`;
     },
     /functions\.yaml, row functions\[1\] \(mehndi\): basis: The basis must not cite/,
+  ],
+  [
+    'hindi-basis-empty',
+    'levers.yaml',
+    (d) => {
+      byId(d, 'levers', 'simpler-menu').basisHi = '  ';
+    },
+    /\(simpler-menu\): basisHi: Hindi text is missing/,
+  ],
+  [
+    'hindi-basis-in-latin-script',
+    'levers.yaml',
+    (d) => {
+      byId(d, 'levers', 'smaller-band').basisHi = `${BASIS_PREFIX}half the band.`;
+    },
+    /\(smaller-band\): basisHi: Hindi text must be written in Devanagari/,
+  ],
+  [
+    'hindi-basis-without-the-phrase',
+    'budget-weights.yaml',
+    (d) => {
+      const wedding = rowsOf(d, 'profiles')[0];
+      if (wedding) wedding.basisHi = 'खाना सबसे बड़ा हिस्सा है।';
+    },
+    /profiles\[0\] \(wedding\): basisHi: The Hindi basis must read/,
+  ],
+  [
+    'hindi-basis-on-a-celebration-timing-empty',
+    'tasks.yaml',
+    (d) => {
+      const row = byId(d, 'tasks', 'book-venue');
+      row.celebration = { ...(row.celebration as object), basisHi: '' };
+    },
+    /\(book-venue\): celebration\.basisHi: Hindi text is missing/,
   ],
   [
     'hindi-in-latin-script',

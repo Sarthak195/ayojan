@@ -7,8 +7,13 @@ import { sum } from '@/core/money/money';
 import type { PlanVersion } from '@/core/plan/plan-version';
 import { quoteLabel } from '@/core/quotes/quote-wording';
 import { dictionaryFor } from '@/i18n/dictionary';
+import { basisNote, type BasisNote } from '@/i18n/basis-note';
 import type { Lang } from '@/i18n/lang';
 import type { BudgetWeightsFile } from '@/schemas/data/budget-weights';
+
+function Note({ text, lang }: BasisNote): ReactElement {
+  return <span lang={lang}>{text}</span>;
+}
 
 /**
  * The split of the user's own budget and the projected cost per category, every amount with
@@ -67,16 +72,20 @@ export function MoneySection({
             {words.whyHeading}
             <DisclosureMarker />
           </summary>
-          {/* The basis is the author's stated assumption, written once in English (D37); the
-              category keeps the page's own name, so it matches the table above. */}
-          <ul lang="en" className="mt-2 list-disc space-y-1 pl-6 text-sm">
-            <li>{profile.basis}</li>
+          {/* The basis is the author's stated assumption (D37), in Hindi where a Hindi note is
+              written and in English otherwise, each tagged with its own language; the category
+              keeps the page's own name, so it matches the table above. */}
+          <ul lang={lang} className="mt-2 list-disc space-y-1 pl-6 text-sm">
+            <li>
+              <Note {...basisNote(profile, lang)} />
+            </li>
             {profile.categories.map((row) => (
               <li key={row.category}>
                 <span lang={lang} className="font-medium">
                   {row[lang]}
                 </span>
-                : {row.basis}
+                {': '}
+                <Note {...basisNote(row, lang)} />
               </li>
             ))}
           </ul>

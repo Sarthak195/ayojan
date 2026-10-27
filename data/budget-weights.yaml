@@ -38,6 +38,7 @@ profiles:
     en: Wedding
     hi: शादी
     basis: 'Planning assumption chosen by the author: food is usually the largest share of a family wedding and the venue the second.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: परिवार की शादी में आम तौर पर सबसे बड़ा हिस्सा खाने का होता है और दूसरा वेन्यू का।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
     categories:
       - category: venue
@@ -47,6 +48,7 @@ profiles:
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: the venue is the second largest share and only partly grows with guests, since a hall is booked whole.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: वेन्यू दूसरा सबसे बड़ा हिस्सा है और मेहमान बढ़ने पर थोड़ा ही बढ़ता है, क्योंकि हॉल पूरा बुक होता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: catering
         en: Catering
@@ -55,6 +57,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: food is the largest share and is priced per plate, so it grows fully with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: खाना सबसे बड़ा हिस्सा है और इसका दाम प्रति प्लेट लगता है, इसलिए यह मेहमानों के साथ पूरा बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: decor
         en: Decor
@@ -63,6 +66,7 @@ profiles:
         perGuestSharePercent: 20
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: decor is a mid-sized share that grows a little with more tables and seating.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: सजावट बीच के आकार का हिस्सा है, जो ज़्यादा मेज़ों और कुर्सियों के साथ थोड़ा बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: photo
         en: Photo and video
@@ -71,6 +75,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: photography is priced by the day and crew, not by the number of guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: फ़ोटो और वीडियो का दाम दिनों और टीम के हिसाब से लगता है, मेहमानों की गिनती से नहीं।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: music
         en: Music and baraat
@@ -79,6 +84,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a band or dhol is booked for the event, so it does not grow with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: बैंड या ढोल पूरे आयोजन के लिए बुक होता है, इसलिए यह मेहमानों के साथ नहीं बढ़ता।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: invites
         en: Invitations and return gifts
@@ -87,6 +93,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: one card and one gift per invited family, so the share grows fully with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: हर बुलाए गए परिवार के लिए एक कार्ड और एक गिफ़्ट, इसलिए यह हिस्सा मेहमानों के साथ पूरा बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: contingency
         en: Contingency
@@ -95,6 +102,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: budget, percent: 5 }
         basis: 'Planning assumption chosen by the author: a tenth held back absorbs surprises, and at least a twentieth of the budget always stays in reserve.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: बजट का दसवाँ हिस्सा अचानक के ख़र्च के लिए अलग रखा जाता है, और बजट का कम से कम बीसवाँ हिस्सा हमेशा बचा रहता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
 
   - id: celebration
@@ -102,6 +110,7 @@ profiles:
     en: Small celebration
     hi: छोटा समारोह
     basis: 'Planning assumption chosen by the author: at a birthday, anniversary, puja or community event food is an even larger share and photos a smaller one than at a wedding.'
+    basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: जन्मदिन, सालगिरह, पूजा या सामुदायिक आयोजन में खाने का हिस्सा शादी से भी बड़ा और फ़ोटो का हिस्सा छोटा होता है।'
     reviewed: "2026-10-26 AI-assisted review at the author's request"
     categories:
       - category: venue
@@ -111,6 +120,7 @@ profiles:
         perGuestSharePercent: 30
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a hall or home terrace is the second largest share and only partly grows with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: हॉल या घर की छत दूसरा सबसे बड़ा हिस्सा है और मेहमान बढ़ने पर थोड़ा ही बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: catering
         en: Food and drinks
@@ -119,6 +129,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: at a small celebration food is most of the cost and grows fully with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: छोटे समारोह में ज़्यादातर ख़र्च खाने का होता है, और यह मेहमानों के साथ पूरा बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: decor
         en: Decor
@@ -127,6 +138,7 @@ profiles:
         perGuestSharePercent: 20
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: balloons, a backdrop and a cake table make decor a slightly larger share than at a wedding.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: गुब्बारे, बैकड्रॉप और केक टेबल की वजह से सजावट का हिस्सा शादी से थोड़ा बड़ा होता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: photo
         en: Photos
@@ -135,6 +147,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: one photographer for a few hours is a small share that does not grow with guests.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: कुछ घंटों के लिए एक फ़ोटोग्राफ़र छोटा हिस्सा है, जो मेहमानों के साथ नहीं बढ़ता।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: music
         en: Music and entertainment
@@ -143,6 +156,7 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: a DJ, magician or games host is booked for the event, not per guest.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: DJ, जादूगर या गेम्स होस्ट पूरे आयोजन के लिए बुक होता है, हर मेहमान के हिसाब से नहीं।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: invites
         en: Invitations and return gifts
@@ -151,6 +165,7 @@ profiles:
         perGuestSharePercent: 100
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: invitations are mostly digital at a small celebration, so the share is mainly return gifts.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: छोटे समारोह में न्योते ज़्यादातर डिजिटल होते हैं, इसलिए यह हिस्सा मुख्य रूप से रिटर्न गिफ़्ट का है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: contingency
         en: Contingency
@@ -159,4 +174,5 @@ profiles:
         perGuestSharePercent: 0
         floor: { of: budget, percent: 5 }
         basis: 'Planning assumption chosen by the author: the same reserve as a wedding, because surprises do not shrink with the event.'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: अचानक के ख़र्च के लिए शादी जितना ही हिस्सा, क्योंकि आयोजन छोटा होने से अचानक के ख़र्च कम नहीं होते।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"

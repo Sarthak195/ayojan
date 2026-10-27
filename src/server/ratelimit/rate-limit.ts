@@ -10,11 +10,11 @@ import {
   type DailyCounter,
 } from './token-bucket';
 
-// Every count here lives in one instance's memory. With up to three Cloud Run instances the
-// bounds are approximate (a client may get up to three times as much), and the client key
-// comes from a caller-supplied header (see client-key.ts). These limits keep one script from
-// draining the shared Gemini pool on one instance; `--max-instances=3` times the instance
-// budget is the real ceiling on model calls a day.
+// Every count here lives in one instance's memory. Since D46 the service runs at most one
+// instance (two only while a deploy briefly overlaps the old revision), so the counts are close
+// to global. The client key is the address Google's front end appends to X-Forwarded-For, not
+// what the caller writes (see client-key.ts). These limits keep one script from draining the
+// single key's daily quota; the instance budget is the real ceiling on model calls a day.
 
 /** `model` is read/* and messages (each may spend a model call); `step` is every other POST. */
 export type RateClass = 'model' | 'step';

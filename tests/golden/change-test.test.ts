@@ -359,6 +359,9 @@ describe('the change test (spec 5.2)', () => {
     expect(v8.current.money.options.find((option) => option.id === 'simpler-menu')?.status).toBe(
       'offered',
     );
+    // Within budget once the levers are in force, so there is no gap left to raise the budget by.
+    expect(v8.current.headline.gap.inr).toBeLessThan(0);
+    expect(v8.current.money.options.some((option) => option.id === 'raise-budget')).toBe(false);
     expect(v8.revision?.kept.changed.map((item) => item.key)).toEqual(['priority:catering']);
     expect(v8.reconfirmations.map((item) => item.vendor.kind)).toEqual([
       'booking',
@@ -402,6 +405,8 @@ describe('the Hinglish Rs 50,000 move after the levers (FR-28)', () => {
     ]);
     expect(move?.shortfall.inr).toBe(7_900);
     expect(view.current.headline.gap.inr).toBe(6_575);
+    const raise = view.current.money.options.find((option) => option.id === 'raise-budget');
+    expect(raise?.saving.inr).toBe(6_575);
     expectPinned('change-test.reallocate-shortfall', view);
   });
 });

@@ -687,32 +687,6 @@
           },
           "fasterAlternativeFor": null,
           "showAnywayAllowed": false
-        },
-        {
-          "id": "raise-budget",
-          "effect": "raiseBudget",
-          "label": {
-            "en": "Raise the budget to cover the gap",
-            "hi": "कमी पूरी करने के लिए बजट बढ़ाएँ"
-          },
-          "consequence": {
-            "en": "The family spends more than first planned.",
-            "hi": "परिवार पहले सोचे गए बजट से ज़्यादा ख़र्च करेगा।"
-          },
-          "basis": "Planning assumption chosen by the author: raising the budget by exactly the gap is always an honest option to show.",
-          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: बजट को ठीक उतना बढ़ाना जितना पैसा कम पड़ रहा है, हमेशा दिखाने लायक एक ईमानदार विकल्प है।",
-          "category": null,
-          "percent": null,
-          "status": "offered",
-          "reason": null,
-          "provenance": "exact",
-          "saving": {
-            "inr": 48900,
-            "provenance": "computed"
-          },
-          "bufferLeft": null,
-          "fasterAlternativeFor": null,
-          "showAnywayAllowed": false
         }
       ],
       "moves": [],

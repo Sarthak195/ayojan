@@ -46,20 +46,31 @@ function verdict(row: LeverRow, context: LeverContext, projection: Projection): 
   return { status: 'offered', reason: null, alsoBooked: false };
 }
 
+/** The plan as it stands once the levers already chosen are in force. */
+export interface LeverNow {
+  readonly gapInr: number;
+  readonly chosen: readonly string[];
+}
+
 /**
  * Levers for a plan that is over budget, measured on `projection` as it stands without any
  * lever applied. Within budget there is nothing to trade off, so the list is empty.
+ * Raising the budget is the exception: it closes whatever gap is left after the levers in
+ * `now`, so it is priced on that gap and not offered once nothing is left (a chosen raise stays
+ * listed so the page can still show it as chosen).
  */
 export function leverOptions(
   context: LeverContext,
   projection: Projection,
+  now: LeverNow = { gapInr: projection.gap.inr, chosen: [] },
 ): BudgetResult<readonly LeverOption[]> {
   if (projection.status === 'within-budget') return succeed([]);
   const options: LeverOption[] = [];
   for (const row of context.levers) {
     const category = categoryOf(row);
+    if (row.effect === 'raiseBudget' && now.gapInr <= 0 && !now.chosen.includes(row.id)) continue;
     const current = category === null ? 0 : projection.lines[category].projected.inr;
-    const saving = savingInr(row, current, projection.gap.inr);
+    const saving = savingInr(row, current, now.gapInr);
     if (!saving.ok) return saving;
     const { status, reason, alsoBooked } = verdict(row, context, projection);
     options.push({

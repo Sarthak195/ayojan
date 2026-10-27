@@ -199,3 +199,39 @@ describe('leverOptions edge cases', () => {
     expect(get(optionsFor(free), 'leaner-photo').saving.inr).toBe(0);
   });
 });
+
+describe('raising the budget after levers already in force', () => {
+  const view = projectSpend(overBudget());
+  if (!view.ok) throw new Error(view.reason);
+  const ids = (now: Parameters<typeof leverOptions>[2]): readonly Option[] => {
+    const options = leverOptions(context(['dhol']), view.value, now);
+    if (!options.ok) throw new Error(options.reason);
+    return options.value;
+  };
+  const others = leverRows.map((row) => row.id).filter((id) => id !== 'raise-budget');
+
+  it('is not offered once the chosen levers leave the plan within budget', () => {
+    for (const gapInr of [0, -220]) {
+      const options = ids({ gapInr, chosen: ['e-invites', 'half-contingency'] });
+      expect(options.map((option) => option.id)).toEqual(others);
+    }
+  });
+
+  it('closes exactly the gap that is left, not the gap before the levers', () => {
+    const raise = ids({ gapInr: 6_575, chosen: ['e-invites'] }).find(
+      (option) => option.id === 'raise-budget',
+    );
+    expect(raise?.saving).toEqual({ inr: 6_575, provenance: 'computed' });
+    expect(raise?.status).toBe('offered');
+  });
+
+  it('stays listed when it is itself chosen, so the page can show it as chosen', () => {
+    const options = ids({ gapInr: 0, chosen: ['raise-budget'] });
+    expect(options.find((option) => option.id === 'raise-budget')?.saving.inr).toBe(0);
+  });
+
+  it('leaves every other lever measured on the plan before the levers', () => {
+    const before = ids(undefined).filter((option) => option.id !== 'raise-budget');
+    expect(ids({ gapInr: -220, chosen: [] })).toEqual(before);
+  });
+});

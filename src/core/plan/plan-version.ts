@@ -167,6 +167,7 @@ export function planVersion(
   const options = leverOptions(
     { levers: data.levers.levers, priorities: walk.value.priorities, mustHaves: brief.mustHaves },
     application.base,
+    { gapInr: application.projection.gap.inr, chosen: inputs.leverIds },
   );
   if (!options.ok) return budgetFail(options.reason);
   const timeline = planTimeline(

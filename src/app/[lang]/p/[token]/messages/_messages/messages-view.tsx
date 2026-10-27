@@ -52,7 +52,8 @@ function MessageBox({
 }
 
 /**
- * Messages to send (spec 6.7, C8): the family update and one message per vendor. The family
+ * Messages to send (spec 6.7, C8): the family update, one message per vendor and an enquiry
+ * for each vendor category not yet approached. The family
  * update is the template unless a checked AI draft is cached for these facts; a rejected or
  * failed draft is never shown, the template is, with the reason (FR-35).
  */
@@ -69,7 +70,7 @@ export function MessagesView({
 }): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.messages;
-  const { drafted, template, vendors } = model;
+  const { drafted, template, vendors, enquiries } = model;
   const draft = drafted?.kind === 'draft' ? drafted : null;
   const reasons = drafted?.kind === 'template' ? drafted.reasons : [];
   return (
@@ -111,7 +112,9 @@ export function MessagesView({
         <h2 id="vendors-heading" className="text-xl font-semibold">
           {words.vendorHeading}
         </h2>
-        {vendors.length === 0 ? <p className="mt-2">{words.noVendors}</p> : null}
+        {vendors.length === 0 && enquiries.length === 0 ? (
+          <p className="mt-2">{words.noVendors}</p>
+        ) : null}
         {vendors.map((vendor, index) => (
           <MessageBox
             key={`${vendor.category}-${vendor.vendor.en}`}
@@ -122,6 +125,24 @@ export function MessagesView({
             lang={lang}
           />
         ))}
+        {enquiries.length === 0 ? null : (
+          <>
+            <h3 id="enquiry-heading" className="mt-6 text-lg font-semibold">
+              {words.enquiryHeading}
+            </h3>
+            <p className="mt-1 text-sm text-muted">{words.enquiryHint}</p>
+            {enquiries.map((enquiry) => (
+              <MessageBox
+                key={enquiry.category}
+                id={`enquiry-${enquiry.category}-text`}
+                title={words.enquiryBox(enquiry.vendor[lang])}
+                label={enquiry.label}
+                text={enquiry.text}
+                lang={lang}
+              />
+            ))}
+          </>
+        )}
       </section>
       <p className="mt-8">
         <a href={`/${lang}/p/${token}`} className="inline-flex min-h-11 items-center font-semibold">

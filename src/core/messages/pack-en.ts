@@ -60,4 +60,24 @@ export const ENGLISH: PhrasePack = {
     ask: 'Could you please help with these questions?',
     thanks: 'Thank you.',
   },
+  enquiry: {
+    intro: (occasion, date, guests, seeking) =>
+      `We are planning our ${occasion} on ${date} for about ${String(guests)} guests and are looking for ${seeking}.`,
+    seeking: {
+      venue: 'a venue',
+      catering: 'a caterer',
+      decor: 'a decorator',
+      photo: 'a photographer',
+      music: 'music (a band or DJ)',
+    },
+    venueHolds: (capacity) => `Our venue holds up to ${String(capacity)} guests.`,
+    mustHave: {
+      dhol: 'dhol',
+      mehndiArtist: 'a mehndi artist',
+      liveCounter: 'a live food counter',
+      choreographer: 'a choreographer',
+    },
+    alsoWant: (items) => `We would also like ${items}.`,
+    close: 'Please send your price with these details. Thank you.',
+  },
 };

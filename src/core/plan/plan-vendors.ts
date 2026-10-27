@@ -31,7 +31,8 @@ export interface VendorContact {
   readonly bookedCapacity: number | null;
 }
 
-function categoryLabel(
+/** The category's name in the plan's budget profile, as the plan page shows it. */
+export function categoryLabel(
   data: PlanData,
   version: PlanVersion,
   category: Category,

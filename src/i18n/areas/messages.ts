@@ -11,6 +11,9 @@ export interface MessagesDictionary {
   readonly vendorHeading: string;
   readonly vendorBox: (vendor: string) => string;
   readonly noVendors: string;
+  readonly enquiryHeading: string;
+  readonly enquiryHint: string;
+  readonly enquiryBox: (category: string) => string;
   readonly aiLabel: (checked: number) => string;
   readonly writeWithAi: string;
   readonly writeHint: string;
@@ -30,6 +33,10 @@ export const en: MessagesDictionary = {
   vendorHeading: 'For your vendors',
   vendorBox: (vendor) => `Message for ${vendor}`,
   noVendors: 'No vendor needs a message yet. Add a quote or book a task first.',
+  enquiryHeading: 'Before any quote',
+  enquiryHint:
+    'Send these to vendors you have no quote from yet. Each holds your date, guest count and needs, never your budget, so a vendor prices what you need, not what you can spend.',
+  enquiryBox: (category) => `Enquiry: ${category}`,
   aiLabel: (checked) =>
     `AI draft, numbers checked against your plan: ${String(checked)} of ${String(checked)}`,
   writeWithAi: 'Write it with AI',
@@ -58,6 +65,10 @@ export const hi: MessagesDictionary = {
   vendorHeading: 'आपके विक्रेताओं के लिए',
   vendorBox: (vendor) => `${vendor} के लिए संदेश`,
   noVendors: 'अभी किसी विक्रेता को संदेश की ज़रूरत नहीं। पहले कोटेशन जोड़ें या कोई काम बुक करें।',
+  enquiryHeading: 'कोटेशन से पहले',
+  enquiryHint:
+    'ये संदेश उन विक्रेताओं को भेजें जिनका कोटेशन अभी नहीं आया। इनमें आपकी तारीख़, मेहमानों की गिनती और ज़रूरतें हैं, आपका बजट नहीं, ताकि विक्रेता आपकी ज़रूरत के हिसाब से क़ीमत बताए, आपके ख़र्च की हद के हिसाब से नहीं।',
+  enquiryBox: (category) => `पूछताछ: ${category}`,
   aiLabel: (checked) =>
     `AI ड्राफ़्ट, संख्याएँ आपकी योजना से जाँची गईं: ${String(checked)} में से ${String(checked)}`,
   writeWithAi: 'AI से लिखवाएँ',

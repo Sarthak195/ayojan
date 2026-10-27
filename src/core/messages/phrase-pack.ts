@@ -2,7 +2,7 @@
 // already formatted (amounts, dates), so no pack ever formats a rupee amount: that lives in
 // one place, and the numbers in a message can only be the ones the facts hold.
 
-import type { Diet, Occasion, VenueLimit } from '@/schemas/readings/vocabulary';
+import type { Category, Diet, MustHave, Occasion, VenueLimit } from '@/schemas/readings/vocabulary';
 
 import type { UnclearQuoteField } from './fact-types';
 
@@ -51,4 +51,19 @@ export interface PhrasePack {
     readonly ask: string;
     readonly thanks: string;
   };
+  /**
+   * A first message to a vendor the family has no quote from yet. There is no slot for an
+   * amount: a family that opens with its budget invites a quote pitched at that ceiling.
+   */
+  readonly enquiry: {
+    readonly intro: (occasion: string, date: string, guests: number, seeking: string) => string;
+    readonly seeking: Readonly<Record<EnquiryCategory, string>>;
+    readonly venueHolds: (capacity: number) => string;
+    readonly mustHave: Readonly<Record<MustHave, string>>;
+    readonly alsoWant: (items: string) => string;
+    readonly close: string;
+  };
 }
+
+/** The categories a family hires a vendor for; invites and contingency have no task that books one. */
+export type EnquiryCategory = Extract<Category, 'venue' | 'catering' | 'decor' | 'photo' | 'music'>;

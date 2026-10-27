@@ -73,4 +73,24 @@ export const HINDI: PhrasePack = {
     ask: 'क्या आप इन सवालों में मदद कर सकते हैं?',
     thanks: 'धन्यवाद।',
   },
+  enquiry: {
+    intro: (occasion, date, guests, seeking) =>
+      `हम ${date} को ${occasion} रख रहे हैं। लगभग ${String(guests)} मेहमान होंगे, और हमें ${seeking} चाहिए।`,
+    seeking: {
+      venue: 'वेन्यू',
+      catering: 'कैटरर',
+      decor: 'सजावट करने वाले',
+      photo: 'फ़ोटोग्राफ़र',
+      music: 'संगीत (बैंड या DJ)',
+    },
+    venueHolds: (capacity) => `हमारे वेन्यू में ${String(capacity)} लोगों तक की जगह है।`,
+    mustHave: {
+      dhol: 'ढोल',
+      mehndiArtist: 'मेहंदी लगाने वाले',
+      liveCounter: 'लाइव काउंटर',
+      choreographer: 'कोरियोग्राफ़र',
+    },
+    alsoWant: (items) => `हमें ये भी चाहिए: ${items}।`,
+    close: 'कृपया इन बातों के साथ अपनी क़ीमत भेजें। धन्यवाद।',
+  },
 };

@@ -16,9 +16,11 @@ import { fakeLlmGateway, type FakeReply } from '../../fakes/llm-gateway';
 import { harness } from '../../unit/server/genai/ladder-harness';
 import { limiter } from '../../unit/server/http/step-support';
 import { context, DATA, deps, location, post } from '../support';
-import { OVER_BUDGET_OPS, OVER_BUDGET_TOKEN, viewOf } from './actions-support';
+import { BRIEF_TOKEN, OVER_BUDGET_OPS, OVER_BUDGET_TOKEN, viewOf } from './actions-support';
+import { BRIEF_OP } from '../../fixtures/plan-readings';
 
 const VIEW = viewOf(OVER_BUDGET_OPS);
+const BRIEF_VIEW = viewOf([BRIEF_OP]);
 
 function model(lang: Lang, cache: ReadingCache = createReadingCache(), nowMs = 0) {
   return messagesModel(VIEW, DATA, lang, cache, nowMs);
@@ -38,6 +40,25 @@ function pageHtml(
       unavailable,
     }),
   );
+}
+
+/** The page for a plan with no quote and no booking yet: what the family sees first. */
+function briefPageHtml(lang: Lang): string {
+  return renderToStaticMarkup(
+    createElement(MessagesView, {
+      lang,
+      token: BRIEF_TOKEN,
+      model: messagesModel(BRIEF_VIEW, DATA, lang, createReadingCache(), 0),
+      unavailable: null,
+    }),
+  );
+}
+
+function unescaped(html: string): string {
+  return html
+    .replace(/&#x27;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"');
 }
 
 function write(gatewayDeps: MessageDeps): Promise<Response> {
@@ -91,7 +112,8 @@ describe('GET /[lang]/p/[token]/messages (spec 6.7, FR-34)', () => {
   it.each(['en', 'hi'] as const)('sizes every message box to hold its whole text (%s)', (lang) => {
     const html = pageHtml(lang);
     const boxes = [...html.matchAll(/<textarea[^>]*rows="(\d+)"[^>]*>([^<]*)<\/textarea>/g)];
-    expect(boxes).toHaveLength(1 + model(lang).vendors.length);
+    const { vendors, enquiries } = model(lang);
+    expect(boxes).toHaveLength(1 + vendors.length + enquiries.length);
     for (const [, rows, body] of boxes) {
       const text = (body ?? '').replace(/&#x27;/g, "'").replace(/&amp;/g, '&');
       expect(Number(rows)).toBe(boxRows(text));
@@ -99,10 +121,45 @@ describe('GET /[lang]/p/[token]/messages (spec 6.7, FR-34)', () => {
   });
 
   it('shows one read-only message per vendor, from the vendor questions', () => {
-    const { vendors } = model('en');
+    const { vendors, enquiries } = model('en');
     expect(vendors.length).toBeGreaterThan(0);
     const html = pageHtml('en');
-    expect(html.match(/<textarea/g)).toHaveLength(1 + vendors.length);
+    expect(html.match(/<textarea/g)).toHaveLength(1 + vendors.length + enquiries.length);
+  });
+
+  it.each(['en', 'hi'] as const)(
+    'offers an enquiry per vendor before any quote, with the copy control (%s)',
+    (lang) => {
+      const html = unescaped(briefPageHtml(lang));
+      const words = dictionaryFor(lang).messages;
+      expect(html).not.toContain(words.noVendors);
+      expect(html).toContain(words.vendorHeading);
+      expect(html).toContain(words.enquiryHeading);
+      expect(html).toContain(words.enquiryHint);
+      for (const category of ['venue', 'catering', 'decor', 'photo', 'music']) {
+        expect(html).toMatch(
+          new RegExp(`<textarea[^>]*id="enquiry-${category}-text"[^>]*readOnly`),
+        );
+      }
+      // The Copy island renders nothing on the server; its no-JavaScript hint is what stands.
+      expect(html).toContain(
+        `<p id="enquiry-catering-text-hint" class="mt-1 text-sm text-muted">${words.selectToCopy}</p>`,
+      );
+      const boxes = [
+        ...html.matchAll(/<textarea[^>]*id="enquiry-[a-z]+-text"[^>]*>([^<]*)<\/textarea>/g),
+      ];
+      expect(boxes).toHaveLength(5);
+      for (const [, body] of boxes) {
+        expect(body).not.toMatch(/\bRs\b|₹|lakh|लाख|8,00,000|[Bb]udget|बजट/);
+        expect(body).toContain(lang === 'en' ? 'about 200 guests' : 'लगभग 200 मेहमान');
+      }
+    },
+  );
+
+  it('keeps the quote and booking messages and adds enquiries only for open categories', () => {
+    const { vendors, enquiries } = model('en');
+    const quoted = new Set(vendors.map((vendor) => vendor.category));
+    for (const enquiry of enquiries) expect(quoted.has(enquiry.category)).toBe(false);
   });
 });
 

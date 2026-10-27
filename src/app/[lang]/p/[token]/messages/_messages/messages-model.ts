@@ -3,11 +3,14 @@ import 'server-only';
 import type { MessageFacts } from '@/core/messages/fact-types';
 import { buildMessageFacts } from '@/core/messages/message-facts';
 import {
+  enquiryTemplates,
   familyUpdateTemplate,
   vendorTemplates,
+  type EnquiryTemplate,
   type FamilyUpdateTemplate,
   type VendorTemplate,
 } from '@/core/messages/templates';
+import { enquiryInput } from '@/core/plan/plan-enquiries';
 import type { PlanView } from '@/core/plan/plan-view';
 import type { Lang } from '@/i18n/lang';
 import type { DataDocuments } from '@/schemas/data/data-files';
@@ -19,6 +22,8 @@ export interface MessagesModel {
   readonly facts: MessageFacts;
   readonly template: FamilyUpdateTemplate;
   readonly vendors: readonly VendorTemplate[];
+  /** First messages for the vendor categories with no quote and no booking yet. */
+  readonly enquiries: readonly EnquiryTemplate[];
   /** The checked draft or a cached rejection for these facts; null when never asked here. */
   readonly drafted: FamilyUpdateResult | null;
 }
@@ -41,6 +46,7 @@ export function messagesModel(
     facts,
     template: familyUpdateTemplate(facts, lang),
     vendors: vendorTemplates(facts, data.vendorQuestions.questions, lang),
+    enquiries: enquiryTemplates(enquiryInput(view.current, data), lang),
     drafted: cachedFamilyUpdate({ facts, language: lang }, cache, nowMs),
   };
 }

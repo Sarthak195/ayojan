@@ -1,8 +1,9 @@
-// The template messages the page shows: the family update and one message per vendor, in
-// English or Hindi, each carrying the label that says code wrote it from the plan's numbers.
+// The template messages the page shows: the family update, one message per vendor and one
+// enquiry per vendor still to approach, in English or Hindi, each carrying the label that says code wrote it from the plan's numbers.
 
 import type { Language } from '@/core/rupees/format';
 
+import { enquiryMessages, type EnquiryInput, type EnquiryMessage } from './enquiry-messages';
 import type { MessageFacts } from './fact-types';
 import { familyUpdateLines } from './family-update';
 import { packFor } from './render-values';
@@ -27,6 +28,8 @@ export interface FamilyUpdateTemplate extends Labelled {
 
 export interface VendorTemplate extends Labelled, VendorMessage {}
 
+export interface EnquiryTemplate extends Labelled, EnquiryMessage {}
+
 function labelled(lines: readonly string[], language: Language): Labelled {
   return {
     labelKey: TEMPLATE_LABEL_KEY,
@@ -49,6 +52,13 @@ export function vendorTemplates(
   language: Language,
 ): VendorTemplate[] {
   return vendorMessages(facts, questions, language).map((message) => ({
+    ...labelled(message.lines, language),
+    ...message,
+  }));
+}
+
+export function enquiryTemplates(input: EnquiryInput, language: Language): EnquiryTemplate[] {
+  return enquiryMessages(input, language).map((message) => ({
     ...labelled(message.lines, language),
     ...message,
   }));

@@ -171,14 +171,16 @@ export function scanAmounts(text: string): ScanHit[] {
     }
     const last = hits.at(-1);
     if (scanned.bare === true) {
-      if (last !== undefined && joinsRange(text, last.end, index)) {
+      const inWords = last !== undefined && isWordCharacter(text.charCodeAt(last.start));
+      if (last !== undefined && joinsRange(text, last.end, index, inWords)) {
         hits[hits.length - 1] = severalAmounts(last.start, scanned.next);
       }
       bareStart = index;
       bareEnd = scanned.next;
     } else if (scanned.hit !== null) {
       const { hit } = scanned;
-      const ranged = bareEnd >= 0 && joinsRange(text, bareEnd, hit.start);
+      const inWords = isWordCharacter(text.charCodeAt(hit.start));
+      const ranged = bareEnd >= 0 && joinsRange(text, bareEnd, hit.start, inWords);
       hits.push(ranged ? severalAmounts(bareStart, hit.end) : hit);
     }
     index = scanned.next;

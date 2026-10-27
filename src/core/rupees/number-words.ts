@@ -1,7 +1,9 @@
-// The closed vocabulary of the amount scanner: unit words (lakh, crore, hazaar) and the
-// Hindi number words of D34. It is a fixed table on purpose. A word outside it, such as
-// English "eight" or Hindi "pachaas", is left unread so the user is asked instead of the
-// scanner guessing a figure.
+// The closed vocabulary of the amount scanner: unit words (sau, hazaar, lakh, crore) and the
+// Hindi number words of D34 and D44 (ek to das, the tens bees to nabbe, dedh, dhai, sava,
+// saadhe, paune). It is a fixed table on purpose. A word outside it, such as English "eight"
+// or Hindi "pachpan", is left unread so the user is asked instead of the scanner guessing a
+// figure. A number word counts only with a unit after it, so "ke saath" (with) and English
+// "do" stay ordinary words.
 
 const DEVANAGARI_START = 0x0900;
 const DEVANAGARI_MARKS_END = 0x0963;
@@ -14,6 +16,7 @@ const ZERO_WIDTH_JOINER = 0x200d;
 // so skipping the lookup keeps a giant adversarial "word" from being normalised.
 const MAX_WORD_LENGTH = 16;
 
+const HUNDRED = 100;
 const THOUSAND = 1_000;
 const LAKH = 100_000;
 const CRORE = 10_000_000;
@@ -73,6 +76,7 @@ export function skipBlanks(text: string, start: number): number {
 }
 
 const UNITS = table<number>([
+  [['sau', 'सौ'], HUNDRED],
   [['lakh', 'lakhs', 'lac', 'lacs', 'लाख'], LAKH],
   [['crore', 'crores', 'cr', 'karod', 'करोड़', 'करोड'], CRORE],
   [['hazaar', 'hazar', 'hajar', 'hazaars', 'हज़ार', 'हजार'], THOUSAND],
@@ -96,6 +100,14 @@ const NUMERALS = table<number>([
   [['aath', 'ath', 'आठ'], 8],
   [['nau', 'नौ'], 9],
   [['das', 'दस'], 10],
+  [['bees', 'bis', 'बीस'], 20],
+  [['tees', 'tis', 'तीस'], 30],
+  [['chalis', 'chaalis', 'chalees', 'chaalees', 'चालीस'], 40],
+  [['pachaas', 'pachas', 'पचास'], 50],
+  [['saath', 'sath', 'साठ'], 60],
+  [['sattar', 'सत्तर'], 70],
+  [['assi', 'assee', 'अस्सी'], 80],
+  [['nabbe', 'nabbey', 'नब्बे'], 90],
 ]);
 
 const FRACTIONS = table<Quantity>([
@@ -118,7 +130,7 @@ export function lookupAttachedUnit(normalized: string): number | undefined {
   return UNITS.get(normalized) ?? ATTACHED_UNITS.get(normalized);
 }
 
-/** A whole number word from one to ten, or undefined. */
+/** A whole number word (one to ten, or a ten from twenty to ninety), or undefined. */
 export function lookupNumeral(normalized: string): number | undefined {
   return NUMERALS.get(normalized);
 }
@@ -142,18 +154,25 @@ const EN_DASH = 0x2013;
 const SLASH = 0x2f;
 
 /**
- * True when only blanks and at most one range joiner (a hyphen, an en dash, a slash, or ya,
- * se, aur, or) lie between `from` and `to`. A bare number word that close to an amount is
- * one end of a range, so the amount cannot be read as a single figure.
+ * True when a bare number word between `from` and `to` and its neighbouring amount are the two
+ * ends of one range. A joiner (a hyphen, an en dash, a slash, or ya, se, aur, or) links them
+ * whatever the amount looks like; blanks alone link them only to an amount spelled in words
+ * ("do teen lakh"), because beside digits the word is usually not a number at all: "ke saath
+ * 200 log" is "with 200 people" and "we can do 8 lakh" is English.
  */
-export function joinsRange(text: string, from: number, to: number): boolean {
+export function joinsRange(text: string, from: number, to: number, inWords: boolean): boolean {
   let index = skipBlanks(text, from);
+  let joined = false;
   const code = text.charCodeAt(index);
   if (code === HYPHEN || code === EN_DASH || code === SLASH) {
     index = skipBlanks(text, index + 1);
+    joined = true;
   } else if (index < to && isWordCharacter(code)) {
     const end = readWord(text, index);
-    if (RANGE_WORDS.has(normalizeWord(text.slice(index, end)))) index = skipBlanks(text, end);
+    if (RANGE_WORDS.has(normalizeWord(text.slice(index, end)))) {
+      index = skipBlanks(text, end);
+      joined = true;
+    }
   }
-  return index === to;
+  return index === to && (joined || inWords);
 }

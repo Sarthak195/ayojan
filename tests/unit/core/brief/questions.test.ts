@@ -17,7 +17,6 @@ describe('budget and guest answers (FR-4)', () => {
     ['negative guests, typographic minus', { guests: '−5' }, 'guests', 'out-of-range'],
     ['too many guests', { guests: '5001' }, 'guests', 'out-of-range'],
     ['fractional guests', { guests: '2.5' }, 'guests', 'not-whole'],
-    ['guests in words the app does not know', { guests: 'aath sau' }, 'guests', 'unreadable'],
     ['two guest counts', { guests: '100 or 200' }, 'guests', 'several-numbers'],
     ['guests cleared', { guests: '' }, 'guests', 'missing'],
     ['guests null', { guests: null }, 'guests', 'missing'],
@@ -26,12 +25,6 @@ describe('budget and guest answers (FR-4)', () => {
     ['budget with two amounts', { budget: '10 crore 1' }, 'budget', 'several-numbers'],
     ['budget one over the maximum', { budget: '100000001' }, 'budget', 'out-of-range'],
     ['negative budget', { budget: '-8 lakh' }, 'budget', 'out-of-range'],
-    [
-      'budget in a Hindi word the app does not know',
-      { budget: 'pachaas hazaar' },
-      'budget',
-      'unreadable',
-    ],
     ['budget in English words', { budget: 'eight lakh' }, 'budget', 'unreadable'],
     [
       'budget with either of two amounts',
@@ -54,6 +47,7 @@ describe('budget and guest answers (FR-4)', () => {
     ['saadhe teen lakh', 350_000],
     ['डेढ़ लाख', 150_000],
     ['dhai lakh', 250_000],
+    ['pachaas hazaar', 50_000],
     ['5000', 5_000],
     ['10 crore', 100_000_000],
   ])('reads the budget answer %s as %i', (text, inr) => {
@@ -64,6 +58,7 @@ describe('budget and guest answers (FR-4)', () => {
   it.each([
     ['150', 150],
     ['dedh hazaar', 1_500],
+    ['aath sau', 800],
     ['  200 guests ', 200],
     ['५००', 500],
   ])('reads the guest answer %s as %i', (text, guests) => {

@@ -118,8 +118,8 @@ describe('verifyClaim reads Hindi amounts inside the quote', () => {
       'verified',
     ],
     ['Devanagari digits', '\u092C\u091C\u091F \u096E \u0932\u093E\u0916', 800_000, 'verified'],
-    // "aath" (8) is inside the ek-to-das table (D34); "pachaas" (50) is outside it.
-    ['a word outside the table', 'budget pachaas hazaar', 50_000, 'unverified:number-not-in-quote'],
+    // "pachaas" (50) joined the table with the other tens in D44.
+    ['a tens word', 'budget pachaas hazaar', 50_000, 'verified'],
     ['English number words', 'budget eight lakh', 800_000, 'unverified:number-not-in-quote'],
   ])('%s', (_name, text, value, outcome) => {
     it(`is ${outcome}`, () => {

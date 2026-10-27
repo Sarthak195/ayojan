@@ -103,6 +103,8 @@ describe('parseAmount reads one Indian amount', () => {
     ['Devanagari saadhe teen lakh', 'साढ़े तीन लाख', 350_000],
     ['Devanagari paune do lakh', 'पौने दो लाख', 175_000],
     ['Devanagari aath lakh', 'आठ लाख', 800_000],
+    ['pachaas hazaar (D44)', 'pachaas hazaar', 50_000],
+    ['Devanagari pachaas hazaar (D44)', 'पचास हजार', 50_000],
   ])('Hindi number words (D34): %s', (_name, text, expected) => {
     it(`reads "${text}" as ${String(expected)}`, () => {
       expect(amountOf(text)).toBe(expected);
@@ -118,8 +120,6 @@ describe('parseAmount reads one Indian amount', () => {
     ['lakh with no number', 'lakh'],
     ['a lone k', 'k'],
     ['a lone L', 'L'],
-    ['a Hindi word outside the table', 'pachaas hazaar'],
-    ['Hindi word outside the table, Devanagari', 'पचास हजार'],
     ['a table word with no unit', 'dedh'],
     ['a table word before the wrong word', 'do log'],
     ['saadhe with no whole number', 'saadhe lakh'],

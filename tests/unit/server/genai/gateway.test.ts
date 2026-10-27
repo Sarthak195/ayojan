@@ -160,15 +160,15 @@ describe('a failed call', () => {
 describe('the 40 s budget (D16)', () => {
   const elapsed = (clock: { now: () => number }): number => clock.now() - T0;
 
-  it('gives rung 1 20 s and rung 2 12 s, then skips rung 3 with only 8 s left', async () => {
+  it('gives rung 1 20 s and rung 2 18 s, then skips rung 3 with only 2 s left', async () => {
     const { gateway, calls, clock } = harness(() => 'hang');
     const result = await gateway.extract(brief());
     expect(result).toEqual({ kind: 'unavailable', reason: 'timeout' });
     expect(calls.map((call) => [call.model, call.timeoutMs])).toEqual([
       [LITE, 20_000],
-      [OLD_LITE, 12_000],
+      [OLD_LITE, 18_000],
     ]);
-    expect(elapsed(clock)).toBe(32_000);
+    expect(elapsed(clock)).toBe(38_000);
   });
 
   it('enters rung 3 with at least 15 s left and caps its timeout at the time left', async () => {
@@ -177,7 +177,7 @@ describe('the 40 s budget (D16)', () => {
     await gateway.extract(brief());
     expect(calls.map((call) => [call.model, call.timeoutMs])).toEqual([
       [LITE, 20_000],
-      [OLD_LITE, 12_000],
+      [OLD_LITE, 18_000],
       [FLASH, 22_000],
     ]);
     expect(elapsed(clock)).toBe(ACTION_BUDGET_MS);

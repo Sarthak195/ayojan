@@ -47,7 +47,10 @@ export interface Rung {
 /** D16 ladder: the slower flash model is tried only when it has room to answer. */
 export const LADDER: readonly Rung[] = [
   { model: 'gemini-3.5-flash-lite', timeoutMs: 20_000, minRemainingMs: MIN_CALL_START_MS },
-  { model: 'gemini-3.1-flash-lite', timeoutMs: 12_000, minRemainingMs: MIN_CALL_START_MS },
+  // It answers in about 5 s, but 12 s cut it off under load on 27 Oct. After a 20 s rung-1
+  // timeout, 18 s still ends by 38 s, inside the budget, and rung 3 still needs 15 s left, so
+  // the latest a read can end is unchanged.
+  { model: 'gemini-3.1-flash-lite', timeoutMs: 18_000, minRemainingMs: MIN_CALL_START_MS },
   { model: 'gemini-3.5-flash', timeoutMs: ACTION_BUDGET_MS, minRemainingMs: 15_000 },
 ];
 

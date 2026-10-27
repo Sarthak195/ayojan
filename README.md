@@ -302,7 +302,7 @@ node scripts/measure-pages.mjs http://127.0.0.1:3600
 - The plan page takes the time of one decrypt and one fold. The link holds the whole plan, so no request waits on a database.
 - One read of a Hinglish brief on the live app took 5.2 s and matched 5 of 5 values. That is a single observation, not a benchmark. The live app answered page requests in about 100 to 150 ms to first byte from the author's machine on 26 Oct 2026, over the author's own network.
 - A model action has a 40 s budget and starts no call with under 6 s left, so a slow model cannot hold a request for the full Cloud Run timeout.
-- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; an instance spends at most 120 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
+- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; the service runs on one Gemini key and one instance, which spends at most 60 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
 
 ## Accessibility
 

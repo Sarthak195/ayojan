@@ -187,12 +187,14 @@ starting a new plan is the way out. The measurement is
 Ayojan is treated as a free-tier Gemini client, and from commit `8ab00a3` (live since revision `ayojan-00003-lx6`) its read pages tell users so. On 26 Oct 2026 the
 Cloud Run project had billing enabled but the Gemini API was not enabled in it, so none of the 7
 working keys can come from that billed project; the projects the keys do come from were not
-inspected. No paid key was added: a paid last step on the model ladder was offered and declined,
+inspected. From 27 Oct 2026 (D46) the service runs on one of those keys only, because pooling
+free-tier keys from several projects can read as getting around Google's documented usage
+limits. No paid key was added: a paid last step on the model ladder was offered and declined,
 so none was built. Text a user submits for reading goes to Gemini under
 Google's terms, not this project's, and is treated as unpaid use (see
 [DATA_HANDLING.md](DATA_HANDLING.md)). The daily allowance is not read from Google: the code
-assumes about 20 requests per model per project per day, at least 6 distinct projects behind
-the keys and a reset at midnight Pacific time ([exhaustion.ts](../src/server/genai/exhaustion.ts)),
+assumes about 20 requests per model per project per day, one project behind the one key, so
+about 60 model calls a day in total, and a reset at midnight Pacific time ([exhaustion.ts](../src/server/genai/exhaustion.ts)),
 and none of these has been measured. When a model refuses or times out, the app tries the next
 model on the ladder, and when all fail it says so, naming the reason, and offers the plain form,
 which does everything except the reading. A read can take up to 40 seconds before it gives up.
@@ -210,15 +212,16 @@ whole pool.
 
 The limits live in each instance's memory ([rate-limit.ts](../src/server/ratelimit/rate-limit.ts)):
 
-| Class          | Applies to                                                       | Limit per client                                         |
-| -------------- | ---------------------------------------------------------------- | -------------------------------------------------------- |
-| Model          | reading a brief, quote or change, and drafting the family update | a burst of 3, then 6 a minute, and 20 a day              |
-| Step           | every other POST                                                 | 60 a minute                                              |
-| Whole instance | model actions                                                    | 120 a day (an instance's share of the assumed 360 calls) |
+| Class          | Applies to                                                       | Limit per client                                        |
+| -------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| Model          | reading a brief, quote or change, and drafting the family update | a burst of 3, then 6 a minute, and 20 a day             |
+| Step           | every other POST                                                 | 60 a minute                                             |
+| Whole instance | model actions                                                    | 60 a day (the whole assumed allowance, on one instance) |
 
 What that does not give you:
 
-- **Up to three times the limits.** Cloud Run may run three instances, each counting alone.
+- **A brief overlap during a deploy.** Cloud Run runs one instance, but during a deploy an
+  old and a new revision can overlap briefly, each counting alone.
 - **A daily budget that lasts as long as an instance.** With no minimum instance, a cold start
   resets the counters.
 - **A weak client identity.** The key is a salted hash of the address Google's front end
@@ -228,7 +231,7 @@ What that does not give you:
   10,000 clients are tracked the oldest are forgotten.
 - **No limit on page views.** Only POSTs are limited. Each plan page decrypts its link, which
   is bounded by the 4,000-character cap.
-- **The real ceiling** is three instances times the per-instance budget, and then the Gemini
+- **The real ceiling** is the one instance's 60 model actions a day, and then the Gemini
   quota itself.
 
 ### The reading cache is per instance

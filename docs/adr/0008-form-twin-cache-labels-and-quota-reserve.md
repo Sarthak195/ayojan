@@ -41,7 +41,9 @@ came from, and part of the quota is held back for text people type themselves.
 - **Limits at the door.** [`rate-limit.ts`](../../src/server/ratelimit/rate-limit.ts) allows a
   client a burst of 3 and 6 a minute for steps that can call the model, and 20 such actions a day;
   other steps get 60 a minute. Each instance allows 120 model actions a day, which is the assumed
-  pool (6 projects, 3 models, 20 requests a day) shared over 3 instances. The client key is a
+  pool (6 projects, 3 models, 20 requests a day) shared over 3 instances. Amended 27 Oct 2026
+  (D46): the service runs on one key from one project and one instance, so the budget is 60
+  model actions a day (1 x 3 x 20). The client key is a
   keyed hash of the rightmost `x-forwarded-for` entry, the one Google's front end appends and a
   caller cannot choose ([`client-key.ts`](../../src/server/ratelimit/client-key.ts)).
 

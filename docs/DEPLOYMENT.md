@@ -66,7 +66,7 @@ DEPLOY_DIR="$(mktemp -d)"
 git archive HEAD | tar -x -C "$DEPLOY_DIR"
 
 gcloud run deploy ayojan --source "$DEPLOY_DIR" --region asia-south1 \
-  --min-instances=0 --max-instances=3 --memory=512Mi --cpu=1 --timeout=60 \
+  --min-instances=0 --max-instances=1 --memory=512Mi --cpu=1 --timeout=60 \
   --allow-unauthenticated \
   --set-secrets=GEMINI_API_KEY=gemini-api-key:latest,STATE_SEAL_KEY=state-seal-key:latest
 ```
@@ -96,8 +96,12 @@ The flags, and why:
 
 - `--min-instances=0`: the service scales to zero when idle, so an idle service holds no
   instance. The price is a cold start on the first request after a quiet period.
-- `--max-instances=3`: a flood cannot start more than three instances. The per-instance
-  limits in [LIMITATIONS.md](LIMITATIONS.md) are sized for three.
+- `--max-instances=1`: a flood cannot start a second instance, and the one instance owns the
+  whole daily model budget of 60 actions (one key, three models, about 20 calls each). From
+  27 Oct 2026 (D46) the service runs on one Gemini key from one project, because pooling
+  free-tier keys from several projects can read as getting around Google's documented usage
+  limits; the limits in [LIMITATIONS.md](LIMITATIONS.md) are sized for that. Earlier
+  revisions ran with a maximum of 3.
 - `--timeout=60`: the app's own budget for one model action is 40 seconds
   (`ACTION_BUDGET_MS` in [gateway.ts](../src/server/genai/gateway.ts)), so a slow model fails
   with the app's own message inside Cloud Run's limit and not with a bare 504.
@@ -114,10 +118,12 @@ The flags, and why:
 The project's default compute service account holds `roles/secretmanager.secretAccessor` on
 both. On 26 Oct 2026 `gemini-api-key` had two enabled versions and `state-seal-key` had one.
 `/api/health` reported 7 keys in the pool that day (the public output was trimmed later and no
-longer shows the key count; see the health endpoint section).
+longer shows the key count; see the health endpoint section). On 27 Oct 2026 the service moved
+to one key (D46): `gemini-api-key` gets a version holding one key, and the deploy above sets
+one instance.
 
-- **Adding a Gemini key later** is `gcloud secrets versions add gemini-api-key --data-file=-`
-  with the new comma-separated list on standard input (`printf`, not `echo`, so there is no
+- **Changing the Gemini key** is `gcloud secrets versions add gemini-api-key --data-file=-`
+  with the new key (or comma-separated list) on standard input (`printf`, not `echo`, so there is no
   trailing newline). Cloud Run reads a secret exposed as an environment variable when an
   instance starts, so a warm instance keeps the old list until it is replaced. This has not
   been exercised on the live service.
@@ -164,8 +170,8 @@ status and counts, an empty reading cache and no model action yet on that instan
 The endpoint is public and unauthenticated, so the public answer is limited to what an operator
 needs from outside. The key count and the per-key quota counters, which would show how much model
 capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
-The numbers describe one instance, not the service: with several instances running, which one
-answers is up to Cloud Run.
+The numbers describe one instance. With `--max-instances=1` that is the service, except
+briefly during a deploy, when an old and a new revision can both answer.
 
 ## Verifying a deploy
 
@@ -180,7 +186,7 @@ gcloud run services describe ayojan --region asia-south1 \
 
 The first must answer `"status":"ok"` (the key count is not in the public output; set
 `HEALTH_DETAIL=1` to see it) with the expected counts (20 tasks, 7 levers, 19
-questions), the second must show timeout 60, a maximum of 3 instances and 100 percent of
+questions), the second must show timeout 60, a maximum of 1 instance and 100 percent of
 traffic on the new revision. Then read one sample brief by hand in a signed-out browser.
 
 What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026 (the `/api/health`

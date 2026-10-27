@@ -115,8 +115,10 @@ recorded with an `-unconfirmed` suffix. The recorded id is kept in the reading's
 `src/app/[lang]/p/[token]/check/read-source.tsx`); a reading entered by form shows no model.
 
 Keys come from `GEMINI_API_KEY` and any `GEMINI_API_KEY_*` variables, each split on commas and
-whitespace and de-duplicated (`src/server/config/key-pool.ts`). The deployed service has seven keys,
-read from Secret Manager. Within a model the gateway starts after the key the previous read used last,
+whitespace and de-duplicated (`src/server/config/key-pool.ts`). The deployed service had seven keys
+on 26 Oct 2026; from 27 Oct (D46) it runs on one key from one project, read from Secret Manager,
+because pooling free-tier keys from several projects can read as getting around Google's
+documented usage limits. The pool code still accepts several keys. Within a model the gateway starts after the key the previous read used last,
 and it remembers failures in memory by key index, never by key:
 
 | Failure (classified on `.status`, `src/server/genai/classify.ts`) | What the ladder does                                                    |
@@ -189,8 +191,8 @@ first out. The cache is in the memory of one server instance. A cached reading i
 by AI (cached)" with the reason, and is never shown as a fresh read.
 
 **Budget per instance** (`src/server/genai/exhaustion.ts`, `src/server/ratelimit/`). Working values,
-not measured: about 20 requests a day per model per key project, at least six projects among the
-keys, three models and three instances give 120 model actions a day for one instance. Past that,
+not measured: about 20 requests a day per model per key project, one project (one key, D46),
+three models and one instance give 60 model actions a day, the whole service's budget. Past that,
 the rate limiter refuses further model actions with a page that names the wait, and the gateway
 starts no more ladders. A model action also counts against the client: a burst of three, six a
 minute and 20 a day. Counters live in memory, so they are per instance and a cold start resets them.
@@ -246,8 +248,8 @@ reader on a deploy that has none.
 
 - The quota numbers in section 6 are working assumptions, not measurements. The service is
   treated as a free-tier client: no key comes from the billed Cloud Run project and no paid key was
-  added (see [DATA_HANDLING.md](DATA_HANDLING.md)). The real ceiling on model calls is the three
-  Cloud Run instances times the per-instance budget, together with the Gemini quota itself.
+  added (see [DATA_HANDLING.md](DATA_HANDLING.md)). The real ceiling on model calls is the one
+  Cloud Run instance's 60 actions a day, together with the Gemini quota itself.
 - Latency is observed, not benchmarked. On 26 Oct 2026 one Hinglish brief read on the deployed
   service took 5.2 s, and a read of a pasted quote took 12.8 s. The same day, a dozen reads from a
   local production server with real keys took 6 to 39 s, and one of twelve first tries ran out of

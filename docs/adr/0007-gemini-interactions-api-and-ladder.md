@@ -69,7 +69,8 @@ of models.
   retuning.
 - One action can wait up to 40 s, and the page says so under each read button.
 - Cool-down memory and counters live in each instance, so up to three Cloud Run instances each
-  learn about a failing model on their own.
+  learn about a failing model on their own. Amended 27 Oct 2026 (D46): the service now runs one
+  instance on one key, so one memory sees every failure.
 - Dropping the retries means a transient failure costs a rung rather than a second try.
 
 ### Verified

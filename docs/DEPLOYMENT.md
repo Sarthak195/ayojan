@@ -187,25 +187,26 @@ no quota, and it is sent with `Cache-Control: no-store`. It reports:
 - `data`: counts of tasks, levers and vendor questions read from `data/`.
 - `readingCache`: `entries`, the number of readings held by this instance. An operator can read
   it to see whether readings will be served from the cache.
-- `quota`: `actionsToday`, this instance's count of model actions in the current quota day.
 - `problems`: the named reasons for a 503.
 
 That is the whole public answer. The rest is behind `HEALTH_DETAIL=1` (off by default; set it on
 the service only while debugging, for example with `gcloud run services update ayojan
 --update-env-vars HEALTH_DETAIL=1`, and unset it afterwards). With it on, the answer gains a
 `detail` object: `keys` (how many Gemini keys are configured, never the keys), `readingCache`
-with its `bytes`, and `quota` with the counts for the quota day by model and key index, how many
+with its `bytes`, and `quota` with `actionsToday` (this instance's count of model actions in the
+current quota day), the counts for the quota day by model and key index, how many
 model and key pairs and how many keys are cooling down after a refusal, and which models are.
 
 Seen on 26 Oct 2026, about 18:00 IST, on revision `ayojan-00001-jxf`, with the output as it was
-then (later trimmed, so the public answer no longer carries `keys` or the per-key counters):
+then (later trimmed, so the public answer no longer carries `keys`, `quota` or the per-key
+counters):
 `{"status":"ok","ai":"available","keys":7,"sealKey":"loaded","data":{"tasks":20,"levers":7,"questions":19},...,"problems":[]}`.
 Seen again at about 20:15 IST on `ayojan-00002-7hr`, right after the second deploy: the same
 status and counts, an empty reading cache and no model action yet on that instance.
 
 The endpoint is public and unauthenticated, so the public answer is limited to what an operator
-needs from outside. The key count and the per-key quota counters, which would show how much model
-capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
+needs from outside. The key count, the day's action count and the per-key quota counters, which would
+show how much model capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
 The numbers describe one instance. With `--max-instances=1` (since `ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3) that is
 the service, except briefly during a deploy, when an old and a new revision can both answer.
 

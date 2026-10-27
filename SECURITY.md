@@ -282,10 +282,10 @@ value, not the rules.
 - The sealed link is a bearer token with no expiry. Cloud Run request logs may hold it (see
   [docs/DATA_HANDLING.md](docs/DATA_HANDLING.md)).
 - `/api/health` is public. It reports `status`, whether the AI is available, whether the seal
-  key is loaded, the planning data counts, the reading cache entry count, how many model
-  actions this instance has run today, and the named reasons for a 503. It contains no key
-  material and makes no model call. The number of keys and the per-key and per-model call
-  counts and cool-downs, which would show how much capacity is left, are not public: they are
+  key is loaded, the planning data counts, the reading cache entry count and the named reasons
+  for a 503. It contains no key
+  material and makes no model call. The number of keys, how many model actions this instance has
+  run today, and the per-key and per-model call counts and cool-downs, which would show how much capacity is left, are not public: they are
   added under `detail` only when the server runs with `HEALTH_DETAIL=1`, which is off by
   default.
 - Next's own console output for an exception during a page render is outside the logger's

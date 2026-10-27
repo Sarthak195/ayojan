@@ -15,8 +15,8 @@ import { loadSealKey, SealKeyError } from '../state/seal-key';
 // Counts only (FR-45). No model call: a probe must not spend quota. No key material: the key
 // pool contributes its size, the quota snapshot names keys by index, and a seal key failure
 // is reported by its named error, whose message never quotes the value. The public answer is
-// only what an operator needs from outside; the key count and the per-key and per-model
-// counters and cool-downs would tell a stranger how much capacity is left, so they appear
+// only what an operator needs from outside; the key count, today's action count and the per-key
+// and per-model counters and cool-downs would tell a stranger how much capacity is left, so they appear
 // only when HEALTH_DETAIL=1 is set on the server.
 
 type Environment = Readonly<Record<string, string | undefined>>;
@@ -35,7 +35,6 @@ export interface HealthReport {
   readonly data: DataCounts | null;
   /** Entries only: enough for an operator to see whether the cache is warm; the size is under detail. */
   readonly readingCache: { readonly entries: number };
-  readonly quota: { readonly actionsToday: number };
   readonly problems: readonly string[];
   /** Present only when HEALTH_DETAIL=1. */
   readonly detail?: HealthDetail;
@@ -125,7 +124,6 @@ export function healthReport(sources: HealthSources = defaultHealthSources()): {
       sealKey: seal.state,
       data: data.counts,
       readingCache: { entries: cache.entries },
-      quota: { actionsToday: quota.actionsToday },
       problems,
       ...(sources.env.HEALTH_DETAIL === '1'
         ? { detail: { keys, readingCache: cache, quota } }

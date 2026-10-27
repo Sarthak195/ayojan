@@ -27,7 +27,7 @@ function sources(overrides: Partial<HealthSources> = {}): HealthSources {
 }
 
 describe('healthReport', () => {
-  it('is 200 with counts of data rows, cache entries and actions, and nothing finer', () => {
+  it('is 200 with counts of data rows and cache entries, and nothing finer', () => {
     const cache = createReadingCache();
     cache.set('k', { kind: 'reading', json: '{}', answeredBy: 'gemini-fake' }, NOW);
     const exhaustion = createExhaustionMemory();
@@ -41,21 +41,20 @@ describe('healthReport', () => {
     expect(report.data?.levers).toBeGreaterThan(0);
     expect(report.data?.questions).toBeGreaterThan(0);
     expect(report.readingCache).toEqual({ entries: 1 });
-    expect(report.quota).toEqual({ actionsToday: 0 });
     expect(report.problems).toEqual([]);
     expect(Object.keys(report).sort()).toEqual(
-      ['ai', 'data', 'problems', 'quota', 'readingCache', 'sealKey', 'status'].sort(),
+      ['ai', 'data', 'problems', 'readingCache', 'sealKey', 'status'].sort(),
     );
     expect(JSON.stringify(report)).not.toContain('gemini-3.5-flash-lite');
   });
 
-  it('adds the key count and per-key counters only when HEALTH_DETAIL=1', () => {
+  it('adds the key count, actions today and per-key counters only when HEALTH_DETAIL=1', () => {
     const exhaustion = createExhaustionMemory();
     exhaustion.countCall('gemini-3.5-flash-lite', 1, NOW);
     exhaustion.countAction(NOW);
     const env = { GEMINI_API_KEY: `${KEY_ONE}, ${KEY_TWO}`, STATE_SEAL_KEY: SEAL_VALUE };
     const { report } = healthReport(sources({ exhaustion, env: { ...env, HEALTH_DETAIL: '1' } }));
-    expect(report.quota.actionsToday).toBe(1);
+    expect(report.detail?.quota.actionsToday).toBe(1);
     expect(report.detail?.keys).toBe(2);
     expect(report.detail?.readingCache.bytes).toBe(0);
     expect(report.detail?.quota.callsToday).toEqual([
@@ -145,6 +144,8 @@ describe('GET /api/health', () => {
     expect(response.status).toBe(200);
     const body = JSON.parse(text) as { ai: string; data: { tasks: number }; detail?: unknown };
     expect(body.detail).toBeUndefined();
+    // Today's action count would show how much of the shared model quota is left.
+    expect(text).not.toContain('actionsToday');
     expect(text).not.toContain('"keys"');
     expect(body.ai).toBe('available');
     expect(body.data.tasks).toBeGreaterThan(0);

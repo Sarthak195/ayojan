@@ -270,8 +270,8 @@ template again with the "Write it with AI" button.
 
 ### Other service limits
 
-- **The health report is public.** `/api/health` shows status, the data counts, the reading
-  cache entry count and this instance's count of model actions today. The key count and the
+- **The health report is public.** `/api/health` shows status, the data counts and the reading
+  cache entry count. The key count, this instance's count of model actions today and the
   per-key quota counters appear only with `HEALTH_DETAIL=1`, which is off by default. It holds
   no key and no text.
 - **Every page loads the React and Next runtime.** The plan works with JavaScript switched off,

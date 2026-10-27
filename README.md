@@ -225,7 +225,7 @@ Requires Node 24 (see `.nvmrc`).
 npm ci && npm run verify
 ```
 
-`verify` runs the type check, lint, validation of the planning data, the tests, the 250-line file cap, the forbidden-pattern and leaked-key scan, and the repository size check. It needs no API key, because the tests run offline and any attempt to fetch fails the test. The CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same steps, plus the build, with no key.
+`verify` runs the type check, lint, validation of the planning data, the tests, the 250-line file cap, the forbidden-pattern and leaked-key scan, and the repository size check. It needs no API key, because the tests run offline and any attempt to fetch fails the test. The CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same steps, plus `npm audit --omit=dev --audit-level=high` right after `npm ci` and the build, with no key.
 
 To run the app:
 
@@ -313,7 +313,7 @@ README.md  AGENTS.md  SECURITY.md  CONTRIBUTING.md  LICENSE
 eslint.config.mjs        the purity boundary for src/core
 next.config.ts           standalone build, fixed security headers
 Dockerfile               the Cloud Run image
-.github/workflows/ci.yml CI: the verify steps plus the build, no key
+.github/workflows/ci.yml CI: a production dependency audit, the verify steps and the build, no key
 data/                    planning knowledge as YAML (weights, tasks, levers, questions, functions)
 golden/llm/              committed model recordings, one per fixture and prompt
 fixtures/                the input texts the recordings were made from

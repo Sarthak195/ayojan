@@ -54,7 +54,7 @@ it out stops comment edits from invalidating the cache).
 ## How it was deployed
 
 Deploys are run by hand from a workstation. CI ([ci.yml](../.github/workflows/ci.yml)) installs,
-checks, tests and builds; it does not deploy and holds no secret.
+audits the production dependencies, checks, tests and builds; it does not deploy and holds no secret.
 
 The source for a deploy is a directory made from `git archive` of the commit, not the working
 tree:

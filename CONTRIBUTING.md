@@ -26,7 +26,7 @@ npm run verify
 | Forbidden  | `npm run check:api`  | Banned patterns and key-shaped strings in every tracked and untracked file                             |
 | Repo size  | `npm run check:repo` | The git object database, history included, is under 9 MB (the contest cap is 10 MB)                    |
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same steps, then `npm run build`,
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `npm audit --omit=dev --audit-level=high` after `npm ci`, then the same steps, then `npm run build`,
 with no API key. No test needs a key. `npm run format:check` (Prettier) is not part of `verify`, so
 run `npx prettier --write` on the files you changed.
 

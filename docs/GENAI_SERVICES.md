@@ -208,17 +208,18 @@ starts no more ladders. A model action also counts against the client: a burst o
 minute and 20 a day. Counters live in memory, so they are per instance and a cold start resets them.
 
 **Reserve for typed text.** Above 80 percent of the assumed allowance for a model and key pair,
-that pair is no longer used for the three sample texts, so the last fifth is kept for text a
+that pair is no longer used for the four sample texts, so the last fifth is kept for text a
 visitor types. Typed text can still use the whole allowance.
 
-**Example readings.** The start page and the quotes page offer three sample texts: the sample
-brief and two sample quotes. Each has a committed recording in `golden/llm/`, made once with
-`npm run record:golden` and stamped with its date and the model that answered. A sample is still
+**Example readings.** The start page, the quotes page and the plan page's change box offer four
+sample texts: the sample brief, two sample quotes and the explainer's change sentence. Each has a
+committed recording in `golden/llm/`, made once with `npm run record:golden` and stamped with its date and the model that answered. A sample is still
 read live first. Its recording is used only when the ladder cannot answer (quota, timeout, or the
 reserve above), and then the page says so: "Example reading, recorded on <date>; your own words are
 read live". A recording is ignored when its prompt or schema version differs from the code's. A
 server with no key says `nokey` even for a sample, so a recording cannot pass for a working AI
-reader on a deploy that has none.
+reader on a deploy that has none. The start page also offers a birthday brief dated 7 days ahead
+by code; it changes daily, so it has no recording and falls back to the form twin.
 
 ## 7. Pasted text is data
 

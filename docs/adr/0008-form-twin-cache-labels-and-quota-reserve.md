@@ -31,7 +31,7 @@ came from, and part of the quota is held back for text people type themselves.
   hash of the prompt id and version, the schema version, the text and anything else the prompt sees.
   It holds at most 200 entries, 2 MiB and 24 hours ([`reading-cache.ts`](../../src/server/genai/reading-cache.ts)).
   A refusal is cached too; an unavailable outcome never is.
-- **Examples come from a recording.** The sample brief and the two sample quotes have a text in
+- **Examples come from a recording.** The sample brief, the two sample quotes and the explainer's change sentence have a text in
   [`fixtures`](../../fixtures) and a recorded reply in [`golden/llm`](../../golden/llm), both
   copied into the image. When a model and key pair has taken 80 percent of its assumed daily
   allowance, an example text skips live calls on that pair, and if nothing can answer it is served

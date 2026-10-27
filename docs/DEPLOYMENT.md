@@ -205,10 +205,11 @@ Seen again at about 20:15 IST on `ayojan-00002-7hr`, right after the second depl
 status and counts, an empty reading cache and no model action yet on that instance.
 
 The endpoint is public and unauthenticated, so the public answer is limited to what an operator
-needs from outside. The key count, the day's action count and the per-key quota counters, which would
-show how much model capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
-The numbers describe one instance. With `--max-instances=1` (since `ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3) that is
-the service, except briefly during a deploy, when an old and a new revision can both answer.
+needs from outside. The key count, the day's action count and the per-key quota counters, which
+would show how much model capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key
+material and no user text. The numbers describe one instance. With `--max-instances=1` (since
+`ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3) that is the service, except
+briefly during a deploy, when an old and a new revision can both answer.
 
 ## Verifying a deploy
 

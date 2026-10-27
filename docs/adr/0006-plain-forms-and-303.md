@@ -52,7 +52,7 @@ a page that is a pure render of the new link.
 
 - The whole loop works with JavaScript off. A reload or a back button never repeats a change.
 - Each route is `POST(request)` returning a `Response`, so tests call it directly with a real
-  `Request`, with no framework or browser, and the 415, 413, 400, 422 and 429 order is ours.
+  `Request`, with no framework or browser, and the 403, 429, 415, 413, 400 and 422 order is ours.
 - Little client JavaScript runs, so there is little client state to get wrong.
 
 ### Costly

@@ -28,6 +28,10 @@ describe('cross-site POSTs', () => {
     ['a foreign Origin', { host: HOST, origin: 'https://evil.example' }],
     ['the literal null Origin', { host: HOST, origin: 'null' }],
     ['Sec-Fetch-Site: cross-site', { host: HOST, 'sec-fetch-site': 'cross-site' }],
+    [
+      'Sec-Fetch-Site: cross-site even with a matching Origin',
+      { host: HOST, origin: `https://${HOST}`, 'sec-fetch-site': 'cross-site' },
+    ],
     ['an Origin on another port', { host: HOST, origin: `https://${HOST}:8443` }],
   ])('answers %s with 403 before the rate limit and the body', async (_name, headers) => {
     const counting = limiter({ allowed: false, reason: 'minute', retryAfterSeconds: 9 });

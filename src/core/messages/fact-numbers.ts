@@ -6,7 +6,6 @@ import { daysBetween, partsOf } from '@/core/calendar/day-number';
 import type { IsoDate } from '@/core/calendar/day-number';
 
 import type { Headline, MessageFacts } from './fact-types';
-import { ATTENTION_SHOWN } from './family-update';
 
 function addDateParts(numbers: Set<number>, date: IsoDate): void {
   const { year, month, day } = partsOf(date);
@@ -40,8 +39,7 @@ export function factNumbers(facts: MessageFacts): ReadonlySet<number> {
   numbers.add(facts.levers.length);
   for (const lever of facts.levers) numbers.add(lever.effectInr);
   numbers.add(facts.atRisk.length);
-  // The update names the first few and counts the rest ("and 4 more").
-  if (facts.atRisk.length > ATTENTION_SHOWN) numbers.add(facts.atRisk.length - ATTENTION_SHOWN);
+  if (facts.moreAtRiskCount > 0) numbers.add(facts.moreAtRiskCount);
   for (const task of facts.atRisk) addDateParts(numbers, task.dueBy);
   numbers.add(facts.vendors.length);
   for (const vendor of facts.vendors) {

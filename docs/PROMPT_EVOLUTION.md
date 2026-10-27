@@ -12,7 +12,7 @@ recording is pending, the "First recordings" entry below records it.
 | `brief`        | `src/server/prompts/brief.ts`             | `BriefReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | `quote`        | `src/server/prompts/quote.ts`             | `QuoteReading`      | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | `change`       | `src/server/prompts/change.ts`            | `ChangeReading`     | 1               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
-| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 2               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
+| `familyUpdate` | `src/server/prompts/family-update.ts`     | `FamilyUpdateDraft` | 3               | 26 Oct 2026 | `gemini-3.5-flash-lite`               |
 | shared         | `src/server/prompts/shared/guardrails.ts` | n/a                 | 1               | 26 Oct 2026 | n/a                                   |
 
 ## Before the first recordings
@@ -112,3 +112,19 @@ recording is pending, the "First recordings" entry below records it.
   0 of 1 drafts accepted. v2 re-record (one call, `--only family-update-facts`): 6 lines naming the
   date, the guests and the capacity per vendor, accepted with "numbers checked against your plan:
   4 of 4". Asserted in `tests/golden/replay.test.ts`.
+
+### familyUpdate v2 to v3 (28 Oct 2026)
+
+- Before (v2): the model was sent every at-risk task and `now.projectedInr`, and had no rule for
+  a plan with nothing priced or for how many tasks to name.
+- After (v3): code sends at most three at-risk tasks, Late first and then earliest due, plus
+  `moreAtRiskCount` for the rest, and leaves `projectedInr` out of `now` while `now.priced` is
+  false. One system rule says to state no spending figure when nothing is priced and to say "and
+  N more" with the given count. The draft check allows `moreAtRiskCount` as a number, so the
+  check no longer derives a remainder the model never saw.
+- Why: the family-update template already did this (a spending line next to "nothing is priced"
+  contradicts itself, and a long list buries the late task), but a model draft passed the check
+  with either fault, because the projection and every task date are fact numbers.
+- Evidence: prompt and fact tests only. The `family-update-facts` recording was relabelled v3,
+  not re-recorded (no model call was made); its reply was written under v2 and still passes the
+  draft check. Re-record with `npm run record:golden -- --only family-update-facts`.

@@ -79,6 +79,11 @@ export interface MessageFactsInput {
 
 /** The input after cleaning, plus what code derived from it. */
 export interface MessageFacts extends MessageFactsInput {
+  /**
+   * `atRisk` here is only the most urgent few (Late first, then earliest due); this counts the
+   * ones left out, so neither a template nor a model has to subtract.
+   */
+  readonly moreAtRiskCount: number;
   /** Projected minus budget: positive means over budget. */
   readonly gapInr: number;
   /** True when there is a version to compare with; false gives a plan summary. */

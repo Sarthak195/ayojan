@@ -1,7 +1,7 @@
 {
   "fixture": "family-update-facts",
   "promptId": "familyUpdate",
-  "promptVersion": 2,
+  "promptVersion": 3,
   "schemaVersion": "1",
   "cacheInputs": ["hi", "simple"],
   "answeredBy": "gemini-3.5-flash-lite",

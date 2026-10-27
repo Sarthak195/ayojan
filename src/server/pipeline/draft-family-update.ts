@@ -144,7 +144,10 @@ function resultOf(
 // The facts are the data block and part of the cache key; language and register change the
 // draft, so they key it too. The GET of the messages page rebuilds exactly these inputs (D08).
 function requestInputs(input: FamilyUpdateInput): { text: string; cacheInputs: string[] } {
-  return { text: stableJson(input.facts), cacheInputs: [input.language, familyUpdate.register] };
+  return {
+    text: stableJson(familyUpdate.factsForModel(input.facts)),
+    cacheInputs: [input.language, familyUpdate.register],
+  };
 }
 
 /**

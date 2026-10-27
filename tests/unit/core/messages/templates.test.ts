@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { checkDraft } from '@/core/messages/draft-check';
-import { packFor } from '@/core/messages/render-values';
+import { moneyText, packFor } from '@/core/messages/render-values';
 import type { MessageFactsInput } from '@/core/messages/fact-types';
 import {
   TEMPLATE_LABEL_EN,
@@ -15,12 +15,13 @@ import { REVISED, VENUE, dataQuestions, date, makeFacts, questionRow } from './f
 
 const LANGUAGES: readonly Language[] = ['en', 'hi'];
 
-// Six slipping tasks on six days, so "and 3 more" is a number the update has to account for.
-const SIX_AT_RISK: MessageFactsInput['atRisk'] = [1, 2, 3, 4, 5, 6].map((day) => ({
-  taskId: `task-${String(day)}`,
-  name: { en: `Task ${String(day)}`, hi: `काम ${String(day)}` },
+// Six slipping tasks, "and 3 more" being a number the update has to account for. Their dates
+// (10 to 15 December) hold no 3, so only the count of the rest can license that number.
+const SIX_AT_RISK: MessageFactsInput['atRisk'] = [0, 1, 2, 3, 4, 5].map((offset) => ({
+  taskId: `task-${String(offset + 1)}`,
+  name: { en: `Task ${String(offset + 1)}`, hi: `काम ${String(offset + 1)}` },
   status: 'atRisk',
-  dueBy: date(`2026-11-0${String(day)}`),
+  dueBy: date(`2026-12-1${String(offset)}`),
   start: 'on',
 }));
 
@@ -51,13 +52,14 @@ describe('the family update template', () => {
   it.each(LANGUAGES)(
     'says nothing is priced, not on budget, before any quote in %s',
     (language) => {
-      const now = { ...REVISED.now, projectedInr: 1_500_000, priced: false };
+      // A projection that differs from the budget, so a stray spending line cannot hide in it.
+      const now = { ...REVISED.now, priced: false };
       const { text } = familyUpdateTemplate(makeFacts({ now }), language);
       const pack = packFor(language).sentences;
       expect(text).toContain(pack.notPriced);
       expect(text).not.toContain(pack.onBudget);
-      // The projection before any price is the budget itself: stating it would contradict.
-      expect(text).not.toContain(pack.spend('', '').slice(0, 12));
+      // Before any price the projection is only the budget: stating it would contradict.
+      expect(text).not.toContain(moneyText(now.projectedInr, language));
     },
   );
 
@@ -150,6 +152,25 @@ describe('the family update template', () => {
     for (const day of [1, 2, 3]) expect(text).toContain(`${task} ${String(day)} (`);
     for (const day of [4, 5, 6]) expect(text).not.toContain(`${task} ${String(day)} (`);
     expect(text).toContain(packFor(language).sentences.andMore(3));
+  });
+
+  it.each(LANGUAGES)('names a Late task first even when it is listed fifth (%s)', (language) => {
+    const late: MessageFactsInput['atRisk'][number] = {
+      taskId: 'late-one',
+      name: { en: 'Book the venue', hi: 'वेन्यू बुक करना' },
+      status: 'late',
+      dueBy: date('2026-10-25'),
+      start: 'today',
+    };
+    const atRisk = [...SIX_AT_RISK.slice(0, 4), late, ...SIX_AT_RISK.slice(4)];
+    const { text } = familyUpdateTemplate(makeFacts({ atRisk }), language);
+    const name = language === 'en' ? 'Book the venue' : 'वेन्यू बुक करना';
+    expect(text).toContain(`${name} (`);
+    expect(text).toContain(packFor(language).sentences.andMore(4));
+    const taskWord = language === 'en' ? 'Task' : 'काम';
+    expect(text).toContain(`${taskWord} 1 (`);
+    expect(text).toContain(`${taskWord} 2 (`);
+    expect(text).not.toContain(`${taskWord} 3 (`);
   });
 
   it('adds a lakh word only when it reads back as the same rupees', () => {

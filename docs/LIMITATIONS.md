@@ -87,8 +87,9 @@ task then says what it needs and what to do ("Needs 3 days from today, 2 days le
 2026: start today", or "Was due by 25 Oct 2026: start today" once the date has passed). Because
 these are latest finishes, a family planning six weeks out sees On track until about a week
 before, and every task reads At risk under two weeks, since the At risk threshold (14 days of
-slack) is shared with weddings. The family update names a Late task's date and "start today",
-without the day counts the plan page shows.
+slack) is shared with weddings. The family update names up to three tasks, Late ones first and
+then the earliest due, and counts the rest ("and 4 more"). A Late task is named with its date
+and "start today", without the day counts the plan page shows.
 
 ### It suggests no themes or ideas
 

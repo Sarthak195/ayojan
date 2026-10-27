@@ -30,9 +30,6 @@ function changeLines(facts: MessageFacts, before: Headline, language: Language):
   return lines.length > 0 ? lines : [sentences.nothingChanged];
 }
 
-/** How many tasks the attention line names; the rest are counted, so the update stays short. */
-export const ATTENTION_SHOWN = 3;
-
 function budgetLines(facts: MessageFacts, language: Language): string[] {
   const { sentences } = packFor(language);
   // Before any price the projection is the budget itself, so a spending line would contradict
@@ -63,15 +60,14 @@ function leverLine(facts: MessageFacts, language: Language): string[] {
 function attentionLine(facts: MessageFacts, language: Language): string[] {
   if (facts.atRisk.length === 0) return [];
   const pack = packFor(language);
-  const items = facts.atRisk.slice(0, ATTENTION_SHOWN).map((task) => {
+  const items = facts.atRisk.map((task) => {
     const name = localized(task.name, language);
     const due = dateText(task.dueBy, language);
     return task.status === 'late'
       ? pack.sentences.lateItem(name, due, task.start)
       : pack.sentences.attentionItem(name, pack.status.atRisk, due);
   });
-  const more = facts.atRisk.length - ATTENTION_SHOWN;
-  if (more > 0) items.push(pack.sentences.andMore(more));
+  if (facts.moreAtRiskCount > 0) items.push(pack.sentences.andMore(facts.moreAtRiskCount));
   return [pack.sentences.attention(items.join(', '))];
 }
 

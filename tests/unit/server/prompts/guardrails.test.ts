@@ -8,6 +8,7 @@ import { BriefReading } from '@/schemas/readings/brief-reading';
 import { ChangeReading } from '@/schemas/readings/change-reading';
 import { FamilyUpdateDraft } from '@/schemas/readings/family-update-draft';
 import { QuoteReading } from '@/schemas/readings/quote-reading';
+import { REVISED, makeFacts } from '../../core/messages/facts-fixture';
 import { buildInteractionRequest } from '@/server/genai/interactions';
 import type { PromptSpec } from '@/server/pipeline/llm-gateway';
 import * as brief from '@/server/prompts/brief';
@@ -162,6 +163,17 @@ describe('family-update prompt', () => {
     expect(familyUpdate.system).toContain('Use only numbers present in the facts');
     expect(familyUpdate.system).toContain('never write any number that is not in the facts');
     expect(familyUpdate.instruction('en')).toContain('Use only the numbers in the facts');
+  });
+
+  it('says nothing is priced when no price exists and caps the tasks it names', () => {
+    expect(familyUpdate.system).toContain('If now.priced is false, say nothing is priced yet');
+    expect(familyUpdate.system).toContain('moreAtRiskCount');
+  });
+
+  it('leaves the projection out of the facts it sends while nothing is priced', () => {
+    const facts = makeFacts({ now: { ...REVISED.now, priced: false }, before: null });
+    expect(JSON.stringify(familyUpdate.factsForModel(facts))).not.toContain('projectedInr');
+    expect(familyUpdate.factsForModel(makeFacts())).toEqual(makeFacts());
   });
 
   it('names the requested language and the simple register', () => {

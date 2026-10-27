@@ -37,7 +37,11 @@ const TODAY = iso('2026-10-26');
 // The tasks a party cannot happen without: a place, food, guests told and the count to the cook.
 const ESSENTIAL = ['book-venue', 'book-caterer', 'send-invitations', 'final-headcount'];
 
-function viewFor(occasion: Brief['occasion'], eventDate: string): PlanView {
+function viewFor(
+  occasion: Brief['occasion'],
+  eventDate: string,
+  mustHaves: Brief['mustHaves'] = [],
+): PlanView {
   const brief: Brief = {
     ...HINGLISH_BRIEF,
     occasion,
@@ -51,7 +55,7 @@ function viewFor(occasion: Brief['occasion'], eventDate: string): PlanView {
       wedding: 'unsure',
       reception: 'unsure',
     },
-    mustHaves: [],
+    mustHaves,
     needs: [],
   };
   const op: Op = { kind: 'briefConfirmed', brief, readBy: FORM_READ };
@@ -107,6 +111,23 @@ describe('a celebration at short notice', () => {
     const view = viewFor('birthday', '2026-11-02');
     for (const id of ESSENTIAL) expect(taskIn(view, id).status).toBe('atRisk');
     expect(statuses(view)).toEqual({ atRisk: 11 });
+  });
+
+  it('plans a birthday 6 days away with no Late task, a choreographer included', () => {
+    for (const mustHaves of [
+      [],
+      ['choreographer'],
+      ['mehndiArtist', 'choreographer', 'dhol'],
+    ] as const) {
+      const view = viewFor('birthday', '2026-11-01', mustHaves);
+      expect(statuses(view).late).toBeUndefined();
+    }
+    expect(
+      taskIn(viewFor('birthday', '2026-11-01', ['choreographer']), 'book-choreographer'),
+    ).toMatchObject({
+      slackDays: 0,
+      status: 'atRisk',
+    });
   });
 
   it('shows an anniversary 3 days away Late, saying what is needed and what to do', () => {

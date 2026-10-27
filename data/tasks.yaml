@@ -311,9 +311,9 @@ tasks:
     latestFinishDaysBefore: 45
     durationDays: 3
     celebration:
-      latestFinishDaysBefore: 5
+      latestFinishDaysBefore: 4
       durationDays: 2
-      basis: 'Planning assumption chosen by the author: a short dance can be practised in the last few days, so the choreographer is booked about five days ahead.'
+      basis: 'Planning assumption chosen by the author: a short dance can be practised in the last few days, so the choreographer is booked about four days ahead, which still fits a party six days away.'
       reviewed: ''
     activatedBy: [{ when: mustHave, mustHave: choreographer }]
     weddingOnly: false

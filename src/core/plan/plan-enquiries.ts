@@ -88,7 +88,10 @@ function unaskedMustHaves(
 export function enquiryInput(version: PlanVersion, data: PlanData): EnquiryInput {
   const booked = new Set<Category>(version.bookings.map((booking) => booking.category));
   const quoted = new Set<Category>(version.quotes.map((quote) => quote.category));
-  const needed = new Set(version.schedule.tasks.map((task) => task.books));
+  // A booking task marked done without an amount still means that vendor is settled.
+  const needed = new Set(
+    version.schedule.tasks.filter((task) => !task.done).map((task) => task.books),
+  );
   const vendors: EnquiryVendor[] = ENQUIRY_CATEGORIES.filter(
     (category) => needed.has(category) && !booked.has(category) && !quoted.has(category),
   ).map((category) => {

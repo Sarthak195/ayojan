@@ -87,6 +87,19 @@ describe('enquiries before any quote', () => {
     }
   });
 
+  it('skips a category whose booking task is done without an amount', () => {
+    const done: Op = {
+      kind: 'taskDone',
+      taskId: 'book-venue',
+      on: date(TODAY),
+      amountInr: null,
+      capacity: null,
+    };
+    const list = enquiries([BRIEF_OP, done], 'en');
+    expect(list.map((enquiry) => enquiry.category)).not.toContain('venue');
+    expect(list.length).toBe(4);
+  });
+
   it('asks only questions that make sense before a quote, raised by the plan', () => {
     const list = enquiries([BRIEF_OP], 'en');
     const asked = list.flatMap((enquiry) => enquiry.questionIds);

@@ -1,12 +1,22 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import type { ReactElement } from 'react';
 
+import { pageTitle } from '@/i18n/page-title';
 import { locationOf } from '@/server/http/see-other';
 import { loadPlanPage } from '@/server/view/plan-page';
 
 import { unavailableReason } from '../../../form/form-view';
 import { messagesModel } from './_messages/messages-model';
 import { MessagesView } from './_messages/messages-view';
+
+export async function generateMetadata({
+  params,
+}: {
+  readonly params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  return pageTitle(params, 'messages');
+}
 
 export default async function MessagesPage({
   params,

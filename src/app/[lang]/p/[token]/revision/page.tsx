@@ -1,11 +1,21 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import type { ReactElement } from 'react';
 
+import { pageTitle } from '@/i18n/page-title';
 import { locationOf } from '@/server/http/see-other';
 import { loadPlanPage } from '@/server/view/plan-page';
 
 import { RevisionView } from '../_revision/revision-view';
 import { LeverSection, selectionOf } from './_levers/lever-section';
+
+export async function generateMetadata({
+  params,
+}: {
+  readonly params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  return pageTitle(params, 'revision');
+}
 
 export default async function RevisionPage({
   params,

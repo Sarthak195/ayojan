@@ -1,6 +1,8 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import type { ReactElement } from 'react';
 
+import { pageTitle } from '@/i18n/page-title';
 import { locationOf } from '@/server/http/see-other';
 import { exampleBook } from '@/server/pipeline/example-readings';
 import { loadPlanPage } from '@/server/view/plan-page';
@@ -11,6 +13,14 @@ import { headlineOf } from '../_change/change-values';
 import { nextSlot } from '../quotes/_quote/quote-record';
 import { QuoteCheckView } from '../quotes/_view/quote-check-view';
 import { CheckView, sourceLabel } from './check-view';
+
+export async function generateMetadata({
+  params,
+}: {
+  readonly params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  return pageTitle(params, 'check');
+}
 
 export default async function CheckPage({
   params,

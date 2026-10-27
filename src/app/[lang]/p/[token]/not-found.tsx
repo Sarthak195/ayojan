@@ -1,8 +1,14 @@
+import type { Metadata } from 'next';
 import { connection } from 'next/server';
 import type { ReactElement } from 'react';
 
+import { problemTitle } from '@/i18n/page-title';
 import { ProblemView } from '@/components/problem/problem-view';
 import { requestLang } from '@/server/view/request-lang';
+
+export async function generateMetadata(): Promise<Metadata> {
+  return problemTitle(await requestLang(), 'damaged-link');
+}
 
 /**
  * A damaged, tampered or older plan link (D6): a 404 page that says so and offers a new plan,

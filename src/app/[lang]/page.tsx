@@ -1,10 +1,20 @@
+import type { Metadata } from 'next';
 import type { ReactElement } from 'react';
 
+import { pageTitle } from '@/i18n/page-title';
 import { PostForm, ReadingHint, SubmitButton } from '@/components/form/post-form';
 import { TextArea } from '@/components/form/fields';
 import { loadLangPage } from '@/server/view/plan-page';
 
 import { exampleBriefText } from './_brief/example-text';
+
+export async function generateMetadata({
+  params,
+}: {
+  readonly params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  return pageTitle(params, 'start');
+}
 
 export default async function StartPage({
   params,

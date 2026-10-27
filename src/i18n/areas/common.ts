@@ -45,6 +45,15 @@ export interface CommonDictionary {
   readonly privacyHint: string;
   readonly optional: string;
   readonly scrollTableHint: string;
+  /** WCAG 2.4.2: one short name per page, shown in the tab as "<name>: Ayojan". */
+  readonly pageTitles: {
+    readonly start: string;
+    readonly form: string;
+    readonly check: string;
+    readonly quotes: string;
+    readonly revision: string;
+    readonly messages: string;
+  };
 }
 
 export const en: CommonDictionary = {
@@ -91,6 +100,14 @@ export const en: CommonDictionary = {
     "Gemini's free tier may use what you send to improve Google's products, so leave out names and phone numbers.",
   optional: '(optional)',
   scrollTableHint: 'If the table is cut off, scroll sideways to see the rest.',
+  pageTitles: {
+    start: 'Start a plan',
+    form: 'Tell us by form',
+    check: 'Check what we read',
+    quotes: 'Vendor quotes',
+    revision: 'What changed',
+    messages: 'Messages to send',
+  },
 };
 
 export const hi: CommonDictionary = {
@@ -137,4 +154,12 @@ export const hi: CommonDictionary = {
     'Gemini के मुफ़्त प्लान में आपकी भेजी जानकारी Google के प्रॉडक्ट बेहतर बनाने के लिए इस्तेमाल हो सकती है, इसलिए नाम और फ़ोन नंबर न डालें।',
   optional: '(वैकल्पिक)',
   scrollTableHint: 'तालिका कटी दिखे तो बाक़ी देखने के लिए बाएँ-दाएँ स्क्रॉल करें।',
+  pageTitles: {
+    start: 'योजना शुरू करें',
+    form: 'फ़ॉर्म से बताइए',
+    check: 'जो पढ़ा, उसे जाँचिए',
+    quotes: 'विक्रेताओं के कोटेशन',
+    revision: 'क्या बदला',
+    messages: 'भेजने के लिए संदेश',
+  },
 };

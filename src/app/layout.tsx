@@ -12,7 +12,8 @@ import { LANG_HEADER, langOfHeader, PATH_HEADER } from '@/i18n/path';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Ayojan',
+  // Each page names itself; the template keeps the product name last so tabs stay distinct.
+  title: { default: 'Ayojan', template: '%s: Ayojan' },
   description: 'A planner for celebrations and events.',
 };
 

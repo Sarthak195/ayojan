@@ -34,6 +34,25 @@ function stringsIn(value: unknown): string[] {
   return Object.values(value).flatMap(stringsIn);
 }
 
+// A map keyed by id would send the id as a key, past the value checks. The projection's own
+// field names (atRisk, budgetInr) are camelCase and may equal a status code, so only a hyphenated
+// key, which no field name is, counts as a leak.
+function keysIn(value: unknown): string[] {
+  if (typeof value !== 'object' || value === null) return [];
+  return [...Object.keys(value), ...Object.values(value).flatMap(keysIn)];
+}
+
+function expectNoIds(sent: unknown, language: 'en' | 'hi'): void {
+  const values = stringsIn(sent);
+  expect(values.length).toBeGreaterThan(0);
+  for (const key of keysIn(sent)) expect(key).not.toContain('-');
+  for (const value of values) {
+    expect(CODED_IDS).not.toContain(value);
+    for (const id of HYPHENATED_IDS) expect(value).not.toContain(id);
+    if (language === 'hi') expect(value).not.toMatch(/[A-Za-z]+-[A-Za-z]+/u);
+  }
+}
+
 function fixtureFacts(): MessageFacts {
   const raw = readFileSync(join(process.cwd(), 'fixtures', 'family-update-facts.json'), 'utf8');
   return buildMessageFacts(JSON.parse(raw) as MessageFactsInput);
@@ -48,13 +67,7 @@ describe('modelFacts', () => {
   for (const [name, facts] of CASES) {
     for (const language of ['en', 'hi'] as const) {
       it(`sends no internal id for ${name} in ${language}`, () => {
-        const values = stringsIn(modelFacts(facts, dataQuestions(), language));
-        expect(values.length).toBeGreaterThan(0);
-        for (const value of values) {
-          expect(CODED_IDS).not.toContain(value);
-          for (const id of HYPHENATED_IDS) expect(value).not.toContain(id);
-          if (language === 'hi') expect(value).not.toMatch(/[A-Za-z]+-[A-Za-z]+/u);
-        }
+        expectNoIds(modelFacts(facts, dataQuestions(), language), language);
       });
     }
   }
@@ -70,6 +83,26 @@ describe('modelFacts', () => {
     );
     expect(sent.mustMention).toHaveLength(reconfirmationQuestionIds(makeFacts()).length);
     expect(sent.mustMention).toContain('मेहमान');
+  });
+
+  it('sends a raise-budget lever as addsInr and a missing earlier version as null', () => {
+    const facts = makeFacts({
+      levers: [
+        {
+          id: 'raise-budget',
+          label: { en: 'Raise the budget', hi: 'बजट बढ़ाएँ' },
+          effectInr: 50_000,
+        },
+      ],
+      before: null,
+    });
+    const sent = modelFacts(facts, dataQuestions(), 'hi') as {
+      levers: unknown[];
+      before: unknown;
+    };
+    expect(sent.levers[0]).toEqual({ label: 'बजट बढ़ाएँ', addsInr: 50_000 });
+    expect(sent.before).toBeNull();
+    expectNoIds(sent, 'hi');
   });
 
   // The rule asks the draft to copy the date and the guest count; the check must count both (day,

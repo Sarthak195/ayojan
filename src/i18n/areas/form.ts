@@ -31,6 +31,9 @@ export interface FormDictionary {
   readonly prioritiesLegend: string;
   readonly categories: Readonly<Record<Category, string>>;
   readonly priorityAnswers: Readonly<Record<Priority, string>>;
+  readonly weddingOnlyTitle: string;
+  readonly weddingOnlyHint: string;
+  readonly weddingMustHavesLegend: string;
   readonly mustHavesLegend: string;
   readonly mustHaves: Readonly<Record<MustHave, string>>;
   readonly needsLegend: string;
@@ -86,6 +89,10 @@ export const en: FormDictionary = {
     save: 'Save here',
     unclear: 'Not sure',
   },
+  weddingOnlyTitle: 'Wedding only',
+  weddingOnlyHint:
+    'Birthday, puja or another occasion? You can skip this part. Leave it closed and the answers stay at Not sure.',
+  weddingMustHavesLegend: 'Wedding must-haves',
   mustHavesLegend: 'Must-haves',
   mustHaves: {
     dhol: 'Dhol',
@@ -145,6 +152,10 @@ export const hi: FormDictionary = {
     save: 'यहाँ बचत',
     unclear: 'पता नहीं',
   },
+  weddingOnlyTitle: 'सिर्फ़ शादी के लिए',
+  weddingOnlyHint:
+    'जन्मदिन, पूजा या कोई और मौका? इस हिस्से को छोड़ सकते हैं। इसे बंद रखने पर जवाब "पता नहीं" ही रहते हैं।',
+  weddingMustHavesLegend: 'शादी की ज़रूरी चीज़ें',
   mustHavesLegend: 'ज़रूरी चीज़ें',
   mustHaves: {
     dhol: 'ढोल',

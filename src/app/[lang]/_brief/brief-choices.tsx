@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 
 import { ChoiceGroup } from '@/components/form/choice-group';
+import { DisclosureMarker, DISCLOSURE_GROUP, LINK_SUMMARY } from '@/components/layout/disclosure';
 import type { BriefDraft } from '@/core/brief/brief-draft';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
@@ -68,18 +69,24 @@ function ticks<T extends string>(
   }));
 }
 
+// Must-haves that only a wedding has. Dhol and the live counter suit any occasion, so they
+// stay outside the fold.
+const WEDDING_MUST_HAVES: readonly MustHave[] = ['mehndiArtist', 'choreographer'];
+
 function FunctionRows({
   lang,
   values,
+  showHint,
 }: {
   readonly lang: Lang;
   readonly values: BriefChoiceValues;
+  readonly showHint: boolean;
 }): ReactElement {
   const words = dictionaryFor(lang).form;
   return (
     <fieldset className="my-4">
       <legend className="font-semibold">{words.functionsLegend}</legend>
-      <p className="text-sm text-muted">{words.functionsHint}</p>
+      {showHint ? <p className="text-sm text-muted">{words.functionsHint}</p> : null}
       {FunctionName.options.map((name) => (
         <ChoiceGroup
           key={name}
@@ -99,11 +106,44 @@ function FunctionRows({
   );
 }
 
+/**
+ * The form twin's wedding block. The occasion is picked on the same page and the page works
+ * without JavaScript, so the block cannot react to the pick; it is folded instead. Closed, its
+ * fields still post their defaults (Not sure, unticked), which is what an absent answer means.
+ */
+function WeddingOnly({
+  lang,
+  values,
+}: {
+  readonly lang: Lang;
+  readonly values: BriefChoiceValues;
+}): ReactElement {
+  const words = dictionaryFor(lang).form;
+  return (
+    <details id="wedding-only" className={`my-4 ${DISCLOSURE_GROUP}`}>
+      <summary className={LINK_SUMMARY}>
+        {words.weddingOnlyTitle}
+        <DisclosureMarker />
+      </summary>
+      <p className="text-sm text-muted">{words.weddingOnlyHint}</p>
+      <FunctionRows lang={lang} values={values} showHint={false} />
+      <ChoiceGroup
+        id="must-have-wedding"
+        name="mustHave"
+        type="checkbox"
+        legend={words.weddingMustHavesLegend}
+        choices={ticks(WEDDING_MUST_HAVES, values.mustHaves, words.mustHaves)}
+      />
+    </details>
+  );
+}
+
 export function BriefChoiceRows({
   lang,
   values,
   priorityChoices,
   showFunctions = true,
+  foldWedding = false,
 }: {
   readonly lang: Lang;
   readonly values: BriefChoiceValues;
@@ -111,11 +151,17 @@ export function BriefChoiceRows({
   readonly priorityChoices: readonly Priority[];
   /** False hides the wedding function rows; the confirm route reads absent rows as unchanged. */
   readonly showFunctions?: boolean;
+  /** True on the form twin: the functions and wedding must-haves sit in a closed "Wedding only". */
+  readonly foldWedding?: boolean;
 }): ReactElement {
   const words = dictionaryFor(lang).form;
+  const generalMustHaves = foldWedding
+    ? MustHave.options.filter((option) => !WEDDING_MUST_HAVES.includes(option))
+    : MustHave.options;
   return (
     <>
-      {showFunctions ? <FunctionRows lang={lang} values={values} /> : null}
+      {foldWedding ? <WeddingOnly lang={lang} values={values} /> : null}
+      {showFunctions && !foldWedding ? <FunctionRows lang={lang} values={values} showHint /> : null}
       <fieldset className="my-4">
         <legend className="font-semibold">{words.prioritiesLegend}</legend>
         {Category.options.map((category) => (
@@ -144,7 +190,7 @@ export function BriefChoiceRows({
         name="mustHave"
         type="checkbox"
         legend={words.mustHavesLegend}
-        choices={ticks(MustHave.options, values.mustHaves, words.mustHaves)}
+        choices={ticks(generalMustHaves, values.mustHaves, words.mustHaves)}
       />
       <ChoiceGroup
         id="need"

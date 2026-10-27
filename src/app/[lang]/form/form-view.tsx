@@ -65,6 +65,7 @@ export function FormView({
           lang={lang}
           values={emptyDraft()}
           priorityChoices={['more', 'standard', 'save']}
+          foldWedding
         />
         <SubmitButton>{words.submit}</SubmitButton>
       </PostForm>

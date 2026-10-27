@@ -56,7 +56,8 @@ Settings shared by the four calls, all fixed in code rather than chosen per call
   each capped by what is left of a 40 s budget for the whole read. A call is started only when at
   least 6 s remain (15 s for the third model), so a call that would be cut off is not spent. Cloud
   Run's request timeout is 60 s. The form shows "Reading can take up to 40 seconds." and a
-  privacy sentence (the free tier may use what is sent) under each read button.
+  privacy sentence (the free tier may use what is sent) under each read button; the "Write it
+  with AI" button on the messages page carries the same sentence.
 - **Retries:** the SDK's own retries are off (`retries: { strategy: 'none' }`). The ladder decides
   what happens after a failure.
 - **Output:** JSON only (`mime_type: 'application/json'`) against a response schema derived from
@@ -150,7 +151,10 @@ have done this. `src/core/grounding/` checks every value:
 2. The quote is looked up in two passes (`quote-match.ts`): exact, then case-folded with
    punctuation removed. There is no fuzzy matching. A match that begins or ends inside a word is
    skipped, so "8 lakh" is not found inside "18 lakh".
-3. Every number the value claims must be written inside its quote (`verification.ts`). The month of
+3. Every number the value claims must be written inside its quote (`verification.ts`). The whole
+   text is scanned and the amounts touching the quote are used, so a quote cut from one end of a
+   range ("teen lakh" from "do-teen lakh") is not verified, and a brief's budget, guest count and
+   venue capacity must be the only amount in their quote. The month of
    a date and the day shift of "2 weeks earlier" are the two exceptions, because they are not
    written as digits there.
 4. Numbers must also be inside the domain bounds (for example guests 1 to 5,000).

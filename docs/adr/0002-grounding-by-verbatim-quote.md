@@ -27,9 +27,11 @@ text the user supplied.
   end on word edges, so "8 lakh" is not found inside "18 lakh". A quote under 3 characters or over
   160 code points is refused with its own reason.
 - **Numbers must be spelled in the quote.** [`verification.ts`](../../src/core/grounding/verification.ts)
-  parses the amounts out of the user's words at the match (lakh, crore, "k", Devanagari digits,
-  Hindi number words, in [`src/core/rupees`](../../src/core/rupees)) and requires the claimed
-  number to be among them. Bounds are checked first. Fields whose value is not spelled out (a month
+  scans the whole canonical text for amounts (lakh, crore, "k", Devanagari digits, Hindi number
+  words, in [`src/core/rupees`](../../src/core/rupees)), takes the ones that touch the match, and
+  requires the claimed number to be among them. An unreadable amount touching the quote (one end
+  of a range) refuses it, and a brief's budget, guest count and venue capacity must be the only
+  amount in their quote. Bounds are checked first. Fields whose value is not spelled out (a month
   written as a word, a day shift read from "2 weeks earlier") say so and are checked on bounds
   only.
 - **Four verdicts, all shown.** A field is `verified`, `unverified` (with a reason such as

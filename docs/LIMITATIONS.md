@@ -81,7 +81,7 @@ The small-celebration task list is still close to a wedding's. A five-guest puja
 gets a venue booking, a final walkthrough at the venue and a music booking, and saying "ghar pe"
 (at home) or "no DJ" changes neither the venue share nor the music task; the words are kept as a
 note. Short notice: a celebration a week away (6 or 7 days) is planned with every task At risk
-and none Late, because its lead times are latest finishes of two to five days. With 5 days or
+and none Late, because its lead times are latest finishes of one to five days. With 5 days or
 fewer the venue and caterer chain shows Late, which is the honest answer at that notice; a Late
 task then says what it needs and what to do ("Needs 3 days from today, 2 days left before 4 Nov
 2026: start today", or "Was due by 25 Oct 2026: start today" once the date has passed). Because

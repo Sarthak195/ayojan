@@ -239,8 +239,8 @@ is unchanged and the seal key is the same, which a rollback does not change.
 
 ## Still unverified
 
-- **Rollback has not been run.** Only one revision exists, so there is nothing to roll back to
-  yet. The commands above are the documented shape, not an exercised procedure.
+- **Rollback has not been run.** Earlier revisions are kept, but traffic has never been moved
+  back to one. The commands above are the documented shape, not an exercised procedure.
 - **Cold start time has not been measured.** The instance was already warm when it was probed,
   and the first-byte figure above is a warm one. A page carries about 132 KiB of gzip JavaScript
   (see [scripts/measure-pages.mjs](../scripts/measure-pages.mjs)), but how long a cold start

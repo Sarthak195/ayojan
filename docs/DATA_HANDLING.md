@@ -84,7 +84,9 @@ billed project. No paid key was added: a paid fallback key was offered and decli
 every read button (the start page brief and its examples, the vendor quote box and the plan change box) it says
 "Gemini's free tier may use what you send to improve Google's products, so leave out names and
 phone numbers." The Hindi interface has the same sentence. It sits in the same hint as "Reading can
-take up to 40 seconds.", which the read button references through `aria-describedby`.
+take up to 40 seconds.", which the read button references through `aria-describedby`. Since
+`3234ce1` the "Write it with AI" button on the messages page, which sends the plan's facts for a
+family update draft, carries the same sentence in its hint.
 
 The Gemini API Additional Terms
 (<https://ai.google.dev/gemini-api/terms>) treat free ("unpaid") and billed ("paid") use

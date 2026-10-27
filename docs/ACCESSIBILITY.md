@@ -100,10 +100,11 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - Every step is a form POST that answers a 303 redirect. The redirect lands on the changed
   section (`#tasks`, `#change-form`, `#quote-form`, or `#check-summary` on a check page;
   [see-other.ts](../src/server/http/see-other.ts)). The `role="status"` sentence saying what
-  happened, such as the new plan version and whether the plan is over budget, is not at that
-  anchor: it renders near the top of the page, under the heading
-  ([status-summary.tsx](../src/components/layout/status-summary.tsx)). So the page opens with
-  the status and the anchor moves the view to the section that changed. Because the page is
+  happened, such as the new plan version and whether the plan is over budget, is near the top
+  of the page, under the heading ([status-summary.tsx](../src/components/layout/status-summary.tsx)).
+  On the plan page that is not at `#tasks`, `#change-form` or `#quote-form`, so the page opens
+  with the status and the anchor moves the view to the section that changed. On a check page the
+  status directly follows the `#check-summary` heading. Because the page is
   freshly loaded, whether a screen reader reads the status aloud is not guaranteed and is not
   heard-tested (see Known gaps). The sentence is computed from the plan, so no user text travels in the redirect.
 - Reload and the back button are safe, because the state is in the link and the POST is

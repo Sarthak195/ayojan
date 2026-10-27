@@ -12,10 +12,10 @@ Ayojan (आयोजन, Hindi for organising an event) is a web planner for cel
 
 ```sh
 npm ci
-cp .env.example .env.local   # then set GEMINI_API_KEY for model reads (optional)
+cp .env.example .env         # then set GEMINI_API_KEY for model reads (optional)
 npm run dev                  # http://localhost:3000
 npm run verify               # types, lint, format, data, tests, size and repo checks
-npm run smoke                # scripts/smoke.mjs, a quick check of a running app
+npm run smoke -- http://localhost:3000   # second terminal, while dev runs; with no URL it checks the live site
 ```
 
 **Contents:** [Architecture](#architecture) · [How it works](#how-it-works) · [Testing](#testing) · [Repo map](#repo-map) · [Decision records (ADRs)](docs/adr)

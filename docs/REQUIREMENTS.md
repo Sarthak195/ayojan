@@ -112,10 +112,12 @@ reasons behind the larger choices are in the [decision records](adr).
 - `G1` to `G4` are the four model calls: G1 reads a brief, G2 reads a vendor quote, G3 reads a
   change message and G4 drafts the family update. See [GENAI_SERVICES.md](GENAI_SERVICES.md).
 - "arch n" is short for "architecture n" (see the table below), for example "arch 8" is the
-  anchors a redirect lands on, described in [ACCESSIBILITY.md](ACCESSIBILITY.md).
-- "spec section 7" (older comments) is the rule that every rupee figure carries a provenance
-  label and that money follows the guest count by fixed rules; read
-  [ADR 0001](adr/0001-pure-core.md) and [ADR 0003](adr/0003-planning-knowledge-as-data.md).
+  accessibility work (anchors, labels, islands), described in [ACCESSIBILITY.md](ACCESSIBILITY.md).
+- "spec 7" or "spec section 7" (older comments) is the rule that every rupee figure carries a
+  provenance label and that money follows the guest count by fixed rules; read
+  [ADR 0001](adr/0001-pure-core.md) and [ADR 0003](adr/0003-planning-knowledge-as-data.md). On the
+  plan page it also labels the line saying how a plan version was made (read by AI, with its count,
+  or an example).
 - `C4` to `C8` and "spec n" or "spec n.n" (for example "spec 6.5") name capabilities and sections of a
   product specification that is not published. What each one does is described in the [README](../README.md).
 
@@ -124,18 +126,18 @@ reasons behind the larger choices are in the [decision records](adr).
 Comments say "architecture 4.5" or "arch 6.3" for a numbered section of a design document that is
 not published. The sections that are cited map to the published records like this.
 
-| Cited as              | Subject                                                                    | Read instead                                                                                                                   |
-| --------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| architecture 3        | The shapes of the plan, and why the plan is derived and never stored       | [ADR 0005](adr/0005-sealed-state-in-the-link.md)                                                                               |
-| architecture 4.1, 4.2 | The budget split, and how a category's money follows the guest count       | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [the money model](LIMITATIONS.md#the-money-model-is-simple-on-purpose)     |
-| architecture 4.3      | The plan as a fold of its confirmed steps, and a view with one more step   | [ADR 0005](adr/0005-sealed-state-in-the-link.md)                                                                               |
-| architecture 4.4      | Move money                                                                 | [the money model](LIMITATIONS.md#the-money-model-is-simple-on-purpose); [README, E2](../README.md#problem-statement-alignment) |
-| architecture 4.5      | Trade-off levers                                                           | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [README, E4](../README.md#problem-statement-alignment)                     |
-| architecture 4.6      | The task schedule and critical path                                        | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [README, E3](../README.md#problem-statement-alignment)                     |
-| architecture 4.7      | Quote comparison, break-even and vendor questions                          | [ADR 0004](adr/0004-unknowns-become-questions.md); [README, E5](../README.md#problem-statement-alignment)                      |
-| architecture 4.8      | Applying a step, the revision diff, the Kept list and re-confirmation      | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [README, E9](../README.md#problem-statement-alignment)                       |
-| architecture 5        | The Gemini gateway, its ladder and its quota handling                      | [ADR 0007](adr/0007-gemini-interactions-api-and-ladder.md); [ADR 0008](adr/0008-form-twin-cache-labels-and-quota-reserve.md)   |
-| architecture 6.1, 6.2 | The sealed link, the fixed POST routes and the 303 redirect                | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [ADR 0006](adr/0006-plain-forms-and-303.md)                                  |
-| architecture 6.3      | The order of checks on a POST and the status each failure answers with     | [ADR 0006](adr/0006-plain-forms-and-303.md)                                                                                    |
-| architecture 7        | Security headers, the content security policy and log privacy              | [SECURITY.md](../SECURITY.md); [DATA_HANDLING.md](DATA_HANDLING.md)                                                            |
-| architecture 8        | The anchors a redirect lands on, and focus and landmarks on narrow screens | [ACCESSIBILITY.md](ACCESSIBILITY.md)                                                                                           |
+| Cited as              | Subject                                                                                                           | Read instead                                                                                                                   |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| architecture 3        | The shapes of the plan, and why the plan is derived and never stored                                              | [ADR 0005](adr/0005-sealed-state-in-the-link.md)                                                                               |
+| architecture 4.1, 4.2 | The budget split, and how a category's money follows the guest count                                              | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [the money model](LIMITATIONS.md#the-money-model-is-simple-on-purpose)     |
+| architecture 4.3      | The plan as a fold of its confirmed steps, and a view with one more step                                          | [ADR 0005](adr/0005-sealed-state-in-the-link.md)                                                                               |
+| architecture 4.4      | Move money                                                                                                        | [the money model](LIMITATIONS.md#the-money-model-is-simple-on-purpose); [README, E2](../README.md#problem-statement-alignment) |
+| architecture 4.5      | Trade-off levers                                                                                                  | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [README, E4](../README.md#problem-statement-alignment)                     |
+| architecture 4.6      | The task schedule and critical path                                                                               | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [README, E3](../README.md#problem-statement-alignment)                     |
+| architecture 4.7      | Quote comparison, break-even and vendor questions                                                                 | [ADR 0004](adr/0004-unknowns-become-questions.md); [README, E5](../README.md#problem-statement-alignment)                      |
+| architecture 4.8      | Applying a step, the revision diff, the Kept list and re-confirmation                                             | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [README, E9](../README.md#problem-statement-alignment)                       |
+| architecture 5        | The Gemini gateway, its ladder and its quota handling                                                             | [ADR 0007](adr/0007-gemini-interactions-api-and-ladder.md); [ADR 0008](adr/0008-form-twin-cache-labels-and-quota-reserve.md)   |
+| architecture 6.1, 6.2 | The sealed link, the fixed POST routes and the 303 redirect                                                       | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [ADR 0006](adr/0006-plain-forms-and-303.md)                                  |
+| architecture 6.3      | The order of checks on a POST and the status each failure answers with                                            | [ADR 0006](adr/0006-plain-forms-and-303.md)                                                                                    |
+| architecture 7        | Security headers, the content security policy and log privacy                                                     | [SECURITY.md](../SECURITY.md); [DATA_HANDLING.md](DATA_HANDLING.md)                                                            |
+| architecture 8        | Anchors a redirect lands on, form labels, focus and landmarks on narrow screens, and the two small client islands | [ACCESSIBILITY.md](ACCESSIBILITY.md); [ADR 0009](adr/0009-rendering.md)                                                        |

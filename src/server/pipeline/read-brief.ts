@@ -6,7 +6,7 @@ import { parseAmount } from '@/core/rupees/parse';
 import { BUDGET_MAX_INR, BUDGET_MIN_INR, type FunctionAnswer } from '@/schemas/plan/brief';
 import { toShortText } from '@/schemas/plan/short-text';
 import { BriefReading } from '@/schemas/readings/brief-reading';
-import type { Category, FunctionName, Priority } from '@/schemas/readings/vocabulary';
+import type { Category, FunctionName, Presence, Priority } from '@/schemas/readings/vocabulary';
 import * as brief from '@/server/prompts/brief';
 
 import type { ReadingOutcome } from './reading-outcome';
@@ -31,14 +31,15 @@ const BUDGET = whole(BUDGET_MIN_INR, BUDGET_MAX_INR);
 type DateReading = BriefReading['date'];
 
 /**
- * A budget the model quoted as given but left without a number ("budget dedh lakh") is read
- * from the quote by the parser the form field uses, so the page never asks for words code can
- * read itself. The quote is still verified, and a range or an approximate figure the model
- * called unclear stays a question.
+ * A budget or guest count the model quoted as given but left without a number ("budget dedh
+ * lakh", "do sau log") is read from the quote by the parser the form field uses, so the page
+ * never asks for words code can read itself. The quote is still verified, a range stays a
+ * question, a number outside the field's bounds is asked with its reason, and a figure the
+ * model called unclear stays a question (D44).
  */
-function budgetAmount(budget: BriefReading['budget']): number | null {
-  if (budget.amountInr !== null || budget.presence !== 'present') return budget.amountInr;
-  const parsed = parseAmount(budget.quote);
+function quotedNumber(presence: Presence, value: number | null, quote: string): number | null {
+  if (value !== null || presence !== 'present') return value;
+  const parsed = parseAmount(quote);
   return parsed.kind === 'amount' ? parsed.inr : null;
 }
 
@@ -153,8 +154,12 @@ function readNotes(reading: BriefReading, verdicts: Verdicts): string[] {
 }
 
 function buildBrief(reading: BriefReading, verdicts: Verdicts, today: IsoDate): PendingValues {
-  const { occasion, guests, venueCapacity } = reading;
-  const budget = { ...reading.budget, amountInr: budgetAmount(reading.budget) };
+  const { occasion, venueCapacity, budget: said, guests: counted } = reading;
+  const budget = { ...said, amountInr: quotedNumber(said.presence, said.amountInr, said.quote) };
+  const guests = {
+    ...counted,
+    count: quotedNumber(counted.presence, counted.count, counted.quote),
+  };
   const occasionVerdict = verdicts.check(
     'occasion',
     { presence: presenceOf(occasion.value), quote: occasion.quote },

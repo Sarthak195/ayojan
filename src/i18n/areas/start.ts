@@ -1,5 +1,5 @@
 // The start page (spec 6.1, D38): a general event planner, the brief box and the two ways round
-// the AI reader (the example brief and the form twin). Both objects share one interface, so a
+// the AI reader (the example brief and the form twin), and a birthday a week away. Both objects share one interface, so a
 // key missing from either language fails `tsc`.
 
 export interface StartDictionary {
@@ -12,6 +12,8 @@ export interface StartDictionary {
   readonly exampleHeading: string;
   readonly exampleButton: string;
   readonly exampleNote: string;
+  readonly birthdayButton: string;
+  readonly birthdayNote: string;
   readonly howHeading: string;
   readonly howRead: string;
   readonly howCheck: string;
@@ -30,6 +32,9 @@ export const en: StartDictionary = {
   exampleButton: 'Try the example brief',
   exampleNote:
     'This sends a sample family wedding brief, and the check page labels it as an example. Your text box stays empty.',
+  birthdayButton: 'Try a birthday next week',
+  birthdayNote:
+    'This sends a short Hinglish birthday brief dated 7 days from today, so the timeline is tight. It is read live; if the AI reader is busy, the form opens instead.',
   howHeading: 'How it works',
   howRead: 'Gemini reads your words and shows each value beside the words it came from.',
   howCheck: 'You check every value. Anything unclear becomes a question, never a guess.',
@@ -49,6 +54,9 @@ export const hi: StartDictionary = {
   exampleButton: 'उदाहरण वाली बात आज़माइए',
   exampleNote:
     'इससे एक नमूना शादी का विवरण भेजा जाता है, और जाँच वाले पेज पर उसे उदाहरण लिखा जाता है। आपका टेक्स्ट बॉक्स खाली रहता है।',
+  birthdayButton: 'अगले हफ़्ते का जन्मदिन आज़माइए',
+  birthdayNote:
+    'इससे हिंग्लिश में जन्मदिन का एक छोटा विवरण भेजा जाता है, जिसकी तारीख़ आज से 7 दिन बाद है, ताकि समय कम रहे। इसे अभी पढ़ा जाता है; अगर AI रीडर व्यस्त है, तो फ़ॉर्म खुलता है।',
   howHeading: 'यह कैसे काम करता है',
   howRead: 'Gemini आपके शब्द पढ़ता है और हर मान उन्हीं शब्दों के साथ दिखाता है जिनसे वह निकला।',
   howCheck: 'आप हर मान जाँचते हैं। जो साफ़ नहीं है, वह सवाल बनता है, अंदाज़ा नहीं।',

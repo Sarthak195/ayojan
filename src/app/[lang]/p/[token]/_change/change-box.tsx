@@ -5,6 +5,7 @@ import { ChoiceGroup } from '@/components/form/choice-group';
 import { TextArea, TextField } from '@/components/form/fields';
 import { PostForm, ReadingHint, SubmitButton } from '@/components/form/post-form';
 import { DISCLOSURE_GROUP, DisclosureMarker, LINK_SUMMARY } from '@/components/layout/disclosure';
+import { exampleText } from '@/app/[lang]/_brief/example-text';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { Category } from '@/schemas/readings/vocabulary';
@@ -43,6 +44,7 @@ export function ChangeBox({
 }): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.change;
+  const example = exampleText('change');
   return (
     <section id="change-form" aria-labelledby="change-heading" className="mt-8">
       <h2 id="change-heading" className="text-xl font-semibold">
@@ -62,6 +64,21 @@ export function ChangeBox({
         <SubmitButton describedBy="change-reading-hint">{words.readButton}</SubmitButton>
         <ReadingHint lang={lang} id="change-reading-hint" />
       </PostForm>
+      {/* The exact committed sentence, so a spent reserve serves its labelled recording (D18). */}
+      {example === null ? null : (
+        <PostForm lang={lang} route="read/change" token={token}>
+          <p id="change-example-note" className="mt-4">
+            {words.exampleNote}
+          </p>
+          <input type="hidden" name="change" value={example} />
+          <div className="mt-2">
+            <SubmitButton variant="secondary" describedBy="change-example-note change-example-hint">
+              {words.exampleButton}
+            </SubmitButton>
+          </div>
+          <ReadingHint lang={lang} id="change-example-hint" />
+        </PostForm>
+      )}
       <details className={`mt-4 ${DISCLOSURE_GROUP}`} open={unavailable !== null}>
         <summary className={LINK_SUMMARY}>
           {words.formSummary}

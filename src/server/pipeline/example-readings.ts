@@ -14,14 +14,16 @@ import * as quote from '@/server/prompts/quote';
 import { SCHEMA_VERSIONS, type ReadingKind } from './schema-versions';
 
 /**
- * The sample texts the start and quotes pages offer (D18): the sample brief and the two sample
- * quotes. Each has a text in `fixtures/` and one committed recording in `golden/llm/`.
+ * The sample texts the start, quotes and plan pages offer (D18): the sample brief, the two
+ * sample quotes and the explainer's change sentence. Each has a text in `fixtures/` and one
+ * committed recording in `golden/llm/`.
  */
 export const EXAMPLE_FIXTURES: readonly { readonly kind: ReadingKind; readonly fixture: string }[] =
   [
     { kind: 'brief', fixture: 'brief-hinglish' },
     { kind: 'quote', fixture: 'quote-caterer-a' },
     { kind: 'quote', fixture: 'quote-caterer-b' },
+    { kind: 'change', fixture: 'change-explainer-sentence' },
   ];
 
 const PROMPTS: Readonly<Record<ReadingKind, { readonly id: string; readonly version: number }>> = {

@@ -11,6 +11,8 @@ export interface ChangeDictionary {
   readonly textLabel: string;
   readonly textHint: string;
   readonly readButton: string;
+  readonly exampleButton: string;
+  readonly exampleNote: string;
   readonly formSummary: string;
   readonly formIntro: string;
   readonly guestsLabel: string;
@@ -60,8 +62,11 @@ export const en: ChangeDictionary = {
   boxIntro:
     'Tell us what changed, the way you would tell family. Nothing changes until you check what we read.',
   textLabel: 'What changed',
-  textHint: 'For example: 50 more guests, the budget is 7.5 lakh, the wedding is 2 weeks earlier.',
+  textHint: 'For example: 50 more guests, the budget is 7.5 lakh, the event is 2 weeks earlier.',
   readButton: 'Read the change',
+  exampleButton: "Try the explainer's change",
+  exampleNote:
+    'This sends the sample sentence: 50 more guests, a smaller budget and the event 2 weeks earlier. Nothing changes until you check what we read.',
   formSummary: 'Use the form instead',
   formIntro: 'Leave a field empty, or on "No change", to keep it as it is.',
   guestsLabel: 'Guests (the new total)',
@@ -125,8 +130,11 @@ export const hi: ChangeDictionary = {
   boxIntro:
     'जो बदला है, वैसे ही लिखिए जैसे परिवार को बताते हैं। जब तक आप हमारा पढ़ा हुआ जाँच न लें, कुछ नहीं बदलेगा।',
   textLabel: 'क्या बदला',
-  textHint: 'जैसे: 50 मेहमान और, बजट अब 7.5 लाख, शादी 2 हफ़्ते पहले।',
+  textHint: 'जैसे: 50 मेहमान और, बजट अब 7.5 लाख, कार्यक्रम 2 हफ़्ते पहले।',
   readButton: 'बदलाव पढ़ें',
+  exampleButton: 'उदाहरण वाला बदलाव आज़माइए',
+  exampleNote:
+    'इससे नमूना वाक्य भेजा जाता है: 50 मेहमान और, बजट थोड़ा कम और कार्यक्रम 2 हफ़्ते पहले। जब तक आप पढ़ी गई बात जाँच न लें, कुछ नहीं बदलता।',
   formSummary: 'इसके बजाय फ़ॉर्म भरें',
   formIntro: 'जो नहीं बदला, उसे ख़ाली या "कोई बदलाव नहीं" पर छोड़ दें।',
   guestsLabel: 'मेहमान (नई कुल संख्या)',

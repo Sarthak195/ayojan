@@ -258,12 +258,12 @@ npm run dev              # http://localhost:3000
 
 ## Testing
 
-On 28 Oct 2026, `npx vitest run` at commit `3ff942e` ended with:
+On 28 Oct 2026, `npx vitest run` at commit `93ca7e1` ended with:
 
 ```
- Test Files  123 passed (123)
-      Tests  2579 passed (2579)
-   Duration  60.73s
+ Test Files  130 passed (130)
+      Tests  2692 passed (2692)
+   Duration  52.74s
 ```
 
 The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network call throw. What the main groups prove:
@@ -287,15 +287,15 @@ The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network cal
 | Plain forms and the no-model path | Every step works through a plain form and a 303 when no model call succeeds, and gives the same plan | [`tests/http/no-model-path.test.ts`](tests/http/no-model-path.test.ts), [`tests/http/enter.test.ts`](tests/http/enter.test.ts), [`tests/http/quotes`](tests/http/quotes), [`tests/http/change`](tests/http/change) |
 | Accessibility | No automated axe violations on any page in either language; the focusable table scroll region and the read-button hints are unit-tested | [`tests/a11y`](tests/a11y), [`tests/unit/components`](tests/unit/components) |
 
-**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 27 Oct 2026 it reported line coverage of 99.52% (2,308 of 2,319 lines) for `src/core`, with 97.11% of statements, 92.53% of branches and 99.16% of functions, at commit `3ff942e`. The run is also a gate: [`vitest.config.mts`](vitest.config.mts) sets thresholds just below that measurement (lines 98%, statements 96%, branches 90%, functions 98%), so `npm run coverage` fails if a change leaves decision code untested.
+**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 28 Oct 2026, at commit `93ca7e1`, it passed the same 130 files and 2,692 tests and reported line coverage of 99.49% (2,366 of 2,378 lines) for `src/core`, with 97.14% of statements (2,825 of 2,908), 92.59% of branches (2,038 of 2,201) and 99.06% of functions (633 of 639). The run is also an enforced gate: [`vitest.config.mts`](vitest.config.mts) sets thresholds just below that measurement (lines 98%, statements 96%, branches 90%, functions 98%), so `npm run coverage` exits non-zero if a change leaves decision code untested, and CI runs it that way.
 
 A deployed URL is checked separately with `npm run smoke` (or `node scripts/smoke.mjs <url>`; the default is the Cloud Run service). [`scripts/smoke.mjs`](scripts/smoke.mjs) makes no model call: it checks the health route, distinct page titles in both languages, the fixed security headers, the form twin through to a plan page, and then the change loop (book the venue, post a change of guests, budget and an earlier date, see the diff and the venue re-confirmation item on the revision page, then Undo and see the booked plan again; [`scripts/smoke-change.mjs`](scripts/smoke-change.mjs)), a damaged plan link, a wrong method and the privacy sentence under the read button. Its form posts are spaced 10 s apart. It prints one PASS or FAIL line per check and exits non-zero on any failure. It needs a live URL, so it is not part of `verify` or the push workflow; the CI workflow has a `smoke` job that runs only when started by hand (`workflow_dispatch`).
 
-**Bundle size.** `npm run check:bundle` ([`scripts/check-bundle-size.mjs`](scripts/check-bundle-size.mjs)) runs after the build, sums the gzip size of the JavaScript in `.next/static/chunks` and fails above 140 KiB. The `noModule` polyfill chunk, which only legacy browsers download, is left out, as it is in the page-weight figures below. The last local build measured 132.9 KiB over 7 chunks. CI runs it as the step after the build.
+**Bundle size.** `npm run check:bundle` ([`scripts/check-bundle-size.mjs`](scripts/check-bundle-size.mjs)) runs after the build, sums the gzip size of the JavaScript in `.next/static/chunks` and fails above 140 KiB. The `noModule` polyfill chunk, which only legacy browsers download, is left out, as it is in the page-weight figures below. The build of commit `93ca7e1` on 28 Oct 2026 measured 133.7 KiB over 7 chunks. CI runs it as the step after the build.
 
 ## Performance, measured
 
-Page weight comes from [`scripts/measure-pages.mjs`](scripts/measure-pages.mjs), run on 26 Oct 2026 against a fresh standalone production build of commit `6a71328`, served locally with no model key (every page is reached through the form twin, so no model call is made):
+Page weight comes from [`scripts/measure-pages.mjs`](scripts/measure-pages.mjs), run on 28 Oct 2026 against a fresh standalone production build of commit `93ca7e1`, served locally with no model key (every page is reached through the form twin, so no model call is made):
 
 ```sh
 node scripts/measure-pages.mjs http://127.0.0.1:3600
@@ -303,46 +303,49 @@ node scripts/measure-pages.mjs http://127.0.0.1:3600
 
 | Page          | HTML raw  | HTML gzip |
 | ------------- | --------- | --------- |
-| Start (`/en`) | 15.3 KiB  | 3.8 KiB   |
-| Form          | 56.3 KiB  | 6.6 KiB   |
-| Check         | 68.3 KiB  | 8.1 KiB   |
-| Plan          | 196.6 KiB | 15.4 KiB  |
-| Quotes        | 47.4 KiB  | 6.7 KiB   |
-| Revision      | 17.7 KiB  | 3.8 KiB   |
-| Messages      | 18.9 KiB  | 4.1 KiB   |
+| Start (`/en`) | 17.8 KiB  | 4.1 KiB   |
+| Form          | 58.5 KiB  | 7.2 KiB   |
+| Check         | 68.9 KiB  | 8.2 KiB   |
+| Plan          | 217.9 KiB | 17.5 KiB  |
+| Quotes        | 48.0 KiB  | 6.8 KiB   |
+| Revision      | 17.8 KiB  | 3.8 KiB   |
+| Messages      | 31.5 KiB  | 5.3 KiB   |
 
-- Every page except the damaged-link 404 loads the same five scripts: 445.3 KiB raw, 131.9 KiB gzip. That is the React and Next runtime. The loop does not need them, so the claim is that **no client JavaScript is needed**, not that the JavaScript is small. The revision page loads one extra chunk of 0.8 KiB and the messages page one of 0.7 KiB. The damaged-link 404 ships no script. The 110 KiB `noModule` polyfill is for old browsers only and is not counted.
+- Every page except the damaged-link 404 loads the same five scripts: 445.3 KiB raw, 131.9 KiB gzip. That is the React and Next runtime. The loop does not need them, so the claim is that **no client JavaScript is needed**, not that the JavaScript is small. The revision page loads one extra chunk of 1.4 KiB and the messages page one of 1.9 KiB. The damaged-link 404 ships no script. The 110 KiB `noModule` polyfill is for old browsers only and is not counted.
 - Most of the plan page's raw size is inline framework payload that repeats the page content. It gzips well, and the server sends gzip.
 - The plan page takes the time of one decrypt and one fold. The link holds the whole plan, so no request waits on a database.
-- One read of a Hinglish brief on the live app took 5.2 s and matched 5 of 5 values. That is a single observation, not a benchmark. The live app answered page requests in about 100 to 150 ms to first byte from the author's machine on 26 Oct 2026, over the author's own network.
+- One read of a Hinglish brief on the live app took 5.2 s and matched 5 of 5 values. That is a single observation, not a benchmark. On 28 Oct 2026 the warm live app (revision `ayojan-00011-n5t`, commit `93ca7e1`) answered page requests with a median time to first byte of 120 ms for the start page, 128 ms for the form, 166 ms for a plan, 136 ms for its quotes page and 129 ms for its messages page (5 requests each after a warm-up, `curl` `time_starttransfer`, from the author's machine over its own network). About 75 ms of each figure is the TCP and TLS set-up on that network; the wait after the connection (one round trip plus the server's work) had medians of 46 to 73 ms. The cold start is a separate figure, in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md#cold-start).
 - A model action has a 40 s budget and starts no call with under 6 s left, so a slow model cannot hold a request for the full Cloud Run timeout.
-- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; since revisions `ayojan-00006-nhx` (one instance) and `ayojan-00008-mr7` (one key) the service runs on one Gemini key and one instance (D46), which spends at most 60 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
+- Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; since revisions `ayojan-00006-nhx` (one instance) and `ayojan-00008-mr7` (one key) the service runs on one Gemini key and one instance (D46), which spends at most 60 model actions per instance lifetime: the counters are in memory, roll over at the quota day and reset whenever the instance restarts, and min instances is 0, so the 60 is a ceiling for one run of the instance and not a hard daily quota ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts); see [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md#rate-limits-are-per-instance-and-advisory)).
 
 ### Live site: Lighthouse, headers and model calls
 
-Measured on 28 Oct 2026 against the live revision `ayojan-00008-mr7` (built from commit `3ff942e`, one instance). The tool was the Lighthouse 13.4.0 command line (the copy already in the local npx cache, so nothing was installed) driving the Playwright headless Chromium 153, in mobile emulation with Lighthouse's default simulated slow-4G and 4x CPU throttling, from the author's machine. Three runs per page, and each cell is the median of the three. The plan page was made through the form twin (`POST /en/enter/brief`: wedding, 800000, 200 guests, 2027-02-26, every function unsure, every priority standard), so no model call was made at any point. A first attempt with Chrome's new headless mode failed with `NO_NAVSTART` on 7 of its 12 runs, so those results were discarded and all 12 runs were repeated with the headless shell; every run in the table completed.
+Measured on 28 Oct 2026 against the live revision `ayojan-00011-n5t` (commit `93ca7e1`, one instance, the only revision taking traffic). The tool was the Lighthouse 13.4.0 command line (the copy already in the local npx cache, so nothing was installed) driving the Playwright headless shell for Chromium 153, in mobile emulation with Lighthouse's default simulated slow-4G and 4x CPU throttling, from the author's machine. Three runs per page, and each cell is the median of the three. The plan page was made through the form twin (`POST /en/enter/brief`: wedding, 800000, 200 guests, 2027-02-26, every function unsure, every priority standard), so no model call was made at any point. Every run completed. Lighthouse exits with code 1 on this Windows machine only because it cannot delete its own temporary profile folder; the reports were written before that.
 
-| Page                   | Perf | A11y | Best practices | SEO | FCP    | LCP    | TBT    | CLS | Speed Index |
-| ---------------------- | ---- | ---- | -------------- | --- | ------ | ------ | ------ | --- | ----------- |
-| Start (`/en`)          | 99   | 100  | 100            | 100 | 0.94 s | 1.27 s | 93 ms  | 0   | 0.95 s      |
-| Form (`/en/form`)      | 98   | 100  | 100            | 100 | 1.05 s | 1.27 s | 153 ms | 0   | 1.22 s      |
-| Plan (`/en/p/<token>`) | 96   | 100  | 100            | 100 | 1.32 s | 1.78 s | 219 ms | 0   | 1.40 s      |
-| Quotes (`.../quotes`)  | 97   | 100  | 100            | 100 | 1.02 s | 1.63 s | 191 ms | 0   | 1.18 s      |
+| Page                      | Perf | A11y | Best practices | SEO | FCP    | LCP    | TBT   | CLS   | Speed Index |
+| ------------------------- | ---- | ---- | -------------- | --- | ------ | ------ | ----- | ----- | ----------- |
+| Start (`/en`)             | 100  | 100  | 100            | 100 | 0.93 s | 1.27 s | 87 ms | 0     | 0.93 s      |
+| Form (`/en/form`)         | 100  | 100  | 100            | 100 | 0.94 s | 1.27 s | 91 ms | 0     | 0.94 s      |
+| Plan (`/en/p/<token>`)    | 100  | 100  | 100            | 60  | 1.15 s | 1.33 s | 50 ms | 0     | 1.15 s      |
+| Quotes (`.../quotes`)     | 100  | 100  | 100            | 60  | 0.90 s | 1.25 s | 87 ms | 0     | 0.90 s      |
+| Messages (`.../messages`) | 100  | 100  | 100            | 60  | 0.90 s | 1.26 s | 54 ms | 0.016 | 0.90 s      |
 
-The three performance scores behind each median were 99/99/99 (start), 95/100/98 (form), 96/95/99 (plan) and 97/97/99 (quotes), so one run can sit a few points from the median; total blocking time moves most. Medians are taken per metric, so a row is not one run.
+The three performance scores behind each median were 100/99/100 (start), 100/100/99 (form), 100/100/100 (plan), 100/100/99 (quotes) and 100/100/100 (messages). Medians are taken per metric, so a row is not one run. These are higher than the 96 to 99 of the earlier run on `ayojan-00008-mr7` (commit `3ff942e`), whose total blocking time was 93 to 219 ms; the pages are not smaller, so the difference is most likely the machine's load at the time, and a few points either way should not be read as a change in the app. The messages page has a layout shift of 0.016 where the "Write it with AI" form moves, which is under Lighthouse's 0.1 threshold.
 
-Response bytes, counted from `curl` with `Accept-Encoding: gzip, br`. The server answered gzip although brotli was offered. The HTML is sent chunked, so there is no `content-length`, and the wire figure is the bytes received.
+**The SEO score of 60 on the plan, quotes and messages pages is deliberate.** Plan pages carry `x-robots-tag: noindex, nofollow` (commit `d1351d0`), because a plan link is private and holds the plan, and Lighthouse's single failing audit there is "Page is blocked from indexing". The public start and form pages score 100.
+
+Response bytes on the same live revision, counted from `curl` with `Accept-Encoding: gzip, br` on 28 Oct 2026. The server answered gzip although brotli was offered. The HTML is sent chunked, so there is no `content-length`, and the wire figure is the bytes received.
 
 | Page   | HTML decoded | HTML on the wire (gzip) |
 | ------ | ------------ | ----------------------- |
-| Start  | 15.8 KiB     | 5.1 KiB                 |
-| Form   | 58.1 KiB     | 8.0 KiB                 |
-| Plan   | 210.8 KiB    | 17.7 KiB                |
-| Quotes | 47.7 KiB     | 8.3 KiB                 |
+| Start  | 17.8 KiB     | 5.4 KiB                 |
+| Form   | 58.5 KiB     | 8.2 KiB                 |
+| Plan   | 217.9 KiB    | 18.4 KiB                |
+| Quotes | 48.0 KiB     | 8.5 KiB                 |
 
-- **JavaScript and CSS.** Every one of the four pages loads the same five scripts, 445.3 KiB decoded and 131.9 KiB on the wire, plus one stylesheet of 4.3 KiB on the wire. All of them are gzip and send `cache-control: public, max-age=31536000, immutable`, so after the first page a visitor downloads the HTML only.
+- **JavaScript and CSS.** Every one of the four pages loads the same five scripts, 445.3 KiB decoded and 131.9 KiB on the wire, plus one stylesheet of 4.4 KiB on the wire. All of them are gzip and send `cache-control: public, max-age=31536000, immutable`, so after the first page a visitor downloads the HTML only.
 - **HTML is not shared-cacheable.** Every HTML page sends `cache-control: private, no-cache, no-store, max-age=0, must-revalidate` and no `ETag`. The content security policy carries a fresh nonce on each request: two requests to `/en/form` returned two different nonces, each repeated on 11 `nonce` attributes in that response's HTML. A shared cache could therefore not serve one copy to two visitors, and the nonce rules it out even if the header allowed it. The hashed static files are the part that caches.
-- **Model calls per action**, read from [`src/server/genai/gateway.ts`](src/server/genai/gateway.ts) and the reading cache as built into `1abc9f6` (live as `ayojan-00009-v7q`; the Lighthouse runs above used `3ff942e`, whose pages are the same). Only a read and "Write it with AI" reach the gateway; every other route, the form entry included, makes none.
+- **Model calls per action**, read from [`src/server/genai/gateway.ts`](src/server/genai/gateway.ts) and the reading cache as built into `93ca7e1` (live as `ayojan-00011-n5t`; the gateway and the cache are unchanged since `1abc9f6`). Only a read and "Write it with AI" reach the gateway; every other route, the form entry included, makes none.
 
 | Action                                            | Model calls |
 | ------------------------------------------------- | ----------- |
@@ -355,7 +358,7 @@ The cache is checked first, before the key check and the daily budget, so a hit 
 
 ## Accessibility
 
-The app is built for a small phone, a slow connection, a keyboard, a screen reader, dark mode, and a browser with JavaScript off, in English or Hindi. axe-core reports no violations on any page or problem page in either language ([`tests/a11y/axe.test.ts`](tests/a11y/axe.test.ts)). Chrome Lighthouse accessibility scored 100 on the start, form, check, plan, quotes, revision and messages pages and on the Hindi plan page. Contrast was checked in a real browser in light and dark schemes, and layouts were checked at 360 px wide. Statuses use a word and an icon, never colour alone, and tables scroll inside a labelled region. The full list of what is built in, how it was tested and what is still open is in [`docs/ACCESSIBILITY.md`](docs/ACCESSIBILITY.md).
+The app is built for a small phone, a slow connection, a keyboard, a screen reader, dark mode, and a browser with JavaScript off, in English or Hindi. axe-core reports no violations on any page or problem page in either language ([`tests/a11y/axe.test.ts`](tests/a11y/axe.test.ts)). Chrome Lighthouse accessibility scored 100 on the start, form, plan, quotes and messages pages of the live site (median of three runs, 28 Oct 2026). Contrast was checked in a real browser in light and dark schemes, and the layouts of the start, form, plan, quotes, revision and messages pages, in both languages, were checked at 360 px and 320 px wide and with the WCAG 1.4.12 text spacing applied, with no page-level horizontal scroll. Statuses use a word and an icon, never colour alone, and tables scroll inside a labelled region. The full list of what is built in, how it was tested and what is still open is in [`docs/ACCESSIBILITY.md`](docs/ACCESSIBILITY.md).
 
 ## Security
 

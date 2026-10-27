@@ -71,7 +71,7 @@ category, because the reading schemas are closed lists.
 
 There are two budget profiles, one for weddings and one for birthdays, anniversaries, pujas,
 community events and "other". The wedding profile knows five functions (haldi, mehndi,
-sangeet, wedding, reception). The task list has 20 tasks and the question list 19 vendor
+sangeet, wedding, reception). The task list has 20 tasks and the question list 22 vendor
 questions. The small-celebration profile drops five wedding-only tasks (the mandap, the haldi,
 the sangeet, the printed cards and the menu tasting) and gives every other task its own shorter lead time and duration. Ayojan knows nothing
 about festival or auspicious dates, venue availability or weather: it only knows the date the
@@ -236,11 +236,11 @@ sends every read to the next model for an hour.
 
 The limits live in each instance's memory ([rate-limit.ts](../src/server/ratelimit/rate-limit.ts)):
 
-| Class          | Applies to                                                       | Limit per client                                        |
-| -------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
-| Model          | reading a brief, quote or change, and drafting the family update | a burst of 3, then 6 a minute, and 20 a day             |
-| Step           | every other POST                                                 | 60 a minute                                             |
-| Whole instance | model actions                                                    | 60 a day (the whole assumed allowance, on one instance) |
+| Class          | Applies to                                                       | Limit per client                                           |
+| -------------- | ---------------------------------------------------------------- | ---------------------------------------------------------- |
+| Model          | reading a brief, quote or change, and drafting the family update | a burst of 3, then 6 a minute, and 20 a day                |
+| Step           | every other POST                                                 | 60 a minute                                                |
+| Whole instance | model actions                                                    | 60 per instance lifetime (counted in memory per quota day) |
 
 What that does not give you:
 
@@ -255,8 +255,9 @@ What that does not give you:
   10,000 clients are tracked the oldest are forgotten.
 - **No limit on page views.** Only POSTs are limited. Each plan page decrypts its link, which
   is bounded by the 4,000-character cap.
-- **The real ceiling** is the one instance's 60 model actions a day, and then the Gemini
-  quota itself.
+- **The real ceiling** is the one instance's 60 model actions per instance lifetime (the counter
+  is in memory and starts again at zero when the instance restarts), and then the Gemini quota
+  itself.
 
 ### The reading cache is per instance
 

@@ -223,7 +223,7 @@ gcloud run services describe ayojan --region asia-south1 \
 ```
 
 The first must answer `"status":"ok"` (the key count is not in the public output; set
-`HEALTH_DETAIL=1` to see it) with the expected counts (20 tasks, 7 levers, 19
+`HEALTH_DETAIL=1` to see it) with the expected counts (20 tasks, 7 levers, 22
 questions), the second must show timeout 60, a maximum of 1 instance and 100 percent of
 traffic on the new revision (after a `nokey` deploy, only once traffic has been routed by name, see
 above). Then read one sample brief by hand in a signed-out browser.
@@ -266,6 +266,18 @@ that goes over still says so); and after a venue booking the status became a bud
 What was checked against `ayojan-00009-v7q` on 28 Oct 2026: `npm run smoke` passed 18 of 18
 against the live address, and `/api/health` answered `ok` with `ai: "available"`.
 
+## Cold start
+
+Measured on 28 Oct 2026 at 02:36 IST against the keyless twin (`ayojan-00017-miw`, tag `nokey`, the
+same image as the main service at commit `93ca7e1` but with no Gemini key), after it had been idle
+for 18 minutes (its last request was a health check at 02:18). The first `GET /en` took 2.55 s to
+the first byte (`curl -w time_starttransfer`; TCP and TLS set-up took 0.09 s of that) and answered 200. Three requests straight after it took 0.147 s, 0.126 s and 0.120 s to the first byte. So a
+cold start added about 2.4 s to the first request, on one measurement from the author's machine
+and network. It is the twin that was measured, not the main service: the image is the same, but
+the main service also mounts a key, so its figure may differ a little, and one sample is an
+observation, not a distribution. With `--min-instances=0` any visitor after a quiet period
+pays it.
+
 ## Rollback
 
 A rollback is a traffic change; an earlier revision keeps its own image:
@@ -285,10 +297,9 @@ is unchanged and the seal key is the same, which a rollback does not change.
 
 - **Rollback has not been run.** Earlier revisions are kept, and traffic has been moved by name
   to a new revision with `update-traffic` (27 Oct 2026), but never back to an earlier one. The commands above are the documented shape, not an exercised procedure.
-- **Cold start time has not been measured.** The instance was already warm when it was probed,
-  and the first-byte figure above is a warm one. A page carries about 132 KiB of gzip JavaScript
-  (see [scripts/measure-pages.mjs](../scripts/measure-pages.mjs)), but how long a cold start
-  adds is not known.
+- **Cold start is one sample, on the keyless twin.** See Cold start above: 2.55 s to the first
+  byte against about 0.12 s warm. The main service has not had a cold start timed, and no repeat
+  was run.
 - **Behaviour with more than one running instance under load** (revisions up to
   `ayojan-00005-zaz` allowed three) was not seen; since `ayojan-00006-nhx` the service runs one. The 90-request burst
   above ran against whichever instance Cloud Run chose.
@@ -299,8 +310,8 @@ is unchanged and the seal key is the same, which a rollback does not change.
   `gemini-api-key` was added on 27 Oct 2026 and read by a newly deployed revision (see Secrets).
 - **The size of the source upload** was not recorded.
 - **A billing budget or alert** was not inspected. A budget alerts and never caps spending.
-- **The keyless twin** (`ayojan-00008-tes`, tag `nokey`) is deployed, but no check against it is
-  recorded on this page.
+- **The keyless twin** (tag `nokey`, now `ayojan-00017-miw`) has one check recorded on this page,
+  the cold start above, and no other.
 - **A throwaway service named `pw5-deploy-check`** (a ten-line Node server, used on 26 Oct 2026
   to prove Cloud Build, the public URL and the secret binding before the app was deployed) was
   deleted on 26 Oct 2026 at about 20:30 IST, with the owner's okay. It was not part of Ayojan.

@@ -20,6 +20,13 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'same-origin' },
           // Duplicates frame-ancestors for older browsers that ignore the CSP directive.
           { key: 'X-Frame-Options', value: 'DENY' },
+          // Two years, subdomains included. No preload token: that is a registry submission the
+          // owner makes on purpose, and the .app suffix is already preloaded as HTTPS-only.
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },
+          // Nothing the app serves is loaded by another origin or opens a cross-origin window,
+          // so both can be strict. Revisit them before adding an embed, a font CDN or a widget.
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',

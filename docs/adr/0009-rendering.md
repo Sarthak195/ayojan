@@ -34,9 +34,12 @@ dynamic rendering), so the decision follows Next's own bundled guide on Content 
   show anything.
 - **Fixed headers in config.** [`next.config.ts`](../../next.config.ts) adds `nosniff`, a same-origin
   referrer policy, `X-Frame-Options: DENY` and a Permissions-Policy that turns off the browser
-  features the app does not use, and removes `X-Powered-By`. HSTS, COOP and CORP are left out on
-  purpose: the default Cloud Run host ends in `.app`, which browsers already treat as HTTPS-only,
-  and there is no cross-origin resource to isolate.
+  features the app does not use, and removes `X-Powered-By`. It also sends HSTS (two years,
+  subdomains, no preload token), `Cross-Origin-Opener-Policy: same-origin` and
+  `Cross-Origin-Resource-Policy: same-origin`. They were first left out because the default
+  Cloud Run host ends in `.app`, which browsers already treat as HTTPS-only, and nothing is
+  loaded cross-origin; they were added later as defence in depth, since the app serves nothing
+  that another origin needs.
 - **No streaming.** There is no `Suspense` boundary or `loading.tsx` in `src`. A page is computed
   from the link in one request (decrypt, fold, build the view, with the planning data already in memory), so there is nothing
   slow to stream. The one slow step is the model call, which runs in a POST, is requested with

@@ -17,7 +17,9 @@ Nothing that identifies you or your plan is kept on the server between requests.
   - a cache of recent model replies (see below);
   - rate-limit counters, keyed by a keyed hash of the caller's address, never the address
     (`src/server/ratelimit/client-key.ts`);
-  - counts of model calls per model and key index (`src/server/genai/exhaustion.ts`).
+  - counts of model calls per model and key index (`src/server/genai/exhaustion.ts`). The public
+    `/api/health` shows only the day's total of model actions; the per-key and per-model counts
+    are returned only when the server runs with `HEALTH_DETAIL=1`, which is off by default.
 
 ### What is inside a link
 

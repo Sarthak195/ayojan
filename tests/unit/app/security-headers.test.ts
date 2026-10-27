@@ -40,6 +40,9 @@ describe('fixed response headers (next.config.ts)', () => {
     ['x-content-type-options', 'nosniff'],
     ['referrer-policy', 'same-origin'],
     ['x-frame-options', 'DENY'],
+    ['strict-transport-security', 'max-age=63072000; includeSubDomains'],
+    ['cross-origin-opener-policy', 'same-origin'],
+    ['cross-origin-resource-policy', 'same-origin'],
   ])('sends %s: %s on every path', async (name, value) => {
     expect((await fixedHeaders()).get(name)).toBe(value);
   });

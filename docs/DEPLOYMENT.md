@@ -113,7 +113,8 @@ The flags, and why:
 
 The project's default compute service account holds `roles/secretmanager.secretAccessor` on
 both. On 26 Oct 2026 `gemini-api-key` had two enabled versions and `state-seal-key` had one.
-`/api/health` reported 7 keys in the pool that day.
+`/api/health` reported 7 keys in the pool that day (the public output was trimmed later and no
+longer shows the key count; see the health endpoint section).
 
 - **Adding a Gemini key later** is `gcloud secrets versions add gemini-api-key --data-file=-`
   with the new comma-separated list on standard input (`printf`, not `echo`, so there is no
@@ -139,22 +140,30 @@ no quota, and it is sent with `Cache-Control: no-store`. It reports:
 - `status`: `ok`, or `unavailable` with a 503 when the seal key is missing or malformed, or
   when the planning data in `data/` fails to load. A keyless server is still healthy (200),
   because the form path works without a model; it reports `ai: "unavailable"`.
-- `keys`: how many Gemini keys are configured, never the keys themselves.
+- `ai`: `available` when at least one Gemini key is configured.
 - `sealKey`: `loaded`, `missing` or `malformed`.
 - `data`: counts of tasks, levers and vendor questions read from `data/`.
-- `readingCache`: entries and bytes held by this instance.
-- `quota`: this instance's counts for the current quota day, by model and key index, plus how
-  many model and key pairs and how many keys are cooling down after a refusal, and which models
-  are.
+- `readingCache`: `entries`, the number of readings held by this instance. The video protocol
+  reads this count before a take.
+- `quota`: `actionsToday`, this instance's count of model actions in the current quota day.
 - `problems`: the named reasons for a 503.
 
-Seen on 26 Oct 2026, about 18:00 IST, on revision `ayojan-00001-jxf`:
+That is the whole public answer. The rest is behind `HEALTH_DETAIL=1` (off by default; set it on
+the service only while debugging, for example with `gcloud run services update ayojan
+--update-env-vars HEALTH_DETAIL=1`, and unset it afterwards). With it on, the answer gains a
+`detail` object: `keys` (how many Gemini keys are configured, never the keys), `readingCache`
+with its `bytes`, and `quota` with the counts for the quota day by model and key index, how many
+model and key pairs and how many keys are cooling down after a refusal, and which models are.
+
+Seen on 26 Oct 2026, about 18:00 IST, on revision `ayojan-00001-jxf`, with the output as it was
+then (later trimmed, so the public answer no longer carries `keys` or the per-key counters):
 `{"status":"ok","ai":"available","keys":7,"sealKey":"loaded","data":{"tasks":20,"levers":7,"questions":19},...,"problems":[]}`.
 Seen again at about 20:15 IST on `ayojan-00002-7hr`, right after the second deploy: the same
 status and counts, an empty reading cache and no model action yet on that instance.
 
-The endpoint is public and unauthenticated, so anyone can see how many keys are configured and
-how much model capacity this instance has used. It holds no key material and no user text.
+The endpoint is public and unauthenticated, so the public answer is limited to what an operator
+needs from outside. The key count and the per-key quota counters, which would show how much model
+capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
 The numbers describe one instance, not the service: with several instances running, which one
 answers is up to Cloud Run.
 
@@ -169,11 +178,13 @@ gcloud run services describe ayojan --region asia-south1 \
   --format='value(spec.template.spec.timeoutSeconds,spec.template.metadata.annotations,status.traffic)'
 ```
 
-The first must answer `"status":"ok"` with the expected counts (20 tasks, 7 levers, 19
+The first must answer `"status":"ok"` (the key count is not in the public output; set
+`HEALTH_DETAIL=1` to see it) with the expected counts (20 tasks, 7 levers, 19
 questions), the second must show timeout 60, a maximum of 3 instances and 100 percent of
 traffic on the new revision. Then read one sample brief by hand in a signed-out browser.
 
-What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026:
+What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026 (the `/api/health`
+rows quote the output of that day, which was later trimmed to drop the key count):
 
 | Check                                                                            | Result                                                                                                                                                                                                       |
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -185,7 +196,7 @@ What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026:
 | Time to first byte from the author's Windows machine                             | roughly 100 to 150 ms on the already-warm instance (10 requests per path after one warm-up; this includes the author's network path)                                                                         |
 | 90 parallel POSTs to `/en/undo`, each with a different made-up `X-Forwarded-For` | 63 answered 415 and 27 answered 429, so the limiter keys on the address Google's front end appends, not on what the caller writes                                                                            |
 
-What was checked against `ayojan-00002-7hr` the same evening:
+What was checked against `ayojan-00002-7hr` the same evening (same note on the `/api/health` row):
 
 | Check                                                                                       | Result                                                                                                                                                                                                                                                                                          |
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -197,7 +208,7 @@ What was checked against `ayojan-00002-7hr` the same evening:
 | Plan page at 360 px in Chromium (Playwright, mobile emulation), money table scrolled 120 px | the caption stayed in view (17 to 337 px), the page stayed 360 px wide, and the console showed no error                                                                                                                                                                                         |
 
 What was checked against `ayojan-00003-lx6` that night, with no model call: `/api/health` answered
-`ok` with 7 keys, the seal key loaded and an empty reading cache; and in English and in Hindi, the
+`ok` (then with a key count of 7, since trimmed from the public output), the seal key loaded and an empty reading cache; and in English and in Hindi, the
 privacy sentence sits in the element that each read button names in `aria-describedby`, on the
 start page (the brief and the example), in the plan's change box and on the quotes page.
 

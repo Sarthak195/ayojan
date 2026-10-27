@@ -14,7 +14,10 @@ import { loadSealKey, SealKeyError } from '../state/seal-key';
 
 // Counts only (FR-45). No model call: a probe must not spend quota. No key material: the key
 // pool contributes its size, the quota snapshot names keys by index, and a seal key failure
-// is reported by its named error, whose message never quotes the value.
+// is reported by its named error, whose message never quotes the value. The public answer is
+// only what an operator needs from outside; the key count and the per-key and per-model
+// counters and cool-downs would tell a stranger how much capacity is left, so they appear
+// only when HEALTH_DETAIL=1 is set on the server.
 
 type Environment = Readonly<Record<string, string | undefined>>;
 
@@ -28,12 +31,20 @@ export interface HealthReport {
   readonly status: 'ok' | 'unavailable';
   /** The form twin works without a key, so a keyless server is healthy with the AI off. */
   readonly ai: 'available' | 'unavailable';
-  readonly keys: number;
   readonly sealKey: 'loaded' | 'missing' | 'malformed';
   readonly data: DataCounts | null;
+  /** Entries only: the protocol for recording a take reads this count before it starts. */
+  readonly readingCache: { readonly entries: number };
+  readonly quota: { readonly actionsToday: number };
+  readonly problems: readonly string[];
+  /** Present only when HEALTH_DETAIL=1. */
+  readonly detail?: HealthDetail;
+}
+
+export interface HealthDetail {
+  readonly keys: number;
   readonly readingCache: CacheStats;
   readonly quota: ExhaustionSnapshot;
-  readonly problems: readonly string[];
 }
 
 export interface HealthSources {
@@ -104,17 +115,21 @@ export function healthReport(sources: HealthSources = defaultHealthSources()): {
   const data = dataState(sources.knowledge);
   const problems = [seal.problem, data.problem].filter((problem) => problem !== null);
   const healthy = problems.length === 0;
+  const cache = sources.cache.stats(nowMs);
+  const quota = sources.exhaustion.snapshot(nowMs);
   return {
     httpStatus: healthy ? 200 : 503,
     report: {
       status: healthy ? 'ok' : 'unavailable',
       ai: keys > 0 ? 'available' : 'unavailable',
-      keys,
       sealKey: seal.state,
       data: data.counts,
-      readingCache: sources.cache.stats(nowMs),
-      quota: sources.exhaustion.snapshot(nowMs),
+      readingCache: { entries: cache.entries },
+      quota: { actionsToday: quota.actionsToday },
       problems,
+      ...(sources.env.HEALTH_DETAIL === '1'
+        ? { detail: { keys, readingCache: cache, quota } }
+        : {}),
     },
   };
 }

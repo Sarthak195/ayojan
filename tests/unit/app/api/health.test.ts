@@ -27,7 +27,7 @@ function sources(overrides: Partial<HealthSources> = {}): HealthSources {
 }
 
 describe('healthReport', () => {
-  it('is 200 with counts of data rows, cache entries, quota and keys', () => {
+  it('is 200 with counts of data rows, cache entries and actions, and nothing finer', () => {
     const cache = createReadingCache();
     cache.set('k', { kind: 'reading', json: '{}', answeredBy: 'gemini-fake' }, NOW);
     const exhaustion = createExhaustionMemory();
@@ -36,16 +36,36 @@ describe('healthReport', () => {
     expect(httpStatus).toBe(200);
     expect(report.status).toBe('ok');
     expect(report.ai).toBe('available');
-    expect(report.keys).toBe(2);
     expect(report.sealKey).toBe('loaded');
     expect(report.data?.tasks).toBeGreaterThan(0);
     expect(report.data?.levers).toBeGreaterThan(0);
     expect(report.data?.questions).toBeGreaterThan(0);
-    expect(report.readingCache.entries).toBe(1);
-    expect(report.quota.callsToday).toEqual([
+    expect(report.readingCache).toEqual({ entries: 1 });
+    expect(report.quota).toEqual({ actionsToday: 0 });
+    expect(report.problems).toEqual([]);
+    expect(Object.keys(report).sort()).toEqual(
+      ['ai', 'data', 'problems', 'quota', 'readingCache', 'sealKey', 'status'].sort(),
+    );
+    expect(JSON.stringify(report)).not.toContain('gemini-3.5-flash-lite');
+  });
+
+  it('adds the key count and per-key counters only when HEALTH_DETAIL=1', () => {
+    const exhaustion = createExhaustionMemory();
+    exhaustion.countCall('gemini-3.5-flash-lite', 1, NOW);
+    exhaustion.countAction(NOW);
+    const env = { GEMINI_API_KEY: `${KEY_ONE}, ${KEY_TWO}`, STATE_SEAL_KEY: SEAL_VALUE };
+    const { report } = healthReport(sources({ exhaustion, env: { ...env, HEALTH_DETAIL: '1' } }));
+    expect(report.quota.actionsToday).toBe(1);
+    expect(report.detail?.keys).toBe(2);
+    expect(report.detail?.readingCache.bytes).toBe(0);
+    expect(report.detail?.quota.callsToday).toEqual([
       { model: 'gemini-3.5-flash-lite', keyIndex: 1, calls: 1 },
     ]);
-    expect(report.problems).toEqual([]);
+    expect(JSON.stringify(report)).not.toContain(KEY_ONE);
+    for (const off of ['0', 'true', '']) {
+      const plain = healthReport(sources({ exhaustion, env: { ...env, HEALTH_DETAIL: off } }));
+      expect(plain.report.detail).toBeUndefined();
+    }
   });
 
   it('is 200 with the AI off when no Gemini key is set', () => {
@@ -54,7 +74,10 @@ describe('healthReport', () => {
     );
     expect(httpStatus).toBe(200);
     expect(report.ai).toBe('unavailable');
-    expect(report.keys).toBe(0);
+    const detailed = healthReport(
+      sources({ env: { STATE_SEAL_KEY: SEAL_VALUE, HEALTH_DETAIL: '1' } }),
+    );
+    expect(detailed.report.detail?.keys).toBe(0);
   });
 
   it('is 503 when production has no seal key, naming the variable', () => {
@@ -114,17 +137,25 @@ describe('GET /api/health', () => {
     vi.unstubAllEnvs();
   });
 
-  it('answers 200 with counts and no key material', async () => {
+  it('answers 200 with counts, no key count and no key material', async () => {
     vi.stubEnv('GEMINI_API_KEY', `${KEY_ONE}, ${KEY_ONE}`);
     vi.stubEnv('GEMINI_API_KEY_2', KEY_TWO);
     const response = GET();
     const text = await response.text();
     expect(response.status).toBe(200);
-    const body = JSON.parse(text) as { keys: number; ai: string; data: { tasks: number } };
-    expect(body.keys).toBe(2);
+    const body = JSON.parse(text) as { ai: string; data: { tasks: number }; detail?: unknown };
+    expect(body.detail).toBeUndefined();
+    expect(text).not.toContain('"keys"');
     expect(body.ai).toBe('available');
     expect(body.data.tasks).toBeGreaterThan(0);
     for (const secret of [KEY_ONE, KEY_TWO, SEAL_VALUE]) expect(text).not.toContain(secret);
+  });
+
+  it('shows the key count over HTTP only with HEALTH_DETAIL=1', async () => {
+    vi.stubEnv('GEMINI_API_KEY', `${KEY_ONE}, ${KEY_TWO}`);
+    vi.stubEnv('HEALTH_DETAIL', '1');
+    const body = (await GET().json()) as { detail: { keys: number } };
+    expect(body.detail.keys).toBe(2);
   });
 
   it('answers 200 with the AI off when no key is configured', async () => {

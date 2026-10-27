@@ -96,9 +96,23 @@ form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   `tests/unit/app/security-headers.test.ts` for what actually leaves `next.config.ts` and the
   proxy.
 
-HSTS, COOP and CORP are not sent. The app loads no cross-origin resource that they would
-protect, and the `.app` top-level domain is preloaded as HTTPS-only in browsers, so they would
-add a header without adding protection.
+Three more fixed headers come from `next.config.ts` on every path:
+
+- `Strict-Transport-Security: max-age=63072000; includeSubDomains` tells a browser that has
+  seen the site once to use HTTPS only for two years. There is no `preload` token: that is a
+  submission to a browser registry which the owner makes on purpose. The `.app` top-level domain
+  is already preloaded as HTTPS-only, so on the default Cloud Run host this is defence in depth
+  for a custom domain that does not end in `.app`.
+- `Cross-Origin-Opener-Policy: same-origin` puts the app in its own browsing context group, so a
+  page that opened it, or one it opens, cannot reach `window` across origins.
+- `Cross-Origin-Resource-Policy: same-origin` stops other sites from loading the app's
+  responses as sub-resources.
+
+The last two are safe because nothing the app serves is loaded by another origin: the pages,
+scripts, styles and `/icon.svg` are fetched by its own pages, there is no embed, font CDN,
+widget or sign-in popup, and `connect-src` is already `'self'`. Adding any of those means
+revisiting both headers. The tests pin all three values in
+`tests/unit/app/security-headers.test.ts`.
 
 ## State sealing
 
@@ -258,10 +272,13 @@ value, not the rules.
   scripts from sending data to another origin.
 - The sealed link is a bearer token with no expiry. Cloud Run request logs may hold it (see
   [docs/DATA_HANDLING.md](docs/DATA_HANDLING.md)).
-- `/api/health` is public. It reports whether keys and the seal key are loaded, how many keys
-  there are, data file counts, and per key index how many calls have been spent today. It
-  contains no key material and makes no model call, but it does show how much capacity is
-  left.
+- `/api/health` is public. It reports `status`, whether the AI is available, whether the seal
+  key is loaded, the planning data counts, the reading cache entry count, how many model
+  actions this instance has run today, and the named reasons for a 503. It contains no key
+  material and makes no model call. The number of keys and the per-key and per-model call
+  counts and cool-downs, which would show how much capacity is left, are not public: they are
+  added under `detail` only when the server runs with `HEALTH_DETAIL=1`, which is off by
+  default.
 - Next's own console output for an exception during a page render is outside the logger's
   allowlist. It was not observed to carry user text in the checks above.
 

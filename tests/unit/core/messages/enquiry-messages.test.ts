@@ -77,7 +77,7 @@ describe('enquiries before any quote', () => {
     }));
     const quotedCategories = new Set(OVER_BUDGET_QUOTES.map((quote) => quote.category));
     const list = enquiries([BRIEF_OP, ...quoted, booked], 'en');
-    expect(list.length).toBeGreaterThan(0);
+    expect(list.map((enquiry) => enquiry.category)).toEqual(['decor', 'music']);
     for (const enquiry of list) {
       expect(enquiry.category).not.toBe('venue');
       expect(quotedCategories.has(enquiry.category)).toBe(false);
@@ -111,6 +111,8 @@ describe('enquiries before any quote', () => {
       'days-for-per-day',
       'jain-menu',
       'elderly-seating',
+      'guests-covered',
+      'rate-above-minimum',
     ]) {
       expect(asked).not.toContain(id);
     }
@@ -118,7 +120,8 @@ describe('enquiries before any quote', () => {
       expect.arrayContaining(['tax-rate', 'minimum-guarantee', 'step-free-access']),
     );
     expect(byCategory(list, 'venue').questionIds).toContain('step-free-access');
-    expect(byCategory(list, 'music').questionIds).toContain('dhol-included');
+    expect(byCategory(list, 'music').text).toContain('We would also like dhol.');
+    expect(byCategory(list, 'music').questionIds).not.toContain('dhol-included');
     expect(byCategory(list, 'photo').questionIds).not.toContain('dhol-included');
   });
 
@@ -133,7 +136,7 @@ describe('enquiries before any quote', () => {
     const mehndi = lang === 'en' ? 'a mehndi artist' : 'मेहंदी लगाने वाले';
     expect(list.filter((enquiry) => enquiry.text.includes(mehndi))).toHaveLength(1);
     for (const enquiry of list) {
-      expect(enquiry.questionIds.length).toBeLessThanOrEqual(7);
+      expect(enquiry.questionIds.length).toBeLessThanOrEqual(8);
       expect(Array.from(enquiry.text).length).toBeLessThan(1000);
       expect(enquiry.text).not.toContain('{');
     }
@@ -141,8 +144,9 @@ describe('enquiries before any quote', () => {
     expect(byCategory(list, 'catering').questionIds).toEqual(
       expect.arrayContaining(['live-counter-included', 'jain-menu', 'step-free-access']),
     );
+    expect(byCategory(list, 'catering').questionIds).toContain('minimum-guarantee');
     expect(byCategory(list, 'venue').text).not.toContain('250');
-    expect(byCategory(list, 'decor').text).toContain('250');
+    expect(byCategory(list, 'decor').text).not.toContain('250');
   });
 
   it('asks the same questions in English and Hindi, each in its own language', () => {

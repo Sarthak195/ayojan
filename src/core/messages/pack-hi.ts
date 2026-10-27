@@ -75,7 +75,7 @@ export const HINDI: PhrasePack = {
   },
   enquiry: {
     intro: (occasion, date, guests, seeking) =>
-      `हम ${date} को ${occasion} रख रहे हैं। लगभग ${String(guests)} मेहमान होंगे, और हमें ${seeking} चाहिए।`,
+      `हमारे यहाँ ${date} को ${occasion} है। लगभग ${String(guests)} मेहमान होंगे, और हमें ${seeking} चाहिए।`,
     seeking: {
       venue: 'वेन्यू',
       catering: 'कैटरर',

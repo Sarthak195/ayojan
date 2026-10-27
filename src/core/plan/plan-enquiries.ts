@@ -24,17 +24,21 @@ const ENQUIRY_CATEGORIES: readonly EnquiryCategory[] = [
 
 // Enough for a vendor to quote on and still one WhatsApp screen or two. The family's own needs
 // are never the ones cut: only the general price questions give way to them.
-const MAX_QUESTIONS = 7;
+const MAX_QUESTIONS = 8;
 
 function forCategory(row: QuestionRow, category: Category): boolean {
   return row.categories.length === 0 || row.categories.includes(category);
 }
 
-// Before a quote every price detail is unknown, so the rows asked about an unclear quote field
-// are the ones to ask up front. "days" is left out: its wording presumes a per-day price.
+// Before a quote only the tax and the caterer's minimum count read naturally; the others presume
+// a price already given, and the guest count is stated in the message.
 function generalQuestions(rows: readonly QuestionRow[], category: Category): VendorQuestion[] {
   return rows
-    .filter((row) => row.raisedBy.when === 'unclearField' && row.raisedBy.field !== 'days')
+    .filter(
+      (row) =>
+        row.raisedBy.when === 'unclearField' &&
+        (row.raisedBy.field === 'taxRate' || row.raisedBy.field === 'minimumGuests'),
+    )
     .filter((row) => forCategory(row, category))
     .filter((row) => !`${row.en}${row.hi}`.includes('{'))
     .map((row) => ({ id: row.id, en: row.en, hi: row.hi, raisedBy: row.raisedBy }));
@@ -48,7 +52,7 @@ function questionsFor(
   const { brief, headline } = version;
   // No quote and nothing to re-confirm, so only the plan's own conditions raise a row here:
   // must-haves, guest needs, diet and venue limits. No row of those kinds has a date in it.
-  const own = vendorQuestions(
+  const all = vendorQuestions(
     rows,
     { category, quote: null, total: null },
     {
@@ -59,6 +63,11 @@ function questionsFor(
       reconfirm: [],
       values: { guests: headline.guests, capacity: headline.venue.capacity, date: null },
     },
+  );
+  // Its wording presumes a booking and a baraat; before a quote the must-have is stated instead.
+  // A venue limit is only the venue's to answer, so other vendors are not asked it.
+  const own = all.filter(
+    (q) => q.id !== 'dhol-included' && (q.raisedBy.when !== 'venueLimit' || category === 'venue'),
   );
   const room = Math.max(0, MAX_QUESTIONS - own.length);
   return [...generalQuestions(rows, category).slice(0, room), ...own];
@@ -103,11 +112,15 @@ export function enquiryInput(version: PlanVersion, data: PlanData): EnquiryInput
       mustHaves: unaskedMustHaves(category, questions, version, data),
     };
   });
+  // Until the venue is settled the family has no hall to describe to other vendors.
+  const venueOpen =
+    vendors.some((vendor) => vendor.category === 'venue') ||
+    (needed.has('venue') && !booked.has('venue'));
   return {
     occasion: version.brief.occasion,
     guests: version.headline.guests,
     eventDate: version.headline.eventDate,
-    venueCapacity: version.headline.venue.capacity,
+    venueCapacity: venueOpen ? null : version.headline.venue.capacity,
     vendors,
   };
 }

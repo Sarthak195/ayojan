@@ -8,6 +8,7 @@ import { messagesModel } from '@/app/[lang]/p/[token]/messages/_messages/message
 import { MessagesView } from '@/app/[lang]/p/[token]/messages/_messages/messages-view';
 import { boxRows } from '@/app/[lang]/p/[token]/messages/_messages/box-rows';
 import type { AiUnavailableReason } from '@/components/banner/banners';
+import { vendorTemplates } from '@/core/messages/templates';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { createReadingCache, type ReadingCache } from '@/server/genai/reading-cache';
@@ -159,6 +160,10 @@ describe('GET /[lang]/p/[token]/messages (spec 6.7, FR-34)', () => {
   it('keeps the quote and booking messages and adds enquiries only for open categories', () => {
     const { vendors, enquiries } = model('en');
     const quoted = new Set(vendors.map((vendor) => vendor.category));
+    expect(enquiries.length).toBeGreaterThan(0);
+    expect(vendors).toEqual(
+      vendorTemplates(model('en').facts, DATA.vendorQuestions.questions, 'en'),
+    );
     for (const enquiry of enquiries) expect(quoted.has(enquiry.category)).toBe(false);
   });
 });

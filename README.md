@@ -258,12 +258,12 @@ npm run dev              # http://localhost:3000
 
 ## Testing
 
-On 28 Oct 2026, `npx vitest run` at commit `93ca7e1` ended with:
+On 28 Oct 2026, `npx vitest run` at commit `98a1c40` ended with:
 
 ```
- Test Files  130 passed (130)
-      Tests  2692 passed (2692)
-   Duration  52.74s
+ Test Files  131 passed (131)
+      Tests  2707 passed (2707)
+   Duration  52.81s
 ```
 
 The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network call throw. What the main groups prove:
@@ -287,7 +287,7 @@ The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network cal
 | Plain forms and the no-model path | Every step works through a plain form and a 303 when no model call succeeds, and gives the same plan | [`tests/http/no-model-path.test.ts`](tests/http/no-model-path.test.ts), [`tests/http/enter.test.ts`](tests/http/enter.test.ts), [`tests/http/quotes`](tests/http/quotes), [`tests/http/change`](tests/http/change) |
 | Accessibility | No automated axe violations on any page in either language; the focusable table scroll region and the read-button hints are unit-tested | [`tests/a11y`](tests/a11y), [`tests/unit/components`](tests/unit/components) |
 
-**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 28 Oct 2026, at commit `93ca7e1`, it passed the same 130 files and 2,692 tests and reported line coverage of 99.49% (2,366 of 2,378 lines) for `src/core`, with 97.14% of statements (2,825 of 2,908), 92.59% of branches (2,038 of 2,201) and 99.06% of functions (633 of 639). The run is also an enforced gate: [`vitest.config.mts`](vitest.config.mts) sets thresholds just below that measurement (lines 98%, statements 96%, branches 90%, functions 98%), so `npm run coverage` exits non-zero if a change leaves decision code untested, and CI runs it that way.
+**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 28 Oct 2026, at commit `98a1c40`, it passed the same 131 files and 2,707 tests and reported line coverage of 99.50% (2,390 of 2,402 lines) for `src/core`, with 97.17% of statements (2,850 of 2,933), 92.63% of branches (2,051 of 2,214) and 99.08% of functions (647 of 653). The run is also an enforced gate: [`vitest.config.mts`](vitest.config.mts) sets thresholds just below that measurement (lines 98%, statements 96%, branches 90%, functions 98%), so `npm run coverage` exits non-zero if a change leaves decision code untested, and CI runs it that way.
 
 A deployed URL is checked separately with `npm run smoke` (or `node scripts/smoke.mjs <url>`; the default is the Cloud Run service). [`scripts/smoke.mjs`](scripts/smoke.mjs) makes no model call: it checks the health route, distinct page titles in both languages, the fixed security headers, the form twin through to a plan page, and then the change loop (book the venue, post a change of guests, budget and an earlier date, see the diff and the venue re-confirmation item on the revision page, then Undo and see the booked plan again; [`scripts/smoke-change.mjs`](scripts/smoke-change.mjs)), a damaged plan link, a wrong method and the privacy sentence under the read button. Its form posts are spaced 10 s apart. It prints one PASS or FAIL line per check and exits non-zero on any failure. It needs a live URL, so it is not part of `verify` or the push workflow; the CI workflow has a `smoke` job that runs only when started by hand (`workflow_dispatch`).
 

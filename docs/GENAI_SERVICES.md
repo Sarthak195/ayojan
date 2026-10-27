@@ -52,9 +52,11 @@ Settings shared by the four calls, all fixed in code rather than chosen per call
 - **Thinking level:** `low`, set in `buildInteractionRequest` (`src/server/genai/interactions.ts`).
   The type of the generation config makes `temperature`, `top_p` and `top_k` unassignable, so
   reasoning is steered by `thinking_level` alone.
-- **Timeouts:** the ladder gives the first model 20 s, the second 12 s and the third up to 40 s,
+- **Timeouts:** the ladder gives the first model 20 s, the second 18 s and the third up to 40 s,
   each capped by what is left of a 40 s budget for the whole read. A call is started only when at
-  least 6 s remain (15 s for the third model), so a call that would be cut off is not spent. Cloud
+  least 6 s remain (15 s for the third model), so a call that would be cut off is not spent. If
+  the first two run to their timeouts, 2 s are left, the third is not started and the read ends
+  at 38 s. Cloud
   Run's request timeout is 60 s. The form shows "Reading can take up to 40 seconds." and a
   privacy sentence (the free tier may use what is sent) under each read button; the "Write it
   with AI" button on the messages page carries the same sentence.
@@ -117,7 +119,7 @@ recorded with an `-unconfirmed` suffix. The recorded id is kept in the reading's
 
 Keys come from `GEMINI_API_KEY` and any `GEMINI_API_KEY_*` variables, each split on commas and
 whitespace and de-duplicated (`src/server/config/key-pool.ts`). The deployed service had seven keys
-on 26 Oct 2026; from the first deploy after 27 Oct (D46) it runs on one key from one project, read from Secret Manager,
+on 26 Oct 2026; since revision `ayojan-00008-mr7` (27 Oct 2026, D46) it runs on one key from one project, read from Secret Manager,
 because pooling free-tier keys from several projects can read as getting around Google's
 documented usage limits. The pool code still accepts several keys. Within a model the gateway starts after the key the previous read used last,
 and it remembers failures in memory by key index, never by key:
@@ -200,7 +202,7 @@ by AI (cached)" with the reason, and is never shown as a fresh read.
 
 **Budget per instance** (`src/server/genai/exhaustion.ts`, `src/server/ratelimit/`). Working values,
 not measured: about 20 requests a day per model per key project, one project (one key, D46),
-three models and one instance (from the next deploy; the serving revision allows three) give 60 model actions a day, the whole service's budget. Past that,
+three models and one instance (since revision `ayojan-00006-nhx`) give 60 model actions a day, the whole service's budget. Past that,
 the rate limiter refuses further model actions with a page that names the wait, and the gateway
 starts no more ladders. A model action also counts against the client: a burst of three, six a
 minute and 20 a day. Counters live in memory, so they are per instance and a cold start resets them.

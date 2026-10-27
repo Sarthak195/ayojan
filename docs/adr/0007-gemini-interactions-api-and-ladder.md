@@ -35,7 +35,10 @@ of models.
 - **The ladder.** [`gateway.ts`](../../src/server/genai/gateway.ts) tries `gemini-3.5-flash-lite`
   (20 s), then `gemini-3.1-flash-lite` (12 s), then `gemini-3.5-flash`, which starts only when at
   least 15 s remain and is capped by what is left. One action has a 40 s budget against Cloud Run's
-  60 s request timeout, and no call starts with under 6 s left. The `LadderModel` type names only
+  60 s request timeout, and no call starts with under 6 s left. Amended 28 Oct 2026 (commit
+  `57965e2`, live since revision `ayojan-00009-v7q`): the second rung now waits 18 s, not 12 s, so
+  if the first two run to their timeouts 2 s are left, the third is not started and a read ends
+  at 38 s. The `LadderModel` type names only
   these three, so `gemini-3.8-flash` (which did not answer within 90 s when probed on 26 Oct 2026)
   and preview models cannot be requested by mistake.
 - **Keys and failures.** Keys come from `GEMINI_API_KEY` and `GEMINI_API_KEY_*`. The gateway

@@ -78,7 +78,7 @@ Ayojan is treated as a free-tier Gemini client, and tells its users so. As check
 the Cloud Run project has billing enabled, but the Gemini API (`generativelanguage.googleapis.com`)
 is not enabled in it, so none of the 7 working Gemini keys can come from that billed project. The
 projects the keys do come from were not inspected, so this page does not claim that each key was
-verified to be on the free tier. From the first deploy after 27 Oct 2026 (D46) the service runs on one key, and that
+verified to be on the free tier. Since revision `ayojan-00008-mr7` (27 Oct 2026, D46) the service runs on one key, and that
 key is one of those seven, so the check of 26 Oct still holds for it: it cannot come from the
 billed project. No paid key was added: a paid fallback key was offered and declined. The UI carries the notice since commit `8ab00a3` (live since revision `ayojan-00003-lx6`): under
 every read button (the start page brief and its examples, the vendor quote box and the plan change box) it says
@@ -121,12 +121,17 @@ dropped and counted, never written.
 
 Fields the logger accepts: the route template (such as `/[lang]/read/[kind]`, never the real
 path), HTTP status, duration in milliseconds, the kind of step, the reading source (such as ai,
-ai-cached, example or form), the prompt id, a short reason code, the model that answered, the key index,
+ai-cached, example or form), the prompt id, a short reason code, the model that answered, the
+model a call asked for, how that call ended (`answer`, `timeout`, `overload`, `rate-limit`, `auth`,
+`retired` or `error`), the key index,
 the attempt number, whether the cache hit, counts of verified and claimed values, the token's
 length (not the token), byte and item counts, a retry delay, a keyed hash of the client, and
 the class name of an error. The app's own log calls use fewer: the route, status and duration of
 each step, the prompt id, reading source, reason code and verified and claimed counts of a
-reading, and the class name of an error.
+reading, the class name of an error, and one `model-call` line per model call (since commit
+`24f9fbd`, live since revision `ayojan-00009-v7q`) with the requested model id, the outcome and
+the duration: INFO for an answer, WARNING otherwise. That line never holds the key, the key
+index, the text, the prompt or the reply.
 
 **Never written:** the text you typed or pasted, quotes from it, rupee amounts, plan links or
 tokens, raw IP addresses, API keys, the seal key, or error messages (they can quote input). The

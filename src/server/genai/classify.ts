@@ -71,6 +71,18 @@ export function classifyFailure(error: unknown): FailureKind {
   return 'transient';
 }
 
+/** How a call ended, for the per-call log line; the ladder still acts on `classifyFailure`. */
+export type CallOutcome = 'timeout' | 'overload' | 'rate-limit' | 'auth' | 'retired' | 'error';
+
+// A client-side timeout and a 5xx both cool the model, but they point at different causes (our
+// cap too tight against a slow answer, or the API under load), so the log keeps them apart.
+export function callOutcome(error: unknown): CallOutcome {
+  const status = statusOf(error);
+  if (status === 408 || (status === undefined && isTimeout(error))) return 'timeout';
+  const failure = classifyFailure(error);
+  return failure === 'our-bug' || failure === 'transient' ? 'error' : failure;
+}
+
 /** Thrown for a failure that is ours to fix. The message names the kind only, never reply text. */
 export class GatewayBugError extends Error {
   readonly kind: 'bad-request' | 'schema-violation';

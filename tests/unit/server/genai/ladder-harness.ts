@@ -9,6 +9,7 @@ import type {
   LadderModel,
 } from '@/server/genai/interactions';
 import { createReadingCache, type ReadingCache } from '@/server/genai/reading-cache';
+import { createLogger } from '@/server/observability/logger';
 import type { ExtractionRequest, LlmGateway } from '@/server/pipeline/llm-gateway';
 
 export const LITE: LadderModel = 'gemini-3.5-flash-lite';
@@ -94,6 +95,8 @@ export function harness(
     now: clock.now,
     memory,
     cache,
+    // Silent unless a test captures it, so the per-call lines do not flood the test output.
+    log: createLogger(() => undefined),
     ...overrides,
   });
   return { gateway, calls, memory, cache, clock };

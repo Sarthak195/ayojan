@@ -24,6 +24,8 @@ const ATTEMPTS: { name: string; event: string; fields: Record<string, unknown> }
     'promptId',
     'reason',
     'answeredBy',
+    'model',
+    'outcome',
     'client',
     'errorName',
   ].flatMap((field) =>
@@ -79,6 +81,8 @@ describe('logger format', () => {
       promptId: 'brief',
       reason: 'quota',
       answeredBy: 'gemini-3.5-flash-lite',
+      model: 'gemini-3.1-flash-lite',
+      outcome: 'rate-limit',
       keyIndex: 2,
       attempt: 1,
       cacheHit: true,
@@ -98,6 +102,8 @@ describe('logger format', () => {
       event: 'read',
       durationMs: 5124,
       answeredBy: 'gemini-3.5-flash-lite',
+      model: 'gemini-3.1-flash-lite',
+      outcome: 'rate-limit',
       cacheHit: true,
     });
     expect(lines[0]).not.toContain('dropped');

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { classifyFailure, type FailureKind } from '@/server/genai/classify';
+import {
+  callOutcome,
+  classifyFailure,
+  type CallOutcome,
+  type FailureKind,
+} from '@/server/genai/classify';
 
 const withFields = (message: string, fields: object): Error =>
   Object.assign(new Error(message), fields);
@@ -55,5 +60,36 @@ describe('classifyFailure', () => {
     const looped: Error & { cause?: unknown } = new Error('loop');
     looped.cause = looped;
     expect(classifyFailure(looped)).toBe('transient');
+  });
+});
+
+describe('callOutcome', () => {
+  it.each<[string, unknown, CallOutcome]>([
+    [
+      'SDK timeout',
+      withFields('Request timed out.', { name: 'APIConnectionTimeoutError' }),
+      'timeout',
+    ],
+    ['AbortSignal.timeout', withFields('signal', { name: 'TimeoutError' }), 'timeout'],
+    [
+      'undici timeout in the cause',
+      withFields('fetch failed', { cause: withFields('y', { code: 'UND_ERR_BODY_TIMEOUT' }) }),
+      'timeout',
+    ],
+    ['408', withFields('x', { status: 408 }), 'timeout'],
+    ['503', withFields('x', { status: 503 }), 'overload'],
+    [
+      '500 saying timeout is still an overload',
+      withFields('Gateway timeout', { status: 504 }),
+      'overload',
+    ],
+    ['429', withFields('x', { status: 429 }), 'rate-limit'],
+    ['401', withFields('x', { status: 401 }), 'auth'],
+    ['404', withFields('x', { status: 404 }), 'retired'],
+    ['400', withFields('x', { status: 400 }), 'error'],
+    ['a connection error', new Error('Connection error.'), 'error'],
+    ['a thrown string', 'boom', 'error'],
+  ])('%s', (_name, error, outcome) => {
+    expect(callOutcome(error)).toBe(outcome);
   });
 });

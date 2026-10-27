@@ -2,6 +2,8 @@ import 'server-only';
 
 import { createHash } from 'node:crypto';
 
+import type { ExtractionRequest, GatewayResult } from '@/server/pipeline/llm-gateway';
+
 import { HOUR_MS } from './exhaustion';
 
 /** Every input that changes the answer; leaving one out would serve a stale reading. */
@@ -137,4 +139,24 @@ export function readingCache(): ReadingCache {
   const held = holder[HOLDER] ?? createReadingCache();
   holder[HOLDER] = held;
   return held;
+}
+
+/** A stored reading, re-checked against the schema; a stale shape is dropped and read again. */
+export function fromCache<T>(
+  request: ExtractionRequest<T>,
+  cache: ReadingCache,
+  key: string,
+  nowMs: number,
+): GatewayResult<T> | undefined {
+  const hit = cache.get(key, nowMs);
+  if (hit === undefined) return undefined;
+  if (hit.kind === 'refused') {
+    return { kind: 'refused', source: 'ai-cached', reason: hit.reason, answeredBy: hit.answeredBy };
+  }
+  const parsed = request.schema.safeParse(JSON.parse(hit.json));
+  if (parsed.success) {
+    return { kind: 'reading', source: 'ai-cached', value: parsed.data, answeredBy: hit.answeredBy };
+  }
+  cache.delete(key);
+  return undefined;
 }

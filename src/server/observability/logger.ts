@@ -29,6 +29,7 @@ const matching =
 const SLUG = /^[a-z][a-z0-9-]{0,47}$/;
 const slug = matching(SLUG);
 const count = integerIn(0, MAX_COUNT);
+const modelId = matching(/^gemini-[a-z0-9.-]{1,40}$/);
 
 const flag: Rule = (value) => (typeof value === 'boolean' ? value : undefined);
 
@@ -49,6 +50,10 @@ export interface LogFields {
   readonly reason?: string;
   /** The model that answered, as the API reported it. */
   readonly answeredBy?: string;
+  /** The model a call asked for, which may differ from the one that answered. */
+  readonly model?: string;
+  /** How one model call ended: answer, timeout, overload, rate-limit, auth, retired or error. */
+  readonly outcome?: string;
   readonly keyIndex?: number;
   readonly attempt?: number;
   readonly cacheHit?: boolean;
@@ -74,7 +79,9 @@ const FIELD_RULES: Readonly<Record<FieldName, Rule>> = {
   readingSource: slug,
   promptId: slug,
   reason: slug,
-  answeredBy: matching(/^gemini-[a-z0-9.-]{1,40}$/),
+  answeredBy: modelId,
+  model: modelId,
+  outcome: slug,
   keyIndex: integerIn(0, 63),
   attempt: integerIn(0, 63),
   cacheHit: flag,

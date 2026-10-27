@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { log, type Logger } from '@/server/observability/logger';
 import type {
   ExtractionRequest,
   GatewayResult,
@@ -8,7 +9,7 @@ import type {
 } from '@/server/pipeline/llm-gateway';
 
 import { loadKeyPool } from '../config/key-pool';
-import { classifyFailure, GatewayBugError } from './classify';
+import { callOutcome, classifyFailure, GatewayBugError } from './classify';
 import { interactionsClientFor } from './client';
 import {
   ASSUMED_DAILY_ALLOWANCE,
@@ -29,7 +30,7 @@ import {
   type LadderModel,
   type RequestParts,
 } from './interactions';
-import { readingCache, readingCacheKey, type ReadingCache } from './reading-cache';
+import { fromCache, readingCache, readingCacheKey, type ReadingCache } from './reading-cache';
 import { validateReply } from './validate-reply';
 
 /** D16: the whole read, every rung included, fits in 40 s (Cloud Run allows 60). */
@@ -65,6 +66,8 @@ export interface GatewayDeps {
   readonly allowance?: number;
   /** Model actions this instance may start per quota day (D18 b). */
   readonly dailyActionBudget?: number;
+  /** Where each call's model, outcome and duration go; the process logger by default. */
+  readonly log?: Logger;
 }
 
 type LadderOutcome =
@@ -92,6 +95,7 @@ async function runLadder<T>(
   allowance: number,
 ): Promise<LadderOutcome> {
   const { memory, now } = deps;
+  const logger = deps.log ?? log;
   const deadline = now() + ACTION_BUDGET_MS;
   const reserveLine = allowance * RESERVE_SHARE;
   const schema = toGeminiSchema(request.schema);
@@ -132,12 +136,22 @@ async function runLadder<T>(
       calls += 1;
       memory.countCall(rung.model, keyIndex, now());
       memory.markTried(rung.model, keyIndex);
+      // Only the final outcome reaches the read's own log line, so each call is logged here to
+      // show which rung failed and how. Never the key, its index, the text or the reply.
+      const startedAt = now();
       try {
         const reply = await deps
           .clientFor(apiKey)
           .create(shaped, callOptions(Math.min(rung.timeoutMs, remaining)));
+        logger.info('model-call', {
+          model: rung.model,
+          outcome: 'answer',
+          durationMs: now() - startedAt,
+        });
         return { kind: 'answer', reply, requested: rung.model };
       } catch (error: unknown) {
+        const outcome = callOutcome(error);
+        logger.warn('model-call', { model: rung.model, outcome, durationMs: now() - startedAt });
         const failure = classifyFailure(error);
         if (failure === 'our-bug') throw new GatewayBugError('bad-request', 'the API refused it');
         if (failure === 'rate-limit') {
@@ -160,25 +174,6 @@ async function runLadder<T>(
     }
   }
   return { kind: 'none', reason };
-}
-
-function fromCache<T>(
-  request: ExtractionRequest<T>,
-  cache: ReadingCache,
-  key: string,
-  nowMs: number,
-): GatewayResult<T> | undefined {
-  const hit = cache.get(key, nowMs);
-  if (hit === undefined) return undefined;
-  if (hit.kind === 'refused') {
-    return { kind: 'refused', source: 'ai-cached', reason: hit.reason, answeredBy: hit.answeredBy };
-  }
-  const parsed = request.schema.safeParse(JSON.parse(hit.json));
-  if (parsed.success) {
-    return { kind: 'reading', source: 'ai-cached', value: parsed.data, answeredBy: hit.answeredBy };
-  }
-  cache.delete(key);
-  return undefined;
 }
 
 /**

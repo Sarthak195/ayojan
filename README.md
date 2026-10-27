@@ -304,6 +304,41 @@ node scripts/measure-pages.mjs http://127.0.0.1:3600
 - A model action has a 40 s budget and starts no call with under 6 s left, so a slow model cannot hold a request for the full Cloud Run timeout.
 - Rate limits protect the shared quota, per instance: a model read allows a burst of 3 and 6 a minute, and 20 a day per client; other posts allow 60 a minute; from the next deploy (D46) the service runs on one Gemini key and one instance, which spends at most 60 model actions a day ([`src/server/ratelimit/rate-limit.ts`](src/server/ratelimit/rate-limit.ts), [`src/server/genai/exhaustion.ts`](src/server/genai/exhaustion.ts)).
 
+### Live site: Lighthouse, headers and model calls
+
+Measured on 28 Oct 2026 against the live revision `ayojan-00008-mr7` (built from commit `3ff942e`, one instance). The tool was the Lighthouse 13.4.0 command line (the copy already in the local npx cache, so nothing was installed) driving the Playwright headless Chromium 153, in mobile emulation with Lighthouse's default simulated slow-4G and 4x CPU throttling, from the author's machine. Three runs per page, and each cell is the median of the three. The plan page was made through the form twin (`POST /en/enter/brief`: wedding, 800000, 200 guests, 2027-02-26, every function unsure, every priority standard), so no model call was made at any point. A first attempt with Chrome's new headless mode failed with `NO_NAVSTART` on 7 of its 12 runs, so those results were discarded and all 12 runs were repeated with the headless shell; every run in the table completed.
+
+| Page                   | Perf | A11y | Best practices | SEO | FCP    | LCP    | TBT    | CLS | Speed Index |
+| ---------------------- | ---- | ---- | -------------- | --- | ------ | ------ | ------ | --- | ----------- |
+| Start (`/en`)          | 99   | 100  | 100            | 100 | 0.94 s | 1.27 s | 93 ms  | 0   | 0.95 s      |
+| Form (`/en/form`)      | 98   | 100  | 100            | 100 | 1.05 s | 1.27 s | 153 ms | 0   | 1.22 s      |
+| Plan (`/en/p/<token>`) | 96   | 100  | 100            | 100 | 1.32 s | 1.78 s | 219 ms | 0   | 1.40 s      |
+| Quotes (`.../quotes`)  | 97   | 100  | 100            | 100 | 1.02 s | 1.63 s | 191 ms | 0   | 1.18 s      |
+
+The three performance scores behind each median were 99/99/99 (start), 95/100/98 (form), 96/95/99 (plan) and 97/97/99 (quotes), so one run can sit a few points from the median; total blocking time moves most. Medians are taken per metric, so a row is not one run.
+
+Response bytes, counted from `curl` with `Accept-Encoding: gzip, br`. The server answered gzip although brotli was offered. The HTML is sent chunked, so there is no `content-length`, and the wire figure is the bytes received.
+
+| Page   | HTML decoded | HTML on the wire (gzip) |
+| ------ | ------------ | ----------------------- |
+| Start  | 15.8 KiB     | 5.1 KiB                 |
+| Form   | 58.1 KiB     | 8.0 KiB                 |
+| Plan   | 210.8 KiB    | 17.7 KiB                |
+| Quotes | 47.7 KiB     | 8.3 KiB                 |
+
+- **JavaScript and CSS.** Every one of the four pages loads the same five scripts, 445.3 KiB decoded and 131.9 KiB on the wire, plus one stylesheet of 4.3 KiB on the wire. All of them are gzip and send `cache-control: public, max-age=31536000, immutable`, so after the first page a visitor downloads the HTML only.
+- **HTML is not shared-cacheable.** Every HTML page sends `cache-control: private, no-cache, no-store, max-age=0, must-revalidate` and no `ETag`. The content security policy carries a fresh nonce on each request: two requests to `/en/form` returned two different nonces, each repeated on 11 `nonce` attributes in that response's HTML. A shared cache could therefore not serve one copy to two visitors, and the nonce rules it out even if the header allowed it. The hashed static files are the part that caches.
+- **Model calls per action**, read from [`src/server/genai/gateway.ts`](src/server/genai/gateway.ts) and the reading cache as built into `3ff942e`. Only a read and "Write it with AI" reach the gateway; every other route, the form entry included, makes none.
+
+| Action                                            | Model calls |
+| ------------------------------------------------- | ----------- |
+| Form entry (`/enter/*`) or any page view          | 0           |
+| Read or draft whose text is in the instance cache | 0           |
+| Normal read or draft                              | 1           |
+| Worst case                                        | 3           |
+
+The cache is checked first, before the key check and the daily budget, so a hit spends no call and no budget (200 entries, 2 MiB, 24 hours, in the memory of the one instance). On a miss the ladder has three rungs (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`, `gemini-3.5-flash`) and, with one key (D46), each makes at most one call, so the worst case is one call per rung, 3 in all, inside the 40 s action budget. Whether all three happen depends on how the earlier ones fail: the first rung may wait 20 s and the second 12 s, and the third starts only with 15 s left, so two calls that run to their timeouts leave 8 s and the third is skipped. Three calls need the first two to fail quickly, for example with a rate limit or an overload answer. A reply that fails the schema is not retried, and a rung cooled by an earlier failure is skipped without a call. However many rungs one action uses, it counts once against the instance's 60 actions a day.
+
 ## Accessibility
 
 The app is built for a small phone, a slow connection, a keyboard, a screen reader, dark mode, and a browser with JavaScript off, in English or Hindi. axe-core reports no violations on any page or problem page in either language ([`tests/a11y/axe.test.ts`](tests/a11y/axe.test.ts)). Chrome Lighthouse accessibility scored 100 on the start, form, check, plan, quotes, revision and messages pages and on the Hindi plan page. Contrast was checked in a real browser in light and dark schemes, and layouts were checked at 360 px wide. Statuses use a word and an icon, never colour alone, and tables scroll inside a labelled region. The full list of what is built in, how it was tested and what is still open is in [`docs/ACCESSIBILITY.md`](docs/ACCESSIBILITY.md).

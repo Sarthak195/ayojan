@@ -3,9 +3,11 @@
 //   node scripts/measure-pages.mjs http://127.0.0.1:3200 [--json]
 // Point it at a production server (the standalone build) that has no model key: every page
 // is reached through the form twin (POST /enter/brief), so no model call is made. Sizes are
-// bytes of the decoded body. gzip uses zlib's default level and brotli its default quality,
-// which is an upper bound on what a tuned server would send; the server's own encoding is
-// reported separately because that is what a phone actually downloads.
+// bytes of the decoded body. The gzip and brotli columns are this script compressing the body
+// locally with zlib's default level and brotli's default quality: they estimate the cost of
+// each encoding, they are not what any server sent (a server may pick other settings or
+// another encoding). The only wire figure is the last line, the bytes received from the server
+// for /en/form with Accept-Encoding gzip, br, and that is what a phone actually downloads.
 import http from 'node:http';
 import https from 'node:https';
 import { brotliCompressSync, gzipSync } from 'node:zlib';

@@ -242,7 +242,10 @@ const plantedFaults: readonly [string, string, Mutation, RegExp][] = [
     'celebration-faster-alternative-missing',
     'tasks.yaml',
     (d) => {
+      // Printed cards are wedding-only (D45), so the row is made a kept task here to reach the check.
       const row = byId(d, 'tasks', 'print-invitations');
+      row.weddingOnly = false;
+      row.celebration = byId(d, 'tasks', 'send-invitations').celebration;
       row.fasterAlternative = { ...(row.fasterAlternative as object), celebration: null };
     },
     /\(print-invitations\): fasterAlternative\.celebration is missing/,

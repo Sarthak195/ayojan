@@ -22,7 +22,7 @@ export const ENGLISH: PhrasePack = {
     rateAboveMinimum: 'rate above the minimum',
     days: 'number of days',
   },
-  status: { late: 'late', atRisk: 'at risk' },
+  status: { atRisk: 'at risk' },
   sentences: {
     title: (occasion, date) => `Update on our ${occasion} on ${date}.`,
     daysToGo: (days) => `${String(days)} ${plural(days, 'day', 'days')} to go.`,
@@ -42,6 +42,7 @@ export const ENGLISH: PhrasePack = {
     leverAdds: (label, amount) => `${label} (adds ${amount})`,
     attention: (items) => `Needs attention: ${items}.`,
     attentionItem: (name, status, due) => `${name} (${status}, due by ${due})`,
+    lateItem: (name, due) => `${name} (behind schedule for ${due}: start today)`,
     vendors: (count, names) =>
       `We will send questions to ${String(count)} ${plural(count, 'vendor', 'vendors')}: ${names}.`,
     unclear: (items) => `Quote details still unclear: ${items}.`,

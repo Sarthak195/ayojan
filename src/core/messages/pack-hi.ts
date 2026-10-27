@@ -34,7 +34,7 @@ export const HINDI: PhrasePack = {
     rateAboveMinimum: 'कम से कम से ज़्यादा पर रेट',
     days: 'दिनों की गिनती',
   },
-  status: { late: 'देर हो चुकी है', atRisk: 'जोखिम में' },
+  status: { atRisk: 'जोखिम में' },
   sentences: {
     title: (occasion, date) => `हमारी ${occasion} (${date}) की ताज़ा जानकारी।`,
     daysToGo: (days) => `${String(days)} दिन बाक़ी हैं।`,
@@ -55,6 +55,7 @@ export const HINDI: PhrasePack = {
     leverAdds: (label, amount) => `${label} (${amount} बढ़ेंगे)`,
     attention: (items) => `ध्यान देने वाले काम: ${items}।`,
     attentionItem: (name, status, due) => `${name} (${status}, आख़िरी तारीख़ ${due})`,
+    lateItem: (name, due) => `${name} (समय से पीछे, ${due} तक होना है: आज ही शुरू करें)`,
     vendors: (count, names) => `हम ${String(count)} वेंडर से सवाल पूछेंगे: ${names}।`,
     unclear: (items) => `क़ीमत की ये बातें अभी साफ़ नहीं हैं: ${items}।`,
     unclearItem: (vendor, fields) => `${vendor} (${fields})`,

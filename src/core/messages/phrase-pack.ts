@@ -14,7 +14,7 @@ export interface PhrasePack {
   readonly diet: Readonly<Record<Diet, string>>;
   readonly venueLimit: Readonly<Record<VenueLimit, string>>;
   readonly quoteField: Readonly<Record<UnclearQuoteField, string>>;
-  readonly status: Readonly<Record<'late' | 'atRisk', string>>;
+  readonly status: Readonly<Record<'atRisk', string>>;
   readonly sentences: {
     readonly title: (occasion: string, date: string) => string;
     readonly daysToGo: (days: number) => string;
@@ -33,6 +33,8 @@ export interface PhrasePack {
     readonly leverAdds: (label: string, amount: string) => string;
     readonly attention: (items: string) => string;
     readonly attentionItem: (name: string, status: string, due: string) => string;
+    /** A Late task says what to do, not "late, due by" a date still ahead (D45). */
+    readonly lateItem: (name: string, due: string) => string;
     readonly vendors: (count: number, names: string) => string;
     readonly unclear: (items: string) => string;
     readonly unclearItem: (vendor: string, fields: string) => string;

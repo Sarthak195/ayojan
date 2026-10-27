@@ -28,7 +28,7 @@ reads "Planning assumption chosen by the author", and no row names a survey, rep
 as its source, because none was fetched and checked. The `reviewed` note on the 73 reviewed rows
 reads "AI-assisted review at the author's request": it is a review made with an AI assistant,
 and no wedding planner, caterer or other person from the trade is recorded as having checked
-the proportions. The 17 small-celebration lead-time blocks in [tasks.yaml](../data/tasks.yaml)
+the proportions. The 15 small-celebration lead-time blocks in [tasks.yaml](../data/tasks.yaml)
 were added later and have an empty `reviewed` field: nobody has reviewed them. The pages label the figures the same way ("Planning assumption", "Using the
 small-celebration profile: planning assumptions, check them"). The savings shown for the
 percentage trade-offs in [levers.yaml](../data/levers.yaml) (for example a simpler decor line
@@ -72,17 +72,23 @@ category, because the reading schemas are closed lists.
 There are two budget profiles, one for weddings and one for birthdays, anniversaries, pujas,
 community events and "other". The wedding profile knows five functions (haldi, mehndi,
 sangeet, wedding, reception). The task list has 20 tasks and the question list 19 vendor
-questions. The small-celebration profile drops three wedding-only tasks (the mandap, the haldi
-and the sangeet) and gives every other task its own shorter lead time and duration. Ayojan knows nothing
+questions. The small-celebration profile drops five wedding-only tasks (the mandap, the haldi,
+the sangeet, the printed cards and the menu tasting) and gives every other task its own shorter lead time and duration. Ayojan knows nothing
 about festival or auspicious dates, venue availability or weather: it only knows the date the
 user gives.
 
 The small-celebration task list is still close to a wedding's. A five-guest puja at home still
-gets printed cards, a menu tasting, a final walkthrough at the venue and a music booking, and
-saying "ghar pe" (at home) or "no DJ" changes neither the venue share nor the music task; the
-words are kept as a note. With under about 18 days' notice, the venue and caterer chain of a
-celebration still shows Late, because the remaining days are fewer than the lead times, and a
-finish-by date that has already passed is shown as a date, with no "start now" wording.
+gets a venue booking, a final walkthrough at the venue and a music booking, and saying "ghar pe"
+(at home) or "no DJ" changes neither the venue share nor the music task; the words are kept as a
+note. Short notice: a celebration a week away (6 or 7 days) is planned with every task At risk
+and none Late, because its lead times are latest finishes of two to five days. With 5 days or
+fewer the venue and caterer chain shows Late, which is the honest answer at that notice; a Late
+task then says what it needs and what to do ("Needs 3 days from today, 2 days left before 4 Nov
+2026: start today", or "Was due by 25 Oct 2026: start today" once the date has passed). Because
+these are latest finishes, a family planning six weeks out sees On track until about a week
+before, and every task reads At risk under two weeks, since the At risk threshold (14 days of
+slack) is shared with weddings. The family update names a Late task's date and "start today",
+without the day counts the plan page shows.
 
 ### It suggests no themes or ideas
 

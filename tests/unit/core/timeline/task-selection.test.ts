@@ -188,16 +188,19 @@ describe('the day counts each profile reads', () => {
     }
     expect(templateOf('book-venue').latestFinishDaysBefore).toBe(100);
     expect(resolveTask(chosen[0] ?? templateOf('book-venue'), false).latestFinishDaysBefore).toBe(
-      14,
+      4,
     );
   });
 
-  it("uses the e-invite's celebration day counts when the lever applies to a celebration", () => {
-    const row = selectTasks(tasksFile.tasks, all, 'celebration').active.find(
-      (candidate) => candidate.id === 'print-invitations',
-    );
-    const timing = templateOf('print-invitations').fasterAlternative?.celebration;
-    if (row === undefined || !timing) throw new Error('print-invitations fixture');
-    expect(resolveTask(row, true)).toMatchObject({ ...timing, fasterApplied: true });
+  // D45: printed cards and a menu tasting are wedding customs. A small celebration invites by
+  // message, so it keeps the sending task and has no card to print first; a wedding keeps both,
+  // with the e-invite as the printed cards' faster alternative.
+  it('drops the printed cards and the menu tasting from a small celebration only', () => {
+    const celebration = idsFor(all, 'celebration');
+    expect(celebration).not.toContain('print-invitations');
+    expect(celebration).not.toContain('menu-tasting');
+    expect(celebration).toContain('send-invitations');
+    expect(idsFor(all)).toEqual(expect.arrayContaining(['print-invitations', 'menu-tasting']));
+    expect(templateOf('print-invitations').fasterAlternative?.en).toBe('Make the e-invite');
   });
 });

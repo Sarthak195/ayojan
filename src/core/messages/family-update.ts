@@ -58,13 +58,13 @@ function leverLine(facts: MessageFacts, language: Language): string[] {
 function attentionLine(facts: MessageFacts, language: Language): string[] {
   if (facts.atRisk.length === 0) return [];
   const pack = packFor(language);
-  const items = facts.atRisk.map((task) =>
-    pack.sentences.attentionItem(
-      localized(task.name, language),
-      pack.status[task.status],
-      dateText(task.dueBy, language),
-    ),
-  );
+  const items = facts.atRisk.map((task) => {
+    const name = localized(task.name, language);
+    const due = dateText(task.dueBy, language);
+    return task.status === 'late'
+      ? pack.sentences.lateItem(name, due)
+      : pack.sentences.attentionItem(name, pack.status.atRisk, due);
+  });
   return [pack.sentences.attention(items.join(', '))];
 }
 

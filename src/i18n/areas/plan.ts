@@ -1,7 +1,7 @@
 // The plan page (spec 6.4): the headline, the money table, the timeline, a short ledger and the
 // links onward. Functions take only strings and numbers, so the parity test can call each one.
 
-import { slackEn, slackHi } from '../slack-words';
+import { daysEn, slackEn, slackHi } from '../slack-words';
 
 export interface PlanDictionary {
   readonly title: (version: number, occasion: string, date: string) => string;
@@ -40,6 +40,13 @@ export interface PlanDictionary {
   /** Negative is days late, positive days to spare. */
   readonly slack: (days: number) => string;
   readonly critical: string;
+  /** A Late task whose finish-by date is still ahead: what it needs against what is left (D45). */
+  readonly lateShort: (needed: number, left: number, date: string) => string;
+  /** A Late task whose finish-by date has passed. */
+  readonly latePassed: (date: string) => string;
+  readonly startToday: string;
+  readonly startAfter: (task: string) => string;
+  readonly startOn: (date: string) => string;
   readonly doneOn: (date: string) => string;
   readonly ledgerHeading: string;
   readonly notedHeading: string;
@@ -89,6 +96,12 @@ export const en: PlanDictionary = {
   finishBy: (date) => `Finish by ${date}`,
   slack: slackEn,
   critical: 'On the critical path',
+  lateShort: (needed, left, date) =>
+    `Needs ${daysEn(needed)} from today, ${left === 0 ? 'none' : daysEn(left)} left before ${date}`,
+  latePassed: (date) => `Was due by ${date}`,
+  startToday: 'start today',
+  startAfter: (task) => `start as soon as "${task}" is done`,
+  startOn: (date) => `start on ${date}`,
   doneOn: (date) => `Done on ${date}`,
   ledgerHeading: 'Ledger',
   notedHeading: 'Noted, not planned by this app',
@@ -98,6 +111,12 @@ export const en: PlanDictionary = {
   leversLink: 'Choose trade-offs',
   messagesLink: 'Messages for vendors and family',
 };
+
+// The verb agrees with the count: one day "बचा", several "बचे".
+function hiLeft(left: number): string {
+  if (left === 0) return 'कोई दिन नहीं बचा';
+  return left === 1 ? '1 दिन बचा' : `${String(left)} दिन बचे`;
+}
 
 export const hi: PlanDictionary = {
   title: (version, occasion, date) => `योजना v${String(version)}: ${occasion}, ${date}`,
@@ -138,6 +157,12 @@ export const hi: PlanDictionary = {
   finishBy: (date) => `${date} तक पूरा करें`,
   slack: slackHi,
   critical: 'सबसे ज़रूरी कड़ी में',
+  lateShort: (needed, left, date) =>
+    `आज से ${String(needed)} दिन चाहिए, ${date} से पहले ${hiLeft(left)}`,
+  latePassed: (date) => `${date} तक हो जाना था`,
+  startToday: 'आज ही शुरू करें',
+  startAfter: (task) => `"${task}" होते ही शुरू करें`,
+  startOn: (date) => `${date} को शुरू करें`,
   doneOn: (date) => `${date} को हो गया`,
   ledgerHeading: 'बही',
   notedHeading: 'लिख लिया, पर यह ऐप इसकी योजना नहीं बनाता',

@@ -88,7 +88,7 @@ describe('the family update template', () => {
     expect(text).toContain('The date is now 12 Dec 2026 (it was 26 Dec 2026).');
     expect(text).toContain('We are Rs 1,50,000 (1.5 lakh) over budget.');
     expect(text).toContain('Simpler decor (saves Rs 45,000)');
-    expect(text).toContain('Print invitations (late, due by 20 Nov 2026)');
+    expect(text).toContain('Print invitations (behind schedule for 20 Nov 2026: start today)');
     expect(text).toContain('We will send questions to 2 vendors: Caterer A, Venue.');
     expect(text).toContain('Caterer A (tax rate)');
     expect(text).toContain('Kept in mind: vegetarian food only, everything indoors.');

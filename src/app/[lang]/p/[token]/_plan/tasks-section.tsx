@@ -7,6 +7,7 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
 import { dateWords } from '../../../_brief/words';
+import { lateLine } from './late-line';
 import { TaskControls, taskNameId } from './task-controls';
 
 /** The critical path first, in its own order, then every other task in schedule order. */
@@ -100,7 +101,9 @@ export function TasksSection({
             <p className="mt-1 text-sm text-muted">
               {task.done && task.doneOn !== null
                 ? words.doneOn(dateWords(task.doneOn, lang))
-                : `${words.finishBy(dateWords(task.latestFinish, lang))}, ${words.slack(task.slackDays)}`}
+                : task.status === 'late'
+                  ? lateLine(task, schedule, lang)
+                  : `${words.finishBy(dateWords(task.latestFinish, lang))}, ${words.slack(task.slackDays)}`}
               {task.onCriticalPath && !task.done ? `. ${words.critical}` : ''}
               {task.notBefore !== null && !task.done
                 ? `. ${taskWords.notBefore(dateWords(task.notBefore, lang))}`

@@ -65,12 +65,13 @@ async function planToken(lang: Lang): Promise<string> {
   return tokenOf(response);
 }
 
-async function allTitles(lang: Lang): Promise<Titles> {
+/** The titles and the token the plan's own title was made from. */
+async function allTitles(lang: Lang): Promise<{ titles: Titles; token: string }> {
   requestLanguage = lang;
   const token = await planToken(lang);
   const langOnly = { params: Promise.resolve({ lang }) };
   const withToken = { params: Promise.resolve({ lang, token }) };
-  return {
+  const titles: Titles = {
     start: await titleOf(startPage, langOnly),
     form: await titleOf(formPage, langOnly),
     check: await titleOf(checkPage, langOnly),
@@ -81,6 +82,7 @@ async function allTitles(lang: Lang): Promise<Titles> {
     notFound: await titleOf(notFound, undefined),
     damagedLink: await titleOf(damagedLink, undefined),
   };
+  return { titles, token };
 }
 
 describe('page titles (WCAG 2.4.2)', () => {
@@ -89,21 +91,22 @@ describe('page titles (WCAG 2.4.2)', () => {
   });
 
   it.each(['en', 'hi'] as const)('gives every page its own title in %s', async (lang) => {
-    const titles = await allTitles(lang);
+    const { titles } = await allTitles(lang);
     const values = listOf(titles);
     expect(new Set(values).size).toBe(values.length);
     for (const title of values) expect(title.endsWith(': Ayojan')).toBe(true);
   });
 
   it('writes the plan title from its heading, never from the token', async () => {
-    const titles = await allTitles('en');
+    const { titles, token } = await allTitles('en');
     expect(titles.plan).toBe('Plan v1: Wedding, 26 Feb 2027: Ayojan');
-    const token = await planToken('en');
+    // The token these titles were built from, not a fresh one: tokens are sealed anew each time.
     expect(listOf(titles).some((title) => title.includes(token))).toBe(false);
+    expect(titles.plan).not.toMatch(/[A-Za-z0-9_-]{40,}/);
   });
 
   it('writes the hi titles in Hindi', async () => {
-    const titles = await allTitles('hi');
+    const { titles } = await allTitles('hi');
     expect(titles.start).toBe('योजना शुरू करें: Ayojan');
     expect(titles.notFound).toBe('पेज नहीं मिला: Ayojan');
     expect(titles.plan).toMatch(/[ऀ-ॿ]/);

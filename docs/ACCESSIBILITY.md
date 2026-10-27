@@ -70,10 +70,17 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - **Dark mode.** The colour tokens are redefined under `prefers-color-scheme: dark`, including
   the focus ring and the status colours. There is no theme toggle: the page follows the system
   setting. The small stylesheet on the server-built error pages does the same.
-- **Field borders and Copy buttons.** Input, textarea and date borders use `--field-line`, at least 3:1 on the page in both schemes (WCAG 1.4.11, checked in `tests/unit/components/islands.test.ts`); `--line` stays for table rules. Each Copy button is named "Copy: <message heading>" (visible label first) and a hidden `role="status"` span says "Copied: <heading>" after a copy.
 
 ### Forms
 
+- **Field borders.** Text, number, date and textarea fields use `--field-line`, at least 3:1 on
+  the page and the surface in both schemes (WCAG 1.4.11); `--line` stays for table rules. The
+  ratio and the use of the token are both checked in `tests/unit/components/islands.test.ts`.
+- **Copy buttons.** Each is named "Copy: <message heading>" (visible label first) and that name
+  never changes. A hidden `role="status"` span says "Copied: <heading>" after a copy, or that
+  the copy failed and the text is selected for a hand copy. The status resets after 3 s and
+  each attempt changes the text, so a repeat copy is announced again (not yet heard in a real
+  screen reader, see Known gaps).
 - Every input has a visible `<label>`; no placeholder stands in for one. Hints and errors are
   tied to the field with `aria-describedby`, and an invalid field is marked `aria-invalid`
   ([fields.tsx](../src/components/form/fields.tsx)).

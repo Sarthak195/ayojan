@@ -46,7 +46,13 @@ function MessageBox({
       <p id={`${id}-hint`} className="mt-1 text-sm text-muted">
         {words.selectToCopy}
       </p>
-      <CopyButton targetId={id} label={words.copy} doneLabel={words.copied} heading={title} />
+      <CopyButton
+        targetId={id}
+        label={words.copy}
+        doneLabel={words.copied}
+        failedText={words.copyFailed}
+        heading={title}
+      />
     </div>
   );
 }

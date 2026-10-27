@@ -23,6 +23,7 @@ export interface MessagesDictionary {
   readonly copy: string;
   readonly copied: string;
   readonly selectToCopy: string;
+  readonly copyFailed: string;
   readonly backToPlan: string;
 }
 
@@ -55,6 +56,7 @@ export const en: MessagesDictionary = {
   copy: 'Copy',
   copied: 'Copied',
   selectToCopy: 'Select the text to copy it.',
+  copyFailed: 'Could not copy. The text is selected, so copy it by hand:',
   backToPlan: 'Back to the plan',
 };
 
@@ -87,5 +89,6 @@ export const hi: MessagesDictionary = {
   copy: 'कॉपी करें',
   copied: 'कॉपी हो गया',
   selectToCopy: 'कॉपी करने के लिए टेक्स्ट चुनें।',
+  copyFailed: 'कॉपी नहीं हो सका। टेक्स्ट चुना हुआ है, उसे खुद कॉपी करें:',
   backToPlan: 'योजना पर लौटें',
 };

@@ -25,6 +25,51 @@ export async function copyFrom(target: CopyTarget, clipboard: ClipboardLike): Pr
   }
 }
 
+/** What a copy attempt came to; "idle" is no attempt, or one whose announcement has timed out. */
+export type CopyStatus = 'idle' | 'done' | 'failed';
+
+/** The part of a document `copyById` needs, narrow so tests can fake it. */
+export interface DocumentLike {
+  getElementById(id: string): unknown;
+}
+
+function isTextArea(node: unknown): node is CopyTarget & { readonly tagName: string } {
+  const candidate = node as { tagName?: unknown; value?: unknown; select?: unknown } | null;
+  return (
+    candidate !== null &&
+    typeof candidate === 'object' &&
+    candidate.tagName === 'TEXTAREA' &&
+    typeof candidate.value === 'string' &&
+    typeof candidate.select === 'function'
+  );
+}
+
+/** Copies the text area with this id; "idle" if there is no such text area. */
+export async function copyById(
+  doc: DocumentLike,
+  id: string,
+  clipboard: ClipboardLike,
+): Promise<CopyStatus> {
+  const target = doc.getElementById(id);
+  if (!isTextArea(target)) return 'idle';
+  return (await copyFrom(target, clipboard)) ? 'done' : 'failed';
+}
+
+/**
+ * The text of the hidden status region. A live region only speaks when its text changes, so
+ * each attempt flips a trailing no-break space: a second copy of the same text is announced too.
+ */
+export function copyStatusText(
+  status: CopyStatus,
+  attempt: number,
+  words: { readonly done: string; readonly failed: string },
+  heading: string,
+): string {
+  if (status === 'idle') return '';
+  const text = status === 'done' ? `${words.done}: ${heading}` : `${words.failed} ${heading}`;
+  return attempt % 2 === 0 ? text : `${text} `;
+}
+
 /**
  * The button's accessible name: the visible text first (WCAG 2.5.3, label in name), then the
  * message heading, so several "Copy" buttons on one page can be told apart.

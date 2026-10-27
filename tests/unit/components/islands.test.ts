@@ -7,7 +7,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { CopyButton, CopyButtonView } from '@/components/islands/copy-button.client';
 import {
   copyButtonName,
+  copyById,
   copyFrom,
+  copyStatusText,
   runningTotalKey,
   tickedValues,
 } from '@/components/islands/island-logic';
@@ -29,33 +31,78 @@ describe('copyFrom', () => {
   });
 });
 
+describe('copyById', () => {
+  const area = (select = vi.fn()): object => ({ tagName: 'TEXTAREA', value: 'hi', select });
+  const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
+
+  it('does nothing when the element is missing or is not a text area', async () => {
+    await expect(copyById({ getElementById: () => null }, 'x', clipboard)).resolves.toBe('idle');
+    await expect(
+      copyById(
+        { getElementById: () => ({ tagName: 'DIV', value: 'a', select: vi.fn() }) },
+        'x',
+        clipboard,
+      ),
+    ).resolves.toBe('idle');
+    expect(clipboard.writeText).not.toHaveBeenCalled();
+  });
+
+  it('reports done on a write and failed, with the text selected, on a refusal', async () => {
+    await expect(copyById({ getElementById: () => area() }, 'x', clipboard)).resolves.toBe('done');
+    const select = vi.fn();
+    const refusing = { writeText: vi.fn().mockRejectedValue(new Error('no')) };
+    await expect(copyById({ getElementById: () => area(select) }, 'x', refusing)).resolves.toBe(
+      'failed',
+    );
+    expect(select).toHaveBeenCalledOnce();
+  });
+});
+
 describe('copy button name and announcement', () => {
   it('starts with the visible label and adds the heading', () => {
     expect(copyButtonName('Copy', 'Message to the caterer')).toBe('Copy: Message to the caterer');
   });
 
-  const view = (copied: boolean): string =>
+  const view = (status: 'idle' | 'done' | 'failed', attempt = 1): string =>
     renderToStaticMarkup(
       createElement(CopyButtonView, {
         label: 'Copy',
         doneLabel: 'Copied',
+        failedText: 'Could not copy, do it by hand:',
         heading: 'Family update',
-        copied,
+        status,
+        attempt,
         onCopy: () => undefined,
       }),
     );
 
   it('keeps an empty status region before a copy', () => {
-    const html = view(false);
+    const html = view('idle');
     expect(html).toContain('aria-label="Copy: Family update"');
     expect(html).toContain('>Copy</button>');
     expect(html).toContain('<span role="status" class="sr-only"></span>');
   });
 
-  it('says the done label in the status region after a copy', () => {
-    const html = view(true);
-    expect(html).toContain('aria-label="Copied: Family update"');
-    expect(html).toContain('<span role="status" class="sr-only">Copied: Family update</span>');
+  it('shows Copied but keeps the button name, so only the status region speaks', () => {
+    const html = view('done');
+    expect(html).toContain('aria-label="Copy: Family update"');
+    expect(html).toContain('>Copied</button>');
+    expect(html).toContain('<span role="status" class="sr-only">Copied: Family update');
+  });
+
+  it('says the failure in the status region and leaves the label alone', () => {
+    const html = view('failed');
+    expect(html).toContain('>Copy</button>');
+    expect(html).toContain('Could not copy, do it by hand: Family update');
+  });
+
+  it('changes the status text on every attempt so a repeat copy is announced again', () => {
+    const words = { done: 'Copied', failed: 'Failed' };
+    const first = copyStatusText('done', 1, words, 'H');
+    const second = copyStatusText('done', 2, words, 'H');
+    expect(first).not.toBe(second);
+    expect(first.trim()).toBe(second.trim());
+    expect(copyStatusText('idle', 3, words, 'H')).toBe('');
   });
 
   it('renders nothing on the server, where there is no clipboard', () => {
@@ -64,6 +111,7 @@ describe('copy button name and announcement', () => {
         targetId: 'x',
         label: 'Copy',
         doneLabel: 'Copied',
+        failedText: 'Failed',
         heading: 'H',
       }),
     );
@@ -121,5 +169,24 @@ describe('field border contrast', () => {
     const line = token(block, 'field-line');
     expect(ratio(line, token(block, 'background'))).toBeGreaterThanOrEqual(3);
     expect(ratio(line, token(block, 'surface'))).toBeGreaterThanOrEqual(3);
+  });
+});
+
+// The contrast numbers above only matter if the fields use the token.
+describe('field border token is used', () => {
+  it.each([
+    'src/components/form/fields.tsx',
+    'src/app/[lang]/p/[token]/_plan/task-controls.tsx',
+    'src/app/[lang]/p/[token]/messages/_messages/messages-view.tsx',
+  ])('%s uses border-field-line and not border-line', (path) => {
+    const source = readFileSync(path, 'utf8');
+    expect(source).toContain('border-field-line');
+    expect(source).not.toMatch(/border-line/);
+  });
+
+  it('maps the token into the Tailwind theme', () => {
+    expect(readFileSync('src/app/globals.css', 'utf8')).toContain(
+      '--color-field-line: var(--field-line)',
+    );
   });
 });

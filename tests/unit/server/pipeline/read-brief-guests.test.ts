@@ -49,6 +49,12 @@ describe('readBrief reads a guest count the model left without a number (D44)', 
     expect(verdict).toMatchObject({ status: 'unverified', reason: 'out-of-bounds' });
   });
 
+  it('fills nothing from a quote that is one end of a compound in the text', async () => {
+    const { guests, verdict } = await guestsOf('do sau pachaas log aayenge', 'do sau');
+    expect(guests).toBeNull();
+    expect(verdict).toMatchObject({ status: 'unverified', reason: 'number-not-in-quote' });
+  });
+
   it('fills nothing from a quote that is not in the text', async () => {
     const { guests, verdict } = await guestsOf('shaadi, kuch log aayenge', 'do sau log');
     expect(guests).toBeNull();

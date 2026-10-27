@@ -25,6 +25,14 @@ export function spelled(value: number | null, bounds: NumberBounds): ClaimedNumb
 }
 
 /**
+ * A single figure (a budget, a guest count) the quote must spell as its only amount, so the
+ * model never picks one end of "2 lakh se 3 lakh" (D44).
+ */
+export function soleFigure(value: number | null, bounds: NumberBounds): ClaimedNumber[] {
+  return value === null ? [] : [{ value, bounds, inQuote: true, sole: true }];
+}
+
+/**
  * A field claims "present" but carries no number it needs, so there is nothing to verify and
  * nothing to plan with: it is asked as unclear rather than shown as matched.
  */

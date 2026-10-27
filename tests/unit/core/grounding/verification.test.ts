@@ -148,6 +148,76 @@ describe('verifyClaim checks only the number the model returned', () => {
   });
 });
 
+// The amounts are read from the whole text, so a quote cut from one end of a range sees the
+// range, and a single figure must be the only amount its quote holds (D44).
+describe('verifyClaim never lets the model choose an end of a range', () => {
+  function soleClaim(quote: string, value: number, bounds: NumberBounds): Claim {
+    return { presence: 'present', quote, numbers: [{ value, bounds, inQuote: true, sole: true }] };
+  }
+
+  describe.each<[string, string, Claim]>([
+    [
+      'the far end of a hyphen range',
+      'budget do-teen lakh hai',
+      soleClaim('teen lakh', 300_000, BUDGET),
+    ],
+    ['the near end of a compound', 'do sau pachaas log aayenge', soleClaim('do sau', 200, GUESTS)],
+    [
+      'a quote that drops the near end',
+      'teen-chaar sau log',
+      soleClaim('chaar sau log', 400, GUESTS),
+    ],
+    ['a digit range', 'budget 2-3 lakh hai', soleClaim('2-3 lakh', 300_000, BUDGET)],
+    [
+      'two amounts joined by se',
+      'budget 2 lakh se 3 lakh',
+      soleClaim('2 lakh se 3 lakh', 300_000, BUDGET),
+    ],
+    [
+      'two amounts joined by ya',
+      'dedh sau ya do sau log',
+      soleClaim('dedh sau ya do sau', 200, GUESTS),
+    ],
+    [
+      'a range joined by to',
+      'budget do to teen lakh',
+      soleClaim('do to teen lakh', 300_000, BUDGET),
+    ],
+    [
+      'a range joined by yaa',
+      'budget do yaa teen lakh',
+      soleClaim('do yaa teen lakh', 300_000, BUDGET),
+    ],
+    [
+      'a range joined by ya phir',
+      'budget do ya phir teen lakh',
+      soleClaim('do ya phir teen lakh', 300_000, BUDGET),
+    ],
+    [
+      'a range joined by two hyphens',
+      'budget do -- teen lakh',
+      soleClaim('do -- teen lakh', 300_000, BUDGET),
+    ],
+    ['an unread near end', 'budget pachees-tees hazaar', soleClaim('tees hazaar', 30_000, BUDGET)],
+    [
+      'a hidden range without sole',
+      'budget do-teen lakh hai',
+      amountClaim('teen lakh', 300_000, BUDGET),
+    ],
+  ])('%s', (_name, text, claim) => {
+    it('is unverified:number-not-in-quote', () => {
+      expect(outcomeOf(verdictOf(text, claim))).toBe('unverified:number-not-in-quote');
+    });
+  });
+
+  it('verifies a single figure that is the only amount in its quote', () => {
+    expect(outcomeOf(verdictOf(BRIEF, soleClaim('Budget 8 lakh', 800_000, BUDGET)))).toBe(
+      'verified',
+    );
+    expect(outcomeOf(verdictOf(BRIEF, soleClaim('lagbhag 200 log', 200, GUESTS)))).toBe('verified');
+  });
+});
+
 describe('verifyClaim reads whole numbers around the match', () => {
   describe.each<[string, string, Claim, string]>([
     // name, text, claim, expected outcome

@@ -18,7 +18,7 @@ import {
   outOfBounds,
   presenceOf,
   presenceWith,
-  spelled,
+  soleFigure,
   whole,
   type Verdicts,
 } from './verdicts';
@@ -170,7 +170,7 @@ function buildBrief(reading: BriefReading, verdicts: Verdicts, today: IsoDate): 
     {
       presence: presenceWith(budget.presence, budget.amountInr),
       quote: budget.quote,
-      numbers: spelled(budget.amountInr, BUDGET),
+      numbers: soleFigure(budget.amountInr, BUDGET),
     },
     true,
   );
@@ -179,7 +179,7 @@ function buildBrief(reading: BriefReading, verdicts: Verdicts, today: IsoDate): 
     {
       presence: presenceWith(guests.presence, guests.count),
       quote: guests.quote,
-      numbers: spelled(guests.count, GUESTS),
+      numbers: soleFigure(guests.count, GUESTS),
     },
     true,
   );
@@ -187,7 +187,7 @@ function buildBrief(reading: BriefReading, verdicts: Verdicts, today: IsoDate): 
   const capacityVerdict = verdicts.check('venueCapacity', {
     presence: presenceWith(venueCapacity.presence, venueCapacity.count),
     quote: venueCapacity.quote,
-    numbers: spelled(venueCapacity.count, VENUE_CAPACITY),
+    numbers: soleFigure(venueCapacity.count, VENUE_CAPACITY),
   });
   return {
     kind: 'brief',

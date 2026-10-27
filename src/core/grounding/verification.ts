@@ -8,7 +8,7 @@
 // must appear in the quote (a month written as "Feb" or a shift of -14 days read from
 // "2 weeks earlier" is not spelled there, so those are passed with `inQuote: false`).
 
-import { amountsIn } from '@/core/rupees/parse';
+import { scanAmounts, type ScanHit } from '@/core/rupees/parse';
 import type { Presence } from '@/schemas/readings/vocabulary';
 
 import type { CanonicalText } from './canonical-text';
@@ -33,6 +33,11 @@ export interface ClaimedNumber {
   readonly bounds?: NumberBounds;
   /** Whether the value must be among the amounts written in its quote. */
   readonly inQuote: boolean;
+  /**
+   * The quote must hold this figure and no other amount. A budget or a count is one figure, so
+   * a quote holding two ("2 lakh se 3 lakh") would let the model choose between them.
+   */
+  readonly sole?: boolean;
 }
 
 export interface Claim {
@@ -68,16 +73,36 @@ function withinBounds(claimed: ClaimedNumber): boolean {
 
 // Bounds come before the number check: a count of -5 or 2.5 can never be spelled as an
 // amount, and "out of bounds" tells the user what to fix where "not in quote" would not.
+// An unreadable amount touching the quote (one end of a range, an unread compound) refuses
+// every spelled number, because the figure the user meant is not the one the model chose.
 function numberReason(
   numbers: readonly ClaimedNumber[],
-  quotedWords: string,
+  hits: () => readonly ScanHit[],
 ): VerificationReason | null {
   if (!numbers.every(withinBounds)) return 'out-of-bounds';
-  const spelled = numbers.some((claimed) => claimed.inQuote) ? amountsIn(quotedWords) : [];
-  const allSpelled = numbers.every(
-    (claimed) => !claimed.inQuote || spelled.includes(claimed.value),
-  );
+  if (!numbers.some((claimed) => claimed.inQuote)) return null;
+  const touching = hits();
+  if (touching.some((hit) => hit.kind === 'unusable')) return 'number-not-in-quote';
+  const amounts = touching.flatMap((hit) => (hit.kind === 'amount' ? [hit.inr] : []));
+  const allSpelled = numbers.every((claimed) => {
+    if (!claimed.inQuote) return true;
+    if (claimed.sole === true) return amounts.length === 1 && amounts[0] === claimed.value;
+    return amounts.includes(claimed.value);
+  });
   return allSpelled ? null : 'number-not-in-quote';
+}
+
+// The whole text is scanned, not the cut-out quote, so a quote that is one end of a range
+// ("teen lakh" from "do-teen lakh") sees the range. One scan serves every claim of a text.
+const scans = new WeakMap<CanonicalText, readonly ScanHit[]>();
+
+function hitsTouching(source: CanonicalText, start: number, end: number): readonly ScanHit[] {
+  let all = scans.get(source);
+  if (all === undefined) {
+    all = scanAmounts(source.text);
+    scans.set(source, all);
+  }
+  return all.filter((hit) => hit.start < end && hit.end > start);
 }
 
 /** The verdict for one claim against text that has already been canonicalised. */
@@ -100,8 +125,9 @@ export function verifyClaim(source: CanonicalText, claim: Claim): FieldVerdict {
   // to spell the number the user wrote. The span is widened to whole numbers first, so
   // "80,000" cut from "1,80,000" reads as the 1,80,000 the user wrote.
   const span = wholeWordSpan(source.text, match.canonicalStart, match.canonicalEnd);
-  const quotedWords = source.text.slice(span.start, span.end);
-  const reason = numberReason(claim.numbers ?? [], quotedWords);
+  const reason = numberReason(claim.numbers ?? [], () =>
+    hitsTouching(source, span.start, span.end),
+  );
   return reason === null
     ? { status: 'verified', ...located }
     : { status: 'unverified', reason, ...located };

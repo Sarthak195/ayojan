@@ -11,6 +11,8 @@ import { basisNote, type BasisNote } from '@/i18n/basis-note';
 import type { Lang } from '@/i18n/lang';
 import type { BudgetWeightsFile } from '@/schemas/data/budget-weights';
 
+import { categoryLabels } from '../_change/category-labels';
+
 function Note({ text, lang }: BasisNote): ReactElement {
   return <span lang={lang}>{text}</span>;
 }
@@ -32,8 +34,7 @@ export function MoneySection({
   const words = dictionaryFor(lang).plan;
   const { projection, cheapest } = current.money;
   const profile = weights.profiles.find((row) => row.id === current.profile);
-  const labelOf = (category: string): string =>
-    profile?.categories.find((row) => row.category === category)?.[lang] ?? category;
+  const labelOf = categoryLabels(weights, current.profile, lang);
 
   const rows: MoneyTableRow[] = projection.order.map((category) => {
     const line = projection.lines[category];

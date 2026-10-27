@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type ReactElement } from 'react';
 
+import { runningTotalKey, tickedValues } from './island-logic';
+
 export interface RunningTotalProps {
   /** The lever form whose boxes this line follows. */
   readonly formId: string;
@@ -17,8 +19,7 @@ export interface RunningTotalProps {
 }
 
 function ticked(form: HTMLFormElement, name: string): Set<string> {
-  const values = new FormData(form).getAll(name);
-  return new Set(values.filter((value): value is string => typeof value === 'string'));
+  return tickedValues(new FormData(form).getAll(name));
 }
 
 /**
@@ -40,13 +41,12 @@ export function RunningTotal({
     const form = document.getElementById(formId);
     if (!(form instanceof HTMLFormElement)) return undefined;
     const follow = (): void => {
-      const levers = ticked(form, 'lever');
-      const shown = ticked(form, 'showAnyway');
-      const key = order
-        .filter(
-          (lever) => levers.has(lever) && (!needsShowAnyway.includes(lever) || shown.has(lever)),
-        )
-        .join(',');
+      const key = runningTotalKey(
+        order,
+        needsShowAnyway,
+        ticked(form, 'lever'),
+        ticked(form, 'showAnyway'),
+      );
       const found = table[key];
       if (found !== undefined) setSentence(found);
     };

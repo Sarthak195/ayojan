@@ -70,6 +70,7 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - **Dark mode.** The colour tokens are redefined under `prefers-color-scheme: dark`, including
   the focus ring and the status colours. There is no theme toggle: the page follows the system
   setting. The small stylesheet on the server-built error pages does the same.
+- **Field borders and Copy buttons.** Input, textarea and date borders use `--field-line`, at least 3:1 on the page in both schemes (WCAG 1.4.11, checked in `tests/unit/components/islands.test.ts`); `--line` stays for table rules. Each Copy button is named "Copy: <message heading>" (visible label first) and a hidden `role="status"` span says "Copied: <heading>" after a copy.
 
 ### Forms
 

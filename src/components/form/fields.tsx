@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from 'react';
 // a 44 px touch target. No placeholder stands in for a label (arch 8).
 
 const INPUT =
-  'block min-h-11 w-full rounded border border-line bg-background px-3 py-2 text-base text-foreground';
+  'block min-h-11 w-full rounded border border-field-line bg-background px-3 py-2 text-base text-foreground';
 
 export interface FieldMessages {
   /** Ids default to `<id>-hint` and `<id>-error`. */

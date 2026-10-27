@@ -14,7 +14,7 @@ export function taskNameId(task: ScheduledTask): string {
 }
 
 const INPUT =
-  'block min-h-11 w-24 rounded border border-line bg-background px-3 py-2 text-base text-foreground';
+  'block min-h-11 w-24 rounded border border-field-line bg-background px-3 py-2 text-base text-foreground';
 
 /**
  * Mark done and Delayed by N days for one open task (spec 5.6). Two plain forms, because the

@@ -10,7 +10,7 @@ import { boxRows } from './box-rows';
 import type { MessagesModel } from './messages-model';
 
 const BOX =
-  'block w-full rounded border border-line bg-surface px-3 py-2 text-base text-foreground';
+  'block w-full rounded border border-field-line bg-surface px-3 py-2 text-base text-foreground';
 
 /** A read-only message with its label, the no-JavaScript hint and the Copy island. */
 function MessageBox({
@@ -46,7 +46,7 @@ function MessageBox({
       <p id={`${id}-hint`} className="mt-1 text-sm text-muted">
         {words.selectToCopy}
       </p>
-      <CopyButton targetId={id} label={words.copy} doneLabel={words.copied} />
+      <CopyButton targetId={id} label={words.copy} doneLabel={words.copied} heading={title} />
     </div>
   );
 }

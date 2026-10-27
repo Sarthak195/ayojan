@@ -38,10 +38,11 @@ export function seal(state: StateToken, key: Buffer = SEAL_KEY): string {
 export function formRequest(
   fields: Record<string, string>,
   contentType = 'application/x-www-form-urlencoded',
+  extraHeaders: Record<string, string> = {},
 ): Request {
   return new Request('http://localhost/en/task', {
     method: 'POST',
-    headers: { 'content-type': contentType, 'x-forwarded-for': '203.0.113.9' },
+    headers: { 'content-type': contentType, 'x-forwarded-for': '203.0.113.9', ...extraHeaders },
     body: new URLSearchParams(fields).toString(),
   });
 }

@@ -7,6 +7,7 @@ export type ProblemKind =
   | 'damaged-link'
   | 'link-full'
   | 'op-cap'
+  | 'cross-site'
   | 'too-many-requests'
   | 'wrong-type'
   | 'too-large'
@@ -26,6 +27,7 @@ export const PROBLEM_STATUS: Readonly<Record<ProblemKind, number>> = {
   'damaged-link': 400,
   'link-full': 422,
   'op-cap': 422,
+  'cross-site': 403,
   'too-many-requests': 429,
   'wrong-type': 415,
   'too-large': 413,
@@ -52,6 +54,8 @@ export function problemText(
       return words.linkFull;
     case 'op-cap':
       return words.opCap;
+    case 'cross-site':
+      return words.crossSite;
     case 'too-many-requests':
       return {
         title: words.tooManyRequests.title,

@@ -1,5 +1,5 @@
 // The words on every problem page: the 404 pages rendered by React and the HTML pages that
-// route handlers answer with (400, 413, 415, 422, 429, 500). Each says what happened and what
+// route handlers answer with (400, 403, 413, 415, 422, 429, 500). Each says what happened and what
 // to do next, and none blames the reader.
 
 export interface ProblemText {
@@ -14,6 +14,7 @@ export interface ProblemsDictionary {
   readonly linkFull: ProblemText;
   /** D06, verbatim. */
   readonly opCap: ProblemText;
+  readonly crossSite: ProblemText;
   readonly tooManyRequests: {
     readonly title: string;
     readonly body: (wait: string) => string;
@@ -52,6 +53,10 @@ export const en: ProblemsDictionary = {
   opCap: {
     title: 'This plan has reached 40 steps',
     body: 'This plan has reached 40 steps; undo a step or start a new plan.',
+  },
+  crossSite: {
+    title: 'This form came from another site',
+    body: 'Ayojan accepts a form only from its own pages. Open your plan link and send the form from there.',
   },
   tooManyRequests: {
     title: 'Too many requests',
@@ -115,6 +120,10 @@ export const hi: ProblemsDictionary = {
   opCap: {
     title: 'इस योजना में 40 क़दम हो गए हैं',
     body: 'इस योजना में 40 क़दम हो गए हैं; एक क़दम वापस लें या नई योजना शुरू करें।',
+  },
+  crossSite: {
+    title: 'यह फ़ॉर्म किसी दूसरी साइट से आया',
+    body: 'आयोजन सिर्फ़ अपने पेजों से भेजे गए फ़ॉर्म लेता है। अपनी योजना का लिंक खोलें और वहीं से फ़ॉर्म भेजें।',
   },
   tooManyRequests: {
     title: 'बहुत ज़्यादा अनुरोध',

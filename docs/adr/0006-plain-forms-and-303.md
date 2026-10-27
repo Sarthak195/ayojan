@@ -19,7 +19,8 @@ a page that is a pure render of the new link.
   `task` and `undo`, each a `route.ts` under `src/app/[lang]` ([`src/app`](../../src/app)). No file
   in `src` contains `'use server'`.
 - **One runner, one order of checks.** [`runStep`](../../src/server/http/post-step.ts) handles the
-  language (an unknown one is a 404 page), then the rate limit before a body byte is read (429 with
+  language (an unknown one is a 404 page), then a cross-site check (403 for a
+  cross-site `Sec-Fetch-Site` or a foreign `Origin`), then the rate limit before a body byte is read (429 with
   `Retry-After`), then [`readForm`](../../src/server/http/form-body.ts): the content type must be
   `application/x-www-form-urlencoded` (415), the body at most 32 KiB (413), the shape valid for a
   strict Zod schema (400), and free text at most 2,000 code points (422). Then the step's own work,

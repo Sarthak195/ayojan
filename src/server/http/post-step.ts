@@ -13,6 +13,7 @@ import { rateLimiter, type RateClass, type RateLimiter } from '../ratelimit/rate
 import { encodeState } from '../state/token-codec';
 import { defaultPlanSources, openPlan, type OpenResult, type PlanSources } from '../view/plan-page';
 import { readForm, type FormRefusal } from './form-body';
+import { isCrossSite } from './origin-check';
 import { problemResponse } from './problem-page';
 import { seeOther, type Destination } from './see-other';
 
@@ -85,6 +86,8 @@ async function respond<S extends z.ZodType>(
   spec: StepSpec<S>,
   deps: StepDeps,
 ): Promise<Response> {
+  // 0. A cross-site post is refused before it can spend the caller's rate or model budget.
+  if (isCrossSite(request.headers)) return problemResponse({ lang, problem: 'cross-site' });
   // 1. Rate limit, before a single body byte is read (arch 6.3).
   const decision = deps.limiter.check(spec.rateClass, clientKeyOf(request.headers));
   if (!decision.allowed) {
@@ -128,7 +131,7 @@ async function respond<S extends z.ZodType>(
 }
 
 /**
- * Runs a POST route handler in the order of arch 6.3: language, rate limit, readForm, the
+ * Runs a POST route handler in the order of arch 6.3: language, origin, rate limit, readForm, the
  * work, encodeState, seeOther. Any throw becomes a 500 page with no detail; the log line
  * carries the error's class name only, because a message can quote user input.
  */

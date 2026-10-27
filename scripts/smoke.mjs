@@ -4,6 +4,8 @@
 // the plan is reached through the form twin (POST /enter/brief), and no /read route is hit.
 // A check that fails today because the feature has not shipped is reported as a failure, never
 // loosened to pass.
+import { runChangeChecks } from './smoke-change.mjs';
+
 const DEFAULT_URL = 'https://ayojan-626015685685.asia-south1.run.app';
 const base = process.argv[2] ?? DEFAULT_URL;
 if (!/^https?:\/\//.test(base)) {
@@ -12,6 +14,9 @@ if (!/^https?:\/\//.test(base)) {
 }
 const origin = new URL(base).origin;
 const TIMEOUT_MS = 20_000;
+// Posts to the live service are spaced out so a smoke run never looks like a burst.
+const POST_GAP_MS = 10_000;
+let lastPost = 0;
 
 const results = [];
 function record(name, ok, detail = '') {
@@ -21,6 +26,12 @@ function record(name, ok, detail = '') {
 
 /** One request that never follows redirects, so a 303 can be read as it is. */
 async function call(path, { method = 'GET', form, headers = {} } = {}) {
+  if (method === 'POST') {
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.max(0, lastPost + POST_GAP_MS - Date.now())),
+    );
+    lastPost = Date.now();
+  }
   const init = { method, redirect: 'manual', headers, signal: AbortSignal.timeout(TIMEOUT_MS) };
   if (form !== undefined) {
     init.body = new URLSearchParams(form).toString();
@@ -159,6 +170,8 @@ await check('Plan page is 200 with the plan heading and the budget figure', asyn
     detail: ok ? '' : `status ${res.status || res.error}, heading ${heading}, budget ${budget}`,
   };
 });
+
+await runChangeChecks({ call, check, origin, token: plan.token, eventDate });
 
 await check(titleCheck, async () => {
   const titles = {

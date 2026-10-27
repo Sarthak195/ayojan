@@ -22,6 +22,10 @@ export default defineConfig({
       // whereas a global number would average in framework glue that is not unit-tested.
       include: ['src/core/**/*.ts'],
       reporter: ['text', 'json-summary'],
+      // Just below the figures measured on 28 Oct 2026 (lines 99.49, statements 97.13, branches
+      // 92.59, functions 99.05), so a decision path left untested fails the run instead of
+      // eroding the number quietly. Raise these when the measurement rises; never lower them.
+      thresholds: { lines: 98, statements: 96, branches: 90, functions: 98 },
     },
   },
 });

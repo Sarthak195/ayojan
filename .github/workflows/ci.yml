@@ -5,6 +5,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Manual only: the live smoke check below must never run on a push.
+  workflow_dispatch:
 
 # Tests run offline by design: there is no API key in this workflow and there must never be one.
 permissions:
@@ -12,6 +14,7 @@ permissions:
 
 jobs:
   verify:
+    if: github.event_name != 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -57,3 +60,21 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Check the client bundle size (gzip, 140 KiB limit)
+        run: npm run check:bundle
+
+  # Posts to the deployed service (form twins only, no model call), so it runs when someone
+  # starts it by hand and never on a push or pull request.
+  smoke:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+
+      - name: Smoke check the live service
+        run: npm run smoke

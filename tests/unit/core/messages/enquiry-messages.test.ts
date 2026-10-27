@@ -116,13 +116,15 @@ describe('enquiries before any quote', () => {
     ]) {
       expect(asked).not.toContain(id);
     }
-    // Every first enquiry opens with the date, what the price covers and the terms.
+    // Every first enquiry opens with the date; the caterer's minimum comes next, for the
+    // others the terms and what the price covers.
     for (const enquiry of list) {
-      expect(enquiry.questionIds.slice(0, 3)).toEqual([
-        'available-on-date',
-        'price-includes',
-        'cancellation-terms',
-      ]);
+      expect(enquiry.questionIds[0]).toBe('available-on-date');
+      expect(enquiry.questionIds.slice(1, 3)).toEqual(
+        enquiry.category === 'catering'
+          ? ['minimum-guarantee', 'cancellation-terms']
+          : ['cancellation-terms', 'price-includes'],
+      );
     }
     expect(byCategory(list, 'catering').questionIds).toEqual(
       expect.arrayContaining(['tax-rate', 'minimum-guarantee', 'step-free-access']),
@@ -152,11 +154,14 @@ describe('enquiries before any quote', () => {
     expect(byCategory(list, 'catering').questionIds).toEqual(
       expect.arrayContaining(['live-counter-included', 'jain-menu', 'step-free-access']),
     );
-    // With six needs of its own the caterer has room for two general questions: the date first.
+    // With six needs of its own the caterer has room for two general questions: the date, then
+    // the per-plate minimum that decides whether quotes can be compared.
     expect(byCategory(list, 'catering').questionIds.slice(0, 2)).toEqual([
       'available-on-date',
-      'price-includes',
+      'minimum-guarantee',
     ]);
+    expect(byCategory(list, 'catering').questionIds).toContain('minimum-guarantee');
+    for (const enquiry of list) expect(enquiry.questionIds[0]).toBe('available-on-date');
     expect(byCategory(list, 'venue').text).not.toContain('250');
     expect(byCategory(list, 'decor').text).not.toContain('250');
   });

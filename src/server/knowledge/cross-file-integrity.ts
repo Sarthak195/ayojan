@@ -66,6 +66,18 @@ export function crossFileProblems(documents: DataDocuments): DataProblem[] {
     });
   }
 
+  // A first enquiry has no date to fill in (its opening line states it), so a placeholder in a
+  // beforeQuote row would be sent as literal braces or silently dropped from every enquiry.
+  vendorQuestions.questions.forEach((row, index) => {
+    if (row.raisedBy.when === 'beforeQuote' && `${row.en}${row.hi}`.includes('{')) {
+      problems.push({
+        fileName: 'vendor-questions.yaml',
+        row: rowLabel(['questions', index], row),
+        message: 'A beforeQuote question must not contain a {placeholder}.',
+      });
+    }
+  });
+
   // Diet and venue limits are served by asking (D14), so each needs a vendor question.
   const raised = vendorQuestions.questions.map((row) => row.raisedBy);
   for (const diet of Diet.options) {

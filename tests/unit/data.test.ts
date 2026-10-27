@@ -8,6 +8,7 @@ import { parse, stringify } from 'yaml';
 import { BASIS_PREFIX, BASIS_PREFIX_HI } from '@/schemas/data/planning-row';
 import { Category, Diet, MustHave, Occasion, VenueLimit } from '@/schemas/readings/vocabulary';
 import { absoluteRupeeProblems } from '@/server/knowledge/absolute-rupees';
+import { crossFileProblems } from '@/server/knowledge/cross-file-integrity';
 import { createKnowledgeRepository, readFromDirectory } from '@/server/knowledge/repository';
 
 const realText = readFromDirectory(join(process.cwd(), 'data'));
@@ -99,6 +100,20 @@ describe('referential-integrity', () => {
     for (const limit of VenueLimit.options) {
       expect(raised.some((by) => by.when === 'venueLimit' && by.venueLimit === limit)).toBe(true);
     }
+  });
+
+  it('keeps placeholders out of the questions asked before a quote', () => {
+    for (const question of vendorQuestions.questions) {
+      if (question.raisedBy.when !== 'beforeQuote') continue;
+      expect(`${question.en}${question.hi}`, question.id).not.toContain('{');
+    }
+    expect(crossFileProblems(documents)).toEqual([]);
+    const withBrace = structuredClone(documents);
+    const first = withBrace.vendorQuestions.questions.find(
+      (row) => row.raisedBy.when === 'beforeQuote',
+    );
+    if (first !== undefined) first.en = `${first.en} {date}`;
+    expect(crossFileProblems(withBrace)).toHaveLength(1);
   });
 
   it('lists each function with exactly the tasks it activates', () => {

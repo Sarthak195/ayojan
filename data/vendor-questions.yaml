@@ -1,8 +1,10 @@
 # Questions to ask a vendor, built into template messages. No prices: the vendor supplies those.
-# categories: the vendors the question is for (empty = any vendor with a quote or booking).
+# categories: the vendors the question is for (empty = any vendor; beforeQuote rows go only to
+# vendors with no quote or booking yet).
 # raisedBy: what in the plan makes the app ask it. beforeQuote rows go only in a first enquiry,
 # to a vendor the family has no quote or booking from yet.
-# {guests}, {capacity} and {date} are filled from the plan when the message is written.
+# {guests}, {capacity} and {date} are filled from the plan when the message is written;
+# beforeQuote rows carry no placeholder (the enquiry's opening line states the date).
 
 questions:
   - id: tax-rate

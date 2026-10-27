@@ -30,20 +30,24 @@ function forCategory(row: QuestionRow, category: Category): boolean {
   return row.categories.length === 0 || row.categories.includes(category);
 }
 
-// Before a quote: the rows written for a first enquiry (the date, what a price covers, the
-// terms) lead, because a vendor busy that day makes the rest moot. Of the unclear-field rows
-// only the tax and the caterer's minimum read naturally; the others presume a price already
-// given, and the guest count is in the message.
+// What a first enquiry asks when there is room for only some of it, most decisive first: a
+// vendor busy that day makes the rest moot, the caterer's per-plate minimum decides whether
+// quotes can be compared at all, then the terms, what the price covers and the tax.
+const GENERAL_PRIORITY: readonly string[] = [
+  'available-on-date',
+  'minimum-guarantee',
+  'cancellation-terms',
+  'price-includes',
+  'tax-rate',
+];
+
+// Before a quote: only the rows above, and only those that read naturally with no price given.
+// None has a placeholder (the data check says so for beforeQuote rows), so the opening line of
+// the enquiry carries the date and the guest count.
 function generalQuestions(rows: readonly QuestionRow[], category: Category): VendorQuestion[] {
-  const first = rows.filter((row) => row.raisedBy.when === 'beforeQuote');
-  const price = rows.filter(
-    (row) =>
-      row.raisedBy.when === 'unclearField' &&
-      (row.raisedBy.field === 'taxRate' || row.raisedBy.field === 'minimumGuests'),
-  );
-  return [...first, ...price]
-    .filter((row) => forCategory(row, category))
-    .filter((row) => !`${row.en}${row.hi}`.includes('{'))
+  return rows
+    .filter((row) => GENERAL_PRIORITY.includes(row.id) && forCategory(row, category))
+    .sort((a, b) => GENERAL_PRIORITY.indexOf(a.id) - GENERAL_PRIORITY.indexOf(b.id))
     .map((row) => ({ id: row.id, en: row.en, hi: row.hi, raisedBy: row.raisedBy }));
 }
 

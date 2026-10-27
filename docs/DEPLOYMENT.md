@@ -149,8 +149,8 @@ no quota, and it is sent with `Cache-Control: no-store`. It reports:
 - `ai`: `available` when at least one Gemini key is configured.
 - `sealKey`: `loaded`, `missing` or `malformed`.
 - `data`: counts of tasks, levers and vendor questions read from `data/`.
-- `readingCache`: `entries`, the number of readings held by this instance. The video protocol
-  reads this count before a take.
+- `readingCache`: `entries`, the number of readings held by this instance. An operator can read
+  it to see whether readings will be served from the cache.
 - `quota`: `actionsToday`, this instance's count of model actions in the current quota day.
 - `problems`: the named reasons for a 503.
 

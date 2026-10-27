@@ -110,20 +110,25 @@ await check('Content-Security-Policy has a script nonce', async () => {
   const ok = /'nonce-[A-Za-z0-9+/=_-]{16,}'/.test(scriptSrc);
   return { ok, detail: ok ? '' : policy === '' ? 'header missing' : 'no nonce in script-src' };
 });
-for (const name of [
-  'X-Content-Type-Options',
-  'Referrer-Policy',
-  'X-Frame-Options',
-  'Permissions-Policy',
-  'Strict-Transport-Security',
-  'Cross-Origin-Opener-Policy',
-  'Cross-Origin-Resource-Policy',
-]) {
-  await check(`${name} header is present on /en`, async () => {
+// Exact values, so a weakened header on the deployed response (max-age=0, unsafe-none) fails.
+const EXPECTED_HEADERS = {
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'same-origin',
+  'X-Frame-Options': 'DENY',
+};
+for (const [name, expected] of Object.entries(EXPECTED_HEADERS)) {
+  await check(`${name} header is ${expected} on /en`, async () => {
     const value = pages.en?.headers.get(name) ?? '';
-    return { ok: value !== '', detail: value === '' ? 'header missing' : '' };
+    return { ok: value === expected, detail: `got ${value === '' ? 'nothing' : value}` };
   });
 }
+await check('Permissions-Policy header is present on /en', async () => {
+  const value = pages.en?.headers.get('Permissions-Policy') ?? '';
+  return { ok: value !== '', detail: value === '' ? 'header missing' : '' };
+});
 
 await check('POST /en/enter/brief (form twin) answers 303 to /en/p/<token>', async () => {
   const res = await call('/en/enter/brief', {

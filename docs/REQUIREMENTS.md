@@ -110,8 +110,8 @@ reasons behind the larger choices are in the [decision records](adr).
 
 - `G1` to `G4` are the four model calls: G1 reads a brief, G2 reads a vendor quote, G3 reads a
   change message and G4 drafts the family update. See [GENAI_SERVICES.md](GENAI_SERVICES.md).
-- `C4` to `C8` and "spec 6.5" name capabilities and sections of a product specification that is
-  not published. What each one does is described in the [README](../README.md).
+- `C4` to `C8` and "spec n" or "spec n.n" (for example "spec 6.5") name capabilities and sections of a
+  product specification that is not published. What each one does is described in the [README](../README.md).
 
 ## What "architecture 4.x" refers to
 
@@ -128,8 +128,8 @@ not published. The sections that are cited map to the published records like thi
 | architecture 4.6      | The task schedule and critical path                                        | [ADR 0003](adr/0003-planning-knowledge-as-data.md); [README, E3](../README.md#problem-statement-alignment)                     |
 | architecture 4.7      | Quote comparison, break-even and vendor questions                          | [ADR 0004](adr/0004-unknowns-become-questions.md); [README, E5](../README.md#problem-statement-alignment)                      |
 | architecture 4.8      | Applying a step, the revision diff, the Kept list and re-confirmation      | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [README, E9](../README.md#problem-statement-alignment)                       |
-| architecture 4.9      | Rupee formatting by hand and the number parser                             | [ADR 0009](adr/0009-rendering.md)                                                                                              |
 | architecture 5        | The Gemini gateway, its ladder and its quota handling                      | [ADR 0007](adr/0007-gemini-interactions-api-and-ladder.md); [ADR 0008](adr/0008-form-twin-cache-labels-and-quota-reserve.md)   |
 | architecture 6.1, 6.2 | The sealed link, the fixed POST routes and the 303 redirect                | [ADR 0005](adr/0005-sealed-state-in-the-link.md); [ADR 0006](adr/0006-plain-forms-and-303.md)                                  |
 | architecture 6.3      | The order of checks on a POST and the status each failure answers with     | [ADR 0006](adr/0006-plain-forms-and-303.md)                                                                                    |
+| architecture 7        | Security headers, the content security policy and log privacy              | [SECURITY.md](../SECURITY.md); [DATA_HANDLING.md](DATA_HANDLING.md)                                                            |
 | architecture 8        | The anchors a redirect lands on, and focus and landmarks on narrow screens | [ACCESSIBILITY.md](ACCESSIBILITY.md)                                                                                           |

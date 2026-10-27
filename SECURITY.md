@@ -101,8 +101,8 @@ Three more fixed headers come from `next.config.ts` on every path:
 - `Strict-Transport-Security: max-age=63072000; includeSubDomains` tells a browser that has
   seen the site once to use HTTPS only for two years. There is no `preload` token: that is a
   submission to a browser registry which the owner makes on purpose. The `.app` top-level domain
-  is already preloaded as HTTPS-only, so on the default Cloud Run host this is defence in depth
-  for a custom domain that does not end in `.app`.
+  is already preloaded as HTTPS-only, so on the default Cloud Run host the header adds nothing; it
+  is defence in depth for a custom domain that does not end in `.app`.
 - `Cross-Origin-Opener-Policy: same-origin` puts the app in its own browsing context group, so a
   page that opened it, or one it opens, cannot reach `window` across origins.
 - `Cross-Origin-Resource-Policy: same-origin` stops other sites from loading the app's
@@ -151,7 +151,8 @@ The plan is `{ schema, ops, pending? }`: inputs and confirmed steps, never compu
   both are mounted from Secret Manager, not set as plain environment values.
 - `src/server/config/key-pool.ts` and `src/server/state/seal-key.ts` read the environment on
   each call, so `next build` needs no secret. Errors name the variable and never its value.
-  Key pool entries are referred to by index in `/api/health` and in logs.
+  Key pool entries are referred to by index in logs, and in `/api/health` only under `detail` when
+  `HEALTH_DETAIL=1` is set.
 - `.env*` is ignored by git except `.env.example`, which holds no value. `.dockerignore` and
   `.gcloudignore` exclude `.env*` because `next build` would otherwise copy one into the
   standalone output.

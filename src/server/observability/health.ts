@@ -33,7 +33,7 @@ export interface HealthReport {
   readonly ai: 'available' | 'unavailable';
   readonly sealKey: 'loaded' | 'missing' | 'malformed';
   readonly data: DataCounts | null;
-  /** Entries only: the protocol for recording a take reads this count before it starts. */
+  /** Entries only: enough for an operator to see whether the cache is warm; the size is under detail. */
   readonly readingCache: { readonly entries: number };
   readonly quota: { readonly actionsToday: number };
   readonly problems: readonly string[];

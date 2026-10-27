@@ -37,7 +37,7 @@ describe('loadSealKey', () => {
   });
 
   it('uses one ephemeral key per process in development, with a warning', () => {
-    Reflect.deleteProperty(globalThis, Symbol.for('ayojan.state.ephemeral-seal-key'));
+    Reflect.deleteProperty(globalThis, '__ayojanEphemeralSealKey');
     const warn = vi.spyOn(process, 'emitWarning').mockImplementation(() => undefined);
     const first = loadSealKey({ NODE_ENV: 'development' });
     const second = loadSealKey({});

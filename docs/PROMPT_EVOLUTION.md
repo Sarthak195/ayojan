@@ -125,6 +125,6 @@ recording is pending, the "First recordings" entry below records it.
 - Why: the family-update template already did this (a spending line next to "nothing is priced"
   contradicts itself, and a long list buries the late task), but a model draft passed the check
   with either fault, because the projection and every task date are fact numbers.
-- Evidence: prompt and fact tests only. The `family-update-facts` recording was relabelled v3,
-  not re-recorded (no model call was made); its reply was written under v2 and still passes the
-  draft check. Re-record with `npm run record:golden -- --only family-update-facts`.
+- Evidence: prompt and fact tests, then a v3 re-record on 28 Oct 2026 (one call,
+  `npm run record:golden -- --only family-update-facts`, answered by `gemini-3.5-flash-lite` in
+  1.6 s). An earlier commit had only relabelled the v2 reply as v3; the re-record replaced it.

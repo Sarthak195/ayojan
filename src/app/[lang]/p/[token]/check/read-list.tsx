@@ -96,7 +96,7 @@ function listValue(head: string, item: string, draft: BriefDraft, lang: Lang): S
 }
 
 // "Not found in your words" only when the words were not found. A quote that was found but
-// whose value is out of range ("0 guests") or whose number it does not spell ("do sau log")
+// whose value is out of range ("0 guests") or whose number it does not spell ("pachpan log")
 // says so, because the person can see their own words right above the badge.
 export function badgeOf(verdict: FieldVerdict, lang: Lang): string {
   const words = dictionaryFor(lang).check;

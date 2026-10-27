@@ -35,6 +35,7 @@ export const ENGLISH: PhrasePack = {
     spend: (projected, budget) => `Planned spending is ${projected} against a budget of ${budget}.`,
     over: (gap) => `We are ${gap} over budget.`,
     onBudget: 'We are exactly on budget.',
+    notPriced: 'Nothing is priced yet, so we cannot say yet how we stand against the budget.',
     under: (headroom) => `We are within budget, with ${headroom} to spare.`,
     levers: (items) => `To manage the budget we chose: ${items}.`,
     leverSaves: (label, amount) => `${label} (saves ${amount})`,

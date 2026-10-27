@@ -24,12 +24,14 @@ export const REVISED: MessageFactsInput = {
     guests: 250,
     eventDate: date('2026-12-12'),
     projectedInr: 1_650_000,
+    priced: true,
   },
   before: {
     budgetInr: 1_400_000,
     guests: 280,
     eventDate: date('2026-12-26'),
     projectedInr: 1_600_000,
+    priced: true,
   },
   daysToEvent: 47,
   levers: [

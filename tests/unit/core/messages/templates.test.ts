@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { checkDraft } from '@/core/messages/draft-check';
+import { packFor } from '@/core/messages/render-values';
 import type { MessageFactsInput } from '@/core/messages/fact-types';
 import {
   TEMPLATE_LABEL_EN,
@@ -20,6 +21,10 @@ const VARIANTS: readonly [string, Partial<MessageFactsInput>][] = [
   ['a plan under budget', { now: { ...REVISED.now, projectedInr: 1_300_000 } }],
   ['a plan exactly on budget', { now: { ...REVISED.now, projectedInr: 1_500_000 } }],
   [
+    'a plan with nothing priced yet',
+    { now: { ...REVISED.now, projectedInr: 1_500_000, priced: false } },
+  ],
+  [
     'a budget that rounds to a different lakh figure',
     { now: { ...REVISED.now, budgetInr: 745_000 } },
   ],
@@ -33,6 +38,17 @@ const VARIANTS: readonly [string, Partial<MessageFactsInput>][] = [
 ];
 
 describe('the family update template', () => {
+  it.each(LANGUAGES)(
+    'says nothing is priced, not on budget, before any quote in %s',
+    (language) => {
+      const now = { ...REVISED.now, projectedInr: 1_500_000, priced: false };
+      const { text } = familyUpdateTemplate(makeFacts({ now }), language);
+      const pack = packFor(language).sentences;
+      expect(text).toContain(pack.notPriced);
+      expect(text).not.toContain(pack.onBudget);
+    },
+  );
+
   it.each(LANGUAGES)('is labelled as a template in %s', (language) => {
     const update = familyUpdateTemplate(makeFacts(), language);
     expect(update.labelKey).toBe(TEMPLATE_LABEL_KEY);

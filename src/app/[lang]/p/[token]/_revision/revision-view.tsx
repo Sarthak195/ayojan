@@ -35,9 +35,11 @@ export function RevisionView({ lang, token, view, data, levers }: RevisionViewPr
   const summary =
     revision === null
       ? words.statusNoChange(current.version)
-      : gap.inr > 0
-        ? words.statusOver(current.version, formatRupees(gap.inr))
-        : words.statusWithin(current.version, formatRupees(-gap.inr));
+      : current.headline.status === 'not-priced'
+        ? words.statusNotPriced(current.version)
+        : gap.inr > 0
+          ? words.statusOver(current.version, formatRupees(gap.inr))
+          : words.statusWithin(current.version, formatRupees(-gap.inr));
   return (
     <div>
       <h1 className="text-2xl font-bold">

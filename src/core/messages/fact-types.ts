@@ -20,6 +20,8 @@ export interface Headline {
   readonly eventDate: IsoDate;
   /** Projected total spend after levers. */
   readonly projectedInr: number;
+  /** False while no comparable quote or booking exists, so the budget gap says nothing yet. */
+  readonly priced: boolean;
 }
 
 export interface AppliedLever {

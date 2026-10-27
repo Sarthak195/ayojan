@@ -46,8 +46,8 @@ export interface AppliedLeverLine {
 }
 
 /**
- * `not-priced` while no category has a comparable quote or booking: the projection is then only the budget
- * split by the planning weights, so "within budget" would be true by construction.
+ * `not-priced` while no category has a comparable quote or booking: the projection is then only
+ * the budget split by the planning weights, so "within budget" would be true by construction.
  */
 export type HeadlineStatus = Projection['status'] | 'not-priced';
 
@@ -196,7 +196,8 @@ export function planVersion(
       venue: venueCapacityOf(walk.value.done, context.tasks, brief.venueCapacity),
       projected: projection.projectedTotal,
       gap: projection.gap,
-      // A guest increase or a budget cut can push the split past the budget before any pricing, so an overshoot is never hidden.
+      // A guest increase or a budget cut can push the split past the budget before any pricing,
+      // so an overshoot is never hidden.
       status: !priced && projection.status === 'within-budget' ? 'not-priced' : projection.status,
     },
     money: {

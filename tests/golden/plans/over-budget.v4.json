@@ -1664,7 +1664,8 @@
       "budgetInr": 800000,
       "guests": 200,
       "eventDate": "2027-02-26",
-      "projectedInr": 957000
+      "projectedInr": 957000,
+      "priced": true
     },
     "before": null,
     "daysToEvent": 118,

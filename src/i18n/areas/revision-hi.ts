@@ -11,6 +11,8 @@ export const hi: RevisionDictionary = {
     `बदलाव लागू: योजना v${String(version)}, बजट से ${amount} ज़्यादा।`,
   statusWithin: (version, amount) =>
     `बदलाव लागू: योजना v${String(version)}, बजट में ${amount} बचे।`,
+  statusNotPriced: (version) =>
+    `बदलाव लागू: योजना v${String(version)}। अभी दाम नहीं लगे: तुलना के लिए कोटेशन या बुकिंग जोड़ें।`,
   statusNoChange: (version) => `योजना v${String(version)} में अभी कोई पक्का बदलाव नहीं है।`,
   laterSteps: (after, current) =>
     `यह सबसे हाल के बदलाव (v${String(after)}) की तुलना है; योजना अब v${String(current)} पर है।`,

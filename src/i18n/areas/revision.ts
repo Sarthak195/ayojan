@@ -10,6 +10,7 @@ export interface RevisionDictionary {
   readonly noChangeBody: string;
   readonly statusOver: (version: number, amount: string) => string;
   readonly statusWithin: (version: number, amount: string) => string;
+  readonly statusNotPriced: (version: number) => string;
   readonly statusNoChange: (version: number) => string;
   readonly laterSteps: (after: number, current: number) => string;
   readonly counter: (kept: number, total: number) => string;
@@ -87,6 +88,8 @@ export const en: RevisionDictionary = {
     `Change applied: plan v${String(version)}, over budget by ${amount}.`,
   statusWithin: (version, amount) =>
     `Change applied: plan v${String(version)}, ${amount} left in the budget.`,
+  statusNotPriced: (version) =>
+    `Change applied: plan v${String(version)}. Not priced yet: add a quote or a booking to compare.`,
   statusNoChange: (version) => `Plan v${String(version)} has no confirmed change yet.`,
   laterSteps: (after, current) =>
     `This compares the latest change (v${String(after)}); the plan is now at v${String(current)}.`,

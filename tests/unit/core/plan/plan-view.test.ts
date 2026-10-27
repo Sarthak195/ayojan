@@ -128,6 +128,7 @@ describe('plan view: what it shows and what it never uses', () => {
       guests: 250,
       eventDate: '2027-02-12',
       projectedInr: 734_400,
+      priced: true,
     });
     expect(view.messageFacts.now.projectedInr).toBe(748_780);
     expect(view.messageFacts.levers.map((lever) => [lever.id, lever.effectInr])).toEqual([

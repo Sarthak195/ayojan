@@ -66,7 +66,8 @@ describe('GET the trade-offs (spec 6.6, FR-31)', () => {
   });
 
   it('says there is nothing to trade off within budget, and refuses any lever post', async () => {
-    expect(sectionHtml(BRIEF_TOKEN)).toContain('nothing to trade off');
+    expect(sectionHtml(OVER_BUDGET_TOKEN)).not.toContain('nothing to trade off');
+    expect(sectionHtml(BRIEF_TOKEN)).toContain('Not priced yet');
     const response = await send({ token: BRIEF_TOKEN, intent: 'preview', lever: ['e-invites'] });
     expect(response.status).toBe(422);
   });

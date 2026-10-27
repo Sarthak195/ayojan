@@ -31,6 +31,7 @@ export function headlineOf(version: PlanVersion): Headline {
     guests: version.headline.guests,
     eventDate: version.headline.eventDate,
     projectedInr: version.headline.projected.inr,
+    priced: version.headline.status !== 'not-priced',
   };
 }
 

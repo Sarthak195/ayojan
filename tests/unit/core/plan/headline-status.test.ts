@@ -2,8 +2,11 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
+import { RevisionView } from '@/app/[lang]/p/[token]/_revision/revision-view';
 import { Headline } from '@/app/[lang]/p/[token]/_plan/headline';
 import { dictionaryFor } from '@/i18n/dictionary';
+
+import { DATA } from '../../../http/support';
 
 import {
   AI_READ,
@@ -14,6 +17,7 @@ import {
   first,
   QUOTE_A,
   versionOf,
+  viewOf,
   VENUE_BOOKED,
 } from './plan-fixture';
 
@@ -94,5 +98,17 @@ describe('headline status words and row', () => {
     const html = renderToStaticMarkup(createElement(Headline, { headline, lang: 'en' }));
     expect(html).toContain('Within budget');
     expect(html).toContain('M4 10.5l4 4 8-9');
+  });
+});
+
+describe('the revision page does not state a budget position for an unpriced plan', () => {
+  const view = viewOf([briefOp(), change({ budgetInr: 900_000, sources: ['more budget'] })]);
+  const html = (lang: 'en' | 'hi'): string =>
+    renderToStaticMarkup(createElement(RevisionView, { lang, token: 't', view, data: DATA }));
+
+  it.each(['en', 'hi'] as const)('says Not priced yet in %s, not money left', (lang) => {
+    const words = dictionaryFor(lang).revision;
+    expect(html(lang)).toContain(words.statusNotPriced(view.current.version));
+    expect(html(lang)).not.toContain(words.statusWithin(view.current.version, 'Rs 0'));
   });
 });

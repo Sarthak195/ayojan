@@ -36,6 +36,7 @@ function budgetLines(facts: MessageFacts, language: Language): string[] {
     moneyText(facts.now.projectedInr, language),
     moneyText(facts.now.budgetInr, language),
   );
+  if (!facts.now.priced) return [spend, sentences.notPriced];
   if (facts.gapInr > 0) return [spend, sentences.over(moneyText(facts.gapInr, language))];
   if (facts.gapInr === 0) return [spend, sentences.onBudget];
   return [spend, sentences.under(moneyText(-facts.gapInr, language))];

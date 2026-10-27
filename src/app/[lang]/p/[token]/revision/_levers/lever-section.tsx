@@ -108,7 +108,13 @@ export function LeverSection(props: LeverSectionProps): ReactElement {
           {words.overBy} <Amount money={current.headline.gap} lang={lang} />
         </p>
       ) : null}
-      {current.money.options.length === 0 ? <p className="mt-2">{words.withinBudget}</p> : null}
+      {current.money.options.length === 0 ? (
+        <p className="mt-2">
+          {current.headline.status === 'not-priced'
+            ? `${dict.plan.notPriced} (${dict.plan.notPricedReason})`
+            : words.withinBudget}
+        </p>
+      ) : null}
       {chosen.length === 0 ? null : (
         <div className="mt-4">
           <h3 className="font-semibold">{words.chosenHeading}</h3>

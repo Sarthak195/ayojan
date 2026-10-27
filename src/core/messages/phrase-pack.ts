@@ -26,6 +26,7 @@ export interface PhrasePack {
     readonly spend: (projected: string, budget: string) => string;
     readonly over: (gap: string) => string;
     readonly onBudget: string;
+    readonly notPriced: string;
     readonly under: (headroom: string) => string;
     readonly levers: (items: string) => string;
     readonly leverSaves: (label: string, amount: string) => string;

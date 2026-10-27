@@ -47,6 +47,8 @@ export const HINDI: PhrasePack = {
     spend: (projected, budget) => `अनुमानित ख़र्च ${projected} है, और बजट ${budget} है।`,
     over: (gap) => `हम बजट से ${gap} ऊपर हैं।`,
     onBudget: 'हम ठीक बजट पर हैं।',
+    notPriced:
+      'अभी किसी चीज़ के दाम नहीं लगे हैं, इसलिए बजट के हिसाब से हम कहाँ हैं, यह अभी नहीं कह सकते।',
     under: (headroom) => `हम बजट के अंदर हैं, ${headroom} बचे हैं।`,
     levers: (items) => `बजट सँभालने के लिए हमने चुना: ${items}।`,
     leverSaves: (label, amount) => `${label} (${amount} बचेंगे)`,

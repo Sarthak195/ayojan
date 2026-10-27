@@ -2103,13 +2103,15 @@
       "budgetInr": 750000,
       "guests": 250,
       "eventDate": "2027-02-12",
-      "projectedInr": 748780
+      "projectedInr": 748780,
+      "priced": true
     },
     "before": {
       "budgetInr": 750000,
       "guests": 250,
       "eventDate": "2027-02-12",
-      "projectedInr": 734400
+      "projectedInr": 734400,
+      "priced": true
     },
     "daysToEvent": 104,
     "levers": [

@@ -6,6 +6,8 @@ import { basisNote } from '@/i18n/basis-note';
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
+import type { CategoryLabel } from '../../_change/category-labels';
+
 const BOX = 'mt-1 h-6 w-6 shrink-0';
 
 /** "Saves Rs 38,000 Computed" or "Would save about Rs 15,900 Planning assumption: about 30 percent". */
@@ -26,14 +28,14 @@ function Saving({
 }
 
 /** Why a lever may not be chosen, in words (spec 6.6): a must-have, or a booked category. */
-function blockedReason(option: LeverOption, lang: Lang): string | null {
+function blockedReason(option: LeverOption, lang: Lang, labelOf: CategoryLabel): string | null {
   const dict = dictionaryFor(lang);
   const { reason } = option;
   if (reason === null) return null;
   if (reason.kind === 'must-have')
     return dict.levers.disabled(dict.form.mustHaves[reason.mustHave]);
-  if (reason.kind === 'booked') return dict.levers.booked(dict.form.categories[reason.category]);
-  return dict.levers.refused(dict.form.categories[reason.category]);
+  if (reason.kind === 'booked') return dict.levers.booked(labelOf(reason.category));
+  return dict.levers.refused(labelOf(reason.category));
 }
 
 /**
@@ -47,12 +49,14 @@ export function LeverRow({
   lang,
   ticked,
   extra,
+  labelOf,
 }: {
   readonly option: LeverOption;
   readonly lang: Lang;
   readonly ticked: boolean;
   /** Lines the preview adds, such as "Also clears Print invitations: At risk". */
   readonly extra?: ReactNode;
+  readonly labelOf: CategoryLabel;
 }): ReactElement {
   const words = dictionaryFor(lang).levers;
   const id = `lever-${option.id}`;
@@ -60,7 +64,7 @@ export function LeverRow({
     option.status === 'disabled' ||
     option.status === 'not-applicable' ||
     (option.status === 'refused' && !option.showAnywayAllowed);
-  const reason = blockedReason(option, lang);
+  const reason = blockedReason(option, lang, labelOf);
   const note = basisNote(option, lang);
   return (
     <li className="py-3">

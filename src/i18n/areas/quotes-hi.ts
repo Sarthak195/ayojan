@@ -48,6 +48,7 @@ export const hi: QuotesDictionary = {
   liveCounterLabel: 'लाइव काउंटर का ख़र्च, रुपयों में',
   inclusionLabel: (index) => `शामिल चीज़ ${String(index)}`,
   advanceLabel: 'एडवांस, प्रतिशत में',
+  advanceHint: 'बुकिंग पर दिया जाने वाला हिस्सा, 0 से 100 के बीच, जैसे 30।',
   addButton: 'यह कोटेशन जोड़ें',
   emptyComparison:
     'अभी कोई कोटेशन नहीं है। पहला कोटेशन जोड़ने के लिए संदेश चिपकाएँ या फ़ॉर्म भरें।',

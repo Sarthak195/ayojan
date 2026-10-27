@@ -87,7 +87,14 @@ describe('basis note on a lever', () => {
     showAnywayAllowed: false,
   });
   const render = (lang: Lang, basisHi: string | null): string =>
-    renderToStaticMarkup(createElement(LeverRow, { option: option(basisHi), lang, ticked: false }));
+    renderToStaticMarkup(
+      createElement(LeverRow, {
+        option: option(basisHi),
+        lang,
+        ticked: false,
+        labelOf: (category) => category,
+      }),
+    );
 
   it('shows the Hindi note on a Hindi page and falls back to English when it is missing', () => {
     expect(render('hi', row.basisHi ?? null)).toContain(

@@ -88,7 +88,7 @@ export function BriefAnswers({
         <TextField
           name="guests"
           label={form.guestsLabel}
-          hint={form.numberHint}
+          hint={form.guestsHint}
           maxLength={40}
           error={error('guests')}
           {...prefill('guests', draft.guests)}
@@ -103,6 +103,7 @@ export function BriefAnswers({
         <TextField
           name="venueCapacity"
           label={form.capacityLabel}
+          hint={form.capacityHint}
           optionalLabel={dict.common.optional}
           maxLength={40}
           error={error('venueCapacity')}

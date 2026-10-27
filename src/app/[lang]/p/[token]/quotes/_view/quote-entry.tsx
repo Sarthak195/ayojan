@@ -6,6 +6,7 @@ import { PostForm, ReadingHint, SubmitButton } from '@/components/form/post-form
 import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
+import type { CategoryLabel } from '../../_change/category-labels';
 import { QuoteInputs } from './quote-inputs';
 
 const LINK = 'inline-flex min-h-11 items-center font-semibold';
@@ -73,10 +74,12 @@ export function QuoteTwin({
   lang,
   token,
   unavailable,
+  labelOf,
 }: {
   readonly lang: Lang;
   readonly token: string;
   readonly unavailable: AiUnavailableReason | null;
+  readonly labelOf: CategoryLabel;
 }): ReactElement {
   const words = dictionaryFor(lang).quotes;
   return (
@@ -89,7 +92,7 @@ export function QuoteTwin({
         <div className="px-3 pb-3">
           <p className="mt-2 text-sm text-muted">{words.formIntro}</p>
           <PostForm lang={lang} route="enter/quote" token={token}>
-            <QuoteInputs lang={lang} prefix="twin" fields={null} />
+            <QuoteInputs lang={lang} prefix="twin" fields={null} labelOf={labelOf} />
             <SubmitButton>{words.addButton}</SubmitButton>
           </PostForm>
         </div>

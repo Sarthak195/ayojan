@@ -24,6 +24,8 @@ export interface FormDictionary {
   readonly dateLabel: string;
   readonly capacityLabel: string;
   readonly numberHint: string;
+  readonly guestsHint: string;
+  readonly capacityHint: string;
   readonly functionsLegend: string;
   readonly functionsHint: string;
   readonly functions: Readonly<Record<FunctionName, string>>;
@@ -63,6 +65,8 @@ export const en: FormDictionary = {
   dateLabel: 'Event date',
   capacityLabel: 'Venue capacity',
   numberHint: 'Digits or words, such as 8 lakh or dedh lakh.',
+  guestsHint: 'About how many people, in digits or words, such as 250 or dhai sau.',
+  capacityHint: 'How many guests the hall holds, if you know, such as 300.',
   functionsLegend: 'Which functions will you hold?',
   functionsHint: 'These are wedding functions. For another occasion, leave them at Not sure.',
   functions: {
@@ -126,6 +130,8 @@ export const hi: FormDictionary = {
   dateLabel: 'कार्यक्रम की तारीख़',
   capacityLabel: 'वेन्यू में कितने लोग आ सकते हैं',
   numberHint: 'अंक या शब्द, जैसे 8 लाख या डेढ़ लाख।',
+  guestsHint: 'लगभग कितने लोग, अंकों या शब्दों में, जैसे 250 या ढाई सौ।',
+  capacityHint: 'वेन्यू में कितने मेहमान आ सकते हैं, अगर पता हो, जैसे 300।',
   functionsLegend: 'कौन-कौन से फ़ंक्शन होंगे?',
   functionsHint: 'ये शादी के फ़ंक्शन हैं। किसी और मौके के लिए इन्हें "पता नहीं" पर छोड़ दें।',
   functions: {

@@ -50,7 +50,7 @@ export function FormView({
         <TextField
           name="guests"
           label={words.guestsLabel}
-          hint={words.numberHint}
+          hint={words.guestsHint}
           maxLength={40}
           required
         />
@@ -58,6 +58,7 @@ export function FormView({
         <TextField
           name="venueCapacity"
           label={words.capacityLabel}
+          hint={words.capacityHint}
           optionalLabel={dict.common.optional}
           maxLength={40}
         />

@@ -7,6 +7,7 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 
 import { dateWords } from '../../../_brief/words';
+import type { CategoryLabel } from '../_change/category-labels';
 import { lateLine } from './late-line';
 import { TaskControls, taskNameId } from './task-controls';
 
@@ -76,11 +77,13 @@ export function TasksSection({
   delayEffects,
   lang,
   token,
+  labelOf,
 }: {
   readonly schedule: Schedule;
   readonly delayEffects: readonly DelayPropagation[];
   readonly lang: Lang;
   readonly token: string;
+  readonly labelOf: CategoryLabel;
 }): ReactElement {
   const words = dictionaryFor(lang).plan;
   const taskWords = dictionaryFor(lang).tasks;
@@ -114,7 +117,7 @@ export function TasksSection({
               effect={delayEffects.find((each) => each.delayedTaskId === task.id)}
               lang={lang}
             />
-            <TaskControls task={task} lang={lang} token={token} />
+            <TaskControls task={task} lang={lang} token={token} labelOf={labelOf} />
           </li>
         ))}
       </ul>

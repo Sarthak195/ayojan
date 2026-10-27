@@ -8,6 +8,7 @@ import type { Lang } from '@/i18n/lang';
 import type { FieldVerdict } from '@/schemas/plan/state-token';
 import { Category, QuoteBasis, TaxTreatment } from '@/schemas/readings/vocabulary';
 
+import type { CategoryLabel } from '../../_change/category-labels';
 import type { QuoteFields } from '../_quote/quote-record';
 
 /** The inputs both quote forms post, named as QuoteForm names them. */
@@ -87,23 +88,31 @@ const text = (value: number | null): string => (value === null ? '' : String(val
  * Every quote value as a plain input with a visible label. On the check page each input starts
  * at the value read from the message and carries the vendor's words and any open question; in
  * the form twin they start empty. Radios without a starting value are required, so a browser
- * asks for them before posting.
+ * asks for them before posting. Categories are named as the plan's profile names them, so the
+ * radio reads the same as the money table; with no plan yet the generic names stand in.
  */
 export function QuoteInputs({
   lang,
   prefix,
   fields,
   notes = {},
+  labelOf,
 }: {
   readonly lang: Lang;
   readonly prefix: string;
   readonly fields: QuoteFields | null;
   readonly notes?: FieldNotes;
+  readonly labelOf?: CategoryLabel | undefined;
 }): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.quotes;
   const id = (name: string): string => `${prefix}-${name}`;
-  const numberField = (name: QuoteInputName, label: string, value: number | null): ReactElement => (
+  const numberField = (
+    name: QuoteInputName,
+    label: string,
+    value: number | null,
+    hint: string = words.numberHint,
+  ): ReactElement => (
     <TextField
       name={name}
       id={id(name)}
@@ -112,7 +121,7 @@ export function QuoteInputs({
       maxLength={9}
       defaultValue={text(value)}
       optionalLabel={dict.common.optional}
-      {...(notes[name] === undefined ? { hint: words.numberHint } : noteParts(notes[name], lang))}
+      {...(notes[name] === undefined ? { hint } : noteParts(notes[name], lang))}
     />
   );
   const inclusions = fields?.inclusion ?? [];
@@ -126,7 +135,7 @@ export function QuoteInputs({
         required
         choices={Category.options.map((value) => ({
           value,
-          label: dict.form.categories[value],
+          label: labelOf === undefined ? dict.form.categories[value] : labelOf(value),
           checked: fields?.category === value,
         }))}
         {...noteParts(notes.category, lang)}
@@ -145,7 +154,7 @@ export function QuoteInputs({
         }))}
         {...noteParts(notes.basis, lang)}
       />
-      {numberField('rateInr', words.rateLabel, fields?.rateInr ?? null)}
+      {numberField('rateInr', words.rateLabel, fields?.rateInr ?? null, words.rateHint)}
       {numberField('minimumGuests', words.minimumLabel, fields?.minimumGuests ?? null)}
       {numberField('guestsCovered', words.coveredLabel, fields?.guestsCovered ?? null)}
       <ChoiceGroup
@@ -183,7 +192,12 @@ export function QuoteInputs({
           optionalLabel={dict.common.optional}
         />
       ))}
-      {numberField('advancePercent', words.advanceLabel, fields?.advancePercent ?? null)}
+      {numberField(
+        'advancePercent',
+        words.advanceLabel,
+        fields?.advancePercent ?? null,
+        words.advanceHint,
+      )}
     </>
   );
 }

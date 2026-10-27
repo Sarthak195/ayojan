@@ -15,6 +15,15 @@ import { REVISED, VENUE, dataQuestions, date, makeFacts, questionRow } from './f
 
 const LANGUAGES: readonly Language[] = ['en', 'hi'];
 
+// Six slipping tasks on six days, so "and 3 more" is a number the update has to account for.
+const SIX_AT_RISK: MessageFactsInput['atRisk'] = [1, 2, 3, 4, 5, 6].map((day) => ({
+  taskId: `task-${String(day)}`,
+  name: { en: `Task ${String(day)}`, hi: `काम ${String(day)}` },
+  status: 'atRisk',
+  dueBy: date(`2026-11-0${String(day)}`),
+  start: 'on',
+}));
+
 const VARIANTS: readonly [string, Partial<MessageFactsInput>][] = [
   ['a revised plan over budget', {}],
   ['a plan with no revision', { before: null }],
@@ -33,6 +42,7 @@ const VARIANTS: readonly [string, Partial<MessageFactsInput>][] = [
     'a plan with nothing to report',
     { levers: [], atRisk: [], unclearQuotes: [], diet: [], venueLimits: [] },
   ],
+  ['six tasks needing attention', { atRisk: SIX_AT_RISK }],
   ['an event today', { daysToEvent: 0 }],
   ['one day to go', { daysToEvent: 1 }],
 ];
@@ -46,6 +56,8 @@ describe('the family update template', () => {
       const pack = packFor(language).sentences;
       expect(text).toContain(pack.notPriced);
       expect(text).not.toContain(pack.onBudget);
+      // The projection before any price is the budget itself: stating it would contradict.
+      expect(text).not.toContain(pack.spend('', '').slice(0, 12));
     },
   );
 
@@ -130,6 +142,14 @@ describe('the family update template', () => {
     expect(hi('on')).toContain('(समय से पीछे, आख़िरी तारीख़ 25 अक्टूबर 2026)');
     // "तक होना है" is future tense: wrong for a date that has passed.
     expect(hi('after')).not.toContain('तक होना है');
+  });
+
+  it.each(LANGUAGES)('names three tasks needing attention and counts the rest (%s)', (language) => {
+    const { text } = familyUpdateTemplate(makeFacts({ atRisk: SIX_AT_RISK }), language);
+    const task = language === 'en' ? 'Task' : 'काम';
+    for (const day of [1, 2, 3]) expect(text).toContain(`${task} ${String(day)} (`);
+    for (const day of [4, 5, 6]) expect(text).not.toContain(`${task} ${String(day)} (`);
+    expect(text).toContain(packFor(language).sentences.andMore(3));
   });
 
   it('adds a lakh word only when it reads back as the same rupees', () => {

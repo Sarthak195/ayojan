@@ -8,6 +8,7 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import type { BudgetWeightsFile } from '@/schemas/data/budget-weights';
 
+import { categoryLabels } from '../../_change/category-labels';
 import { nextSlot } from '../_quote/quote-record';
 import { ComparisonTable } from './comparison-table';
 import { PasteSection, QuoteTwin } from './quote-entry';
@@ -75,9 +76,7 @@ export function QuotesView({
   const { current } = view;
   const latest = view.ledger[0];
   const base = `/${lang}/p/${token}`;
-  const profile = weights.profiles.find((row) => row.id === current.profile);
-  const labelOf = (category: string): string =>
-    profile?.categories.find((row) => row.category === category)?.[lang] ?? category;
+  const labelOf = categoryLabels(weights, current.profile, lang);
   const full = nextSlot(current.quotes) === null;
   return (
     <div>
@@ -105,7 +104,7 @@ export function QuotesView({
       ) : (
         <>
           <PasteSection lang={lang} token={token} sampleText={sampleText} />
-          <QuoteTwin lang={lang} token={token} unavailable={unavailable} />
+          <QuoteTwin lang={lang} token={token} unavailable={unavailable} labelOf={labelOf} />
         </>
       )}
       {current.comparisons.length === 0 ? (

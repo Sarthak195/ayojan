@@ -43,6 +43,7 @@ export interface QuotesDictionary {
   readonly liveCounterLabel: string;
   readonly inclusionLabel: (index: number) => string;
   readonly advanceLabel: string;
+  readonly advanceHint: string;
   readonly addButton: string;
   readonly emptyComparison: string;
   readonly comparisonHeading: (category: string, guests: string) => string;
@@ -131,6 +132,7 @@ export const en: QuotesDictionary = {
   liveCounterLabel: 'Live counter charge in rupees',
   inclusionLabel: (index) => `Included item ${String(index)}`,
   advanceLabel: 'Advance in percent',
+  advanceHint: 'The share paid at booking, from 0 to 100, for example 30.',
   addButton: 'Add this quote',
   emptyComparison: 'No quotes yet. Paste a message or use the form to add the first one.',
   comparisonHeading: (category, guests) => `${category} at ${guests} guests`,

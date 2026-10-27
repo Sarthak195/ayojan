@@ -15,6 +15,7 @@ import type { Lang } from '@/i18n/lang';
 import { LeverId } from '@/schemas/generated/ids';
 import type { Op } from '@/schemas/plan/op';
 
+import { categoryLabels } from '../../_change/category-labels';
 import { LeverRow } from './lever-row';
 import {
   candidateOp,
@@ -82,6 +83,7 @@ export function LeverSection(props: LeverSectionProps): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.levers;
   const { current } = view;
+  const labelOf = categoryLabels(data.budgetWeights, current.profile, lang);
   const chosen = chosenOptions(current);
   const open = current.money.options.filter((option) => !chosen.includes(option));
   const { fresh, result } = previewFor(props);
@@ -151,6 +153,7 @@ export function LeverSection(props: LeverSectionProps): ReactElement {
                   key={option.id}
                   option={option}
                   lang={lang}
+                  labelOf={labelOf}
                   ticked={fresh.includes(option.id)}
                   extra={result?.cleared
                     .filter(

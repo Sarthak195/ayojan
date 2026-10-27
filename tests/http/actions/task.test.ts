@@ -5,8 +5,11 @@ import { describe, expect, it } from 'vitest';
 import { POST as task } from '@/app/[lang]/task/route';
 import { PlanPageView } from '@/app/[lang]/p/[token]/_plan/plan-page-view';
 
+import type { Op } from '@/schemas/plan/op';
+
+import { AI_READ, HINGLISH_BRIEF } from '../../fixtures/plan-readings';
 import { context, DATA, deps, post, type Fields } from '../support';
-import { BRIEF_TOKEN, opsOf, planLocation, viewOf } from './actions-support';
+import { BRIEF_TOKEN, opsOf, planLocation, tokenFor, viewOf } from './actions-support';
 
 const EN = context({ lang: 'en' });
 
@@ -100,7 +103,9 @@ describe('POST /[lang]/task', () => {
     expect(html).toMatch(/name="amountInr"/);
     expect(html).toMatch(/name="capacity"/);
     // The booking tasks' Mark done is a summary styled as the outlined button, with a marker.
-    const summary = /<summary[^>]*>\s*Mark done[\s\S]*?<\/summary>/.exec(html)?.[0] ?? '';
+    const summary =
+      /<summary[^>]*>\s*<span aria-hidden="true">Mark done[\s\S]*?<\/summary>/.exec(html)?.[0] ??
+      '';
     expect(summary).toContain('border border-foreground');
     expect(summary).toContain('min-h-11');
     expect(summary).toContain('<svg');
@@ -116,11 +121,25 @@ describe('POST /[lang]/task', () => {
       (match) => match[1] ?? '',
     );
     for (const label of ['Mark done', 'Save']) {
-      const named = buttons.filter((text) => text.startsWith(label));
+      const named = buttons.filter((text) => text.startsWith(`<span aria-hidden="true">${label}<`));
       expect(named.length).toBeGreaterThan(1);
-      for (const text of named) expect(text).toMatch(/<span class="sr-only">: [^<]+<\/span>/);
+      // The whole name in one node: a separate ": task" span gets a space before its colon.
+      for (const text of named)
+        expect(text).toMatch(new RegExp(`<span class="sr-only">${label}: [^<]+</span>$`));
       expect(new Set(named.map((text) => text.replace(/<[^>]+>/g, ''))).size).toBe(named.length);
     }
+  });
+
+  it('names a category in the task form as the money table does, by the plan profile', () => {
+    const birthday: Op = {
+      kind: 'briefConfirmed',
+      brief: { ...HINGLISH_BRIEF, occasion: 'birthday' },
+      readBy: AI_READ,
+    };
+    const html = planHtml(tokenFor([birthday]), null);
+    expect(html).toContain('With an amount, Venue or hall shows as booked');
+    expect(html).toContain('With an amount, Food and drinks shows as booked');
+    expect(html).not.toContain('With an amount, Food and catering');
   });
 
   it('links the change box, quotes, trade-offs and messages from the Jump to nav', () => {

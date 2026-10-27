@@ -9,6 +9,7 @@ import type { Lang } from '@/i18n/lang';
 import type { QuoteSlot } from '@/schemas/plan/quote-record';
 import type { FieldVerdict, PendingReading } from '@/schemas/plan/state-token';
 
+import type { CategoryLabel } from '../../_change/category-labels';
 import { ReadSource } from '../../check/read-source';
 import { fieldsFrom } from '../_quote/quote-record';
 import {
@@ -29,6 +30,8 @@ export interface QuoteCheckViewProps {
   readonly source: string;
   /** The letter this quote will take, or null when the plan already holds six. */
   readonly slot: QuoteSlot | null;
+  /** The plan profile's category names; absent before a plan exists. */
+  readonly categoryLabel?: CategoryLabel;
 }
 
 const INPUT_OF: Readonly<Record<string, QuoteInputName>> = {
@@ -97,6 +100,7 @@ export function QuoteCheckView({
   pending,
   source,
   slot,
+  categoryLabel,
 }: QuoteCheckViewProps): ReactElement {
   const dict = dictionaryFor(lang);
   const words = dict.quotes;
@@ -135,7 +139,13 @@ export function QuoteCheckView({
         </ul>
       )}
       <PostForm lang={lang} route="confirm" token={token}>
-        <QuoteInputs lang={lang} prefix="check" fields={fieldsFrom(values)} notes={notes} />
+        <QuoteInputs
+          lang={lang}
+          prefix="check"
+          fields={fieldsFrom(values)}
+          notes={notes}
+          labelOf={categoryLabel}
+        />
         {others.length === 0 && otherExtras.length === 0 ? null : (
           <section aria-labelledby="other-heading" className="mt-4">
             <h2 id="other-heading" className="text-lg font-semibold">

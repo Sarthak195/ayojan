@@ -56,6 +56,8 @@ export function PlanPageView({
   const { current } = view;
   const latest = view.ledger[0];
   const read = readLine(latest, lang);
+  // One name per category on the whole page: the money table, the task forms and the change box.
+  const labelOf = categoryLabels(weights, current.profile, lang);
   const base = `/${lang}/p/${token}`;
   const moved =
     latestDelay === null
@@ -111,6 +113,7 @@ export function PlanPageView({
         delayEffects={current.delayEffects}
         lang={lang}
         token={token}
+        labelOf={labelOf}
       />
       {current.brief.notes.length === 0 ? null : (
         <section aria-labelledby="noted-heading" className="mt-8">
@@ -124,12 +127,7 @@ export function PlanPageView({
           </ul>
         </section>
       )}
-      <ChangeBox
-        lang={lang}
-        token={token}
-        labelOf={categoryLabels(weights, current.profile, lang)}
-        unavailable={changeUnavailable}
-      />
+      <ChangeBox lang={lang} token={token} labelOf={labelOf} unavailable={changeUnavailable} />
       <LedgerSection ledger={view.ledger} lang={lang} />
       {view.ledger.length > 1 ? <UndoForm lang={lang} token={token} id="undo-plan" /> : null}
       <section id="next" aria-labelledby="next-heading" className="mt-8">

@@ -39,6 +39,8 @@ export interface PhrasePack {
      * recorded delay gets the wait, or no instruction when the date alone would be a guess.
      */
     readonly lateItem: (name: string, due: string, start: 'today' | 'after' | 'on') => string;
+    /** The tasks past the first few, counted rather than listed. */
+    readonly andMore: (count: number) => string;
     readonly vendors: (count: number, names: string) => string;
     readonly unclear: (items: string) => string;
     readonly unclearItem: (vendor: string, fields: string) => string;

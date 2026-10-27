@@ -60,6 +60,7 @@ export const HINDI: PhrasePack = {
       start === 'on'
         ? `${name} (समय से पीछे, आख़िरी तारीख़ ${due})`
         : `${name} (समय से पीछे, आख़िरी तारीख़ ${due}: ${start === 'today' ? 'आज ही शुरू करें' : 'पिछला काम होते ही शुरू करें'})`,
+    andMore: (count) => `और ${String(count)} काम`,
     vendors: (count, names) => `हम ${String(count)} वेंडर से सवाल पूछेंगे: ${names}।`,
     unclear: (items) => `क़ीमत की ये बातें अभी साफ़ नहीं हैं: ${items}।`,
     unclearItem: (vendor, fields) => `${vendor} (${fields})`,

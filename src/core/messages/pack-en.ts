@@ -46,6 +46,7 @@ export const ENGLISH: PhrasePack = {
       start === 'on'
         ? `${name} (behind schedule for ${due})`
         : `${name} (behind schedule for ${due}: ${start === 'today' ? 'start today' : 'start when the earlier step is done'})`,
+    andMore: (count) => `and ${String(count)} more`,
     vendors: (count, names) =>
       `We will send questions to ${String(count)} ${plural(count, 'vendor', 'vendors')}: ${names}.`,
     unclear: (items) => `Quote details still unclear: ${items}.`,

@@ -56,6 +56,15 @@ export default async function CheckPage({
         pending={pending}
         source={sourceLabel(pending.readBy, recordedOn, page.lang)}
         slot={nextSlot(page.view?.current.quotes ?? [])}
+        {...(page.view === null
+          ? {}
+          : {
+              categoryLabel: categoryLabels(
+                page.data.budgetWeights,
+                page.view.current.profile,
+                page.lang,
+              ),
+            })}
       />
     );
   }

@@ -8,9 +8,26 @@ import { dictionaryFor } from '@/i18n/dictionary';
 import type { Lang } from '@/i18n/lang';
 import { MAX_DELAY_DAYS } from '@/schemas/forms/task-event';
 
+import type { CategoryLabel } from '../_change/category-labels';
+
 /** The id of the element holding a task's name, which each control's button is described by. */
 export function taskNameId(task: ScheduledTask): string {
   return `task-${task.id}-name`;
+}
+
+/**
+ * A button's visible word, and its accessible name with the task in one string: the buttons
+ * repeat for every task, so each name carries the task to tell them apart. `sr-only` is
+ * absolutely positioned, so name computation treats it as a block and puts a space before a
+ * separate ": task", which a screen reader reads as "Save : Book the venue".
+ */
+function Named({ label, task }: { readonly label: string; readonly task: string }): ReactElement {
+  return (
+    <>
+      <span aria-hidden="true">{label}</span>
+      <span className="sr-only">{`${label}: ${task}`}</span>
+    </>
+  );
 }
 
 const INPUT =
@@ -26,17 +43,17 @@ export function TaskControls({
   task,
   lang,
   token,
+  labelOf,
 }: {
   readonly task: ScheduledTask;
   readonly lang: Lang;
   readonly token: string;
+  readonly labelOf: CategoryLabel;
 }): ReactElement | null {
   if (task.done) return null;
   const dict = dictionaryFor(lang);
   const words = dict.tasks;
   const name = <span className="sr-only">{task[lang]}: </span>;
-  // The buttons repeat for every task, so each name carries the task to tell them apart.
-  const forTask = <span className="sr-only">: {task[lang]}</span>;
   const describedBy = taskNameId(task);
   const daysId = `task-${task.id}-days`;
   return (
@@ -46,15 +63,13 @@ export function TaskControls({
         <input type="hidden" name="event" value="done" />
         {task.books === null ? (
           <SubmitButton variant="secondary" describedBy={describedBy}>
-            {words.markDone}
-            {forTask}
+            <Named label={words.markDone} task={task[lang]} />
           </SubmitButton>
         ) : (
           <details className={DISCLOSURE_GROUP}>
             <summary className={BUTTON_SUMMARY}>
-              {words.markDone}
+              <Named label={words.markDone} task={task[lang]} />
               <DisclosureMarker />
-              {forTask}
             </summary>
             <TextField
               name="amountInr"
@@ -68,7 +83,7 @@ export function TaskControls({
               inputMode="numeric"
               optionalLabel={dict.common.optional}
               maxLength={9}
-              hint={words.amountHint(dict.form.categories[task.books])}
+              hint={words.amountHint(labelOf(task.books))}
             />
             {task.books === 'venue' ? (
               <TextField
@@ -87,8 +102,7 @@ export function TaskControls({
               />
             ) : null}
             <SubmitButton describedBy={describedBy}>
-              {words.markDone}
-              {forTask}
+              <Named label={words.markDone} task={task[lang]} />
             </SubmitButton>
           </details>
         )}
@@ -116,8 +130,7 @@ export function TaskControls({
             />
           </div>
           <SubmitButton variant="secondary" describedBy={describedBy}>
-            {words.save}
-            {forTask}
+            <Named label={words.save} task={task[lang]} />
           </SubmitButton>
         </div>
         <p id={`${daysId}-hint`} className="mt-1 text-sm text-muted">

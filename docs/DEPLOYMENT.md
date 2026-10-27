@@ -8,11 +8,11 @@ setting below was read back from the running service with `gcloud run services d
 
 ## What is deployed
 
-| Fact (as read on 26 Oct 2026) | Value                                                                                                                                                                                                                 |
+| Fact (as read on 27 Oct 2026) | Value                                                                                                                                                                                                                 |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                      |
-| Revision serving traffic      | `ayojan-00003-lx6` at 100 percent of traffic; the earlier revisions, `ayojan-00001-jxf` and `ayojan-00002-7hr`, are kept for rollback                                                                                 |
-| Source of that revision       | commit `eb37d0d` on `main`                                                                                                                                                                                            |
+| Revision serving traffic      | `ayojan-00004-4vl` at 100 percent of traffic; the earlier revisions, `ayojan-00001-jxf` to `ayojan-00003-lx6`, are kept for rollback                                                                                  |
+| Source of that revision       | commit `e632246` on `main`                                                                                                                                                                                            |
 | Request timeout               | 60 seconds                                                                                                                                                                                                            |
 | Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 3                                                                                                                              |
 | Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                          |
@@ -30,7 +30,9 @@ image leaves out Markdown files and `docs/` (see `.dockerignore`), so a later co
 only those needs no deploy.
 
 The third revision was built from `eb37d0d` on 26 Oct 2026 at about 23:20 IST. It adds the privacy
-sentence under every read button, in English and Hindi (`git log --oneline a9184fe..eb37d0d`).
+sentence under every read button, in English and Hindi (`git log --oneline a9184fe..eb37d0d`). The fourth
+was built from `e632246` on 27 Oct 2026 at about 16:20 IST: requests set `store: false`, and a plan
+says "Not priced yet" until a comparable quote or a booking exists (`git log --oneline eb37d0d..e632246`).
 
 ## The container image
 
@@ -73,7 +75,7 @@ For the first deploy, on 26 Oct 2026, the directory was the archive of `f694edb`
 reported "Building using Dockerfile", created the revision `ayojan-00001-jxf`, and routed 100
 percent of traffic to it. The second deploy, the same evening, used the archive of `a9184fe`
 and created `ayojan-00002-7hr`, which took all traffic. The third, from the archive of `eb37d0d`,
-created `ayojan-00003-lx6`.
+created `ayojan-00003-lx6`; the fourth, from the archive of `e632246`, created `ayojan-00004-4vl`.
 
 Why a git archive and not `--source .`:
 
@@ -198,6 +200,12 @@ What was checked against `ayojan-00003-lx6` that night, with no model call: `/ap
 `ok` with 7 keys, the seal key loaded and an empty reading cache; and in English and in Hindi, the
 privacy sentence sits in the element that each read button names in `aria-describedby`, on the
 start page (the brief and the example), in the plan's change box and on the quotes page.
+
+What was checked against `ayojan-00004-4vl` on 27 Oct 2026, with one model call: a Hinglish brief
+written for the check was read in 15.3 s by `gemini-3.5-flash-lite`; the confirmed plan v1 said "Not
+priced yet (add a quote or a booking to compare)" and not "Within budget"; its family update made no
+budget claim; a guest increase through the form gave "over budget by Rs 29,933" (an unpriced plan
+that goes over still says so); and after a venue booking the status became a budget verdict.
 
 ## Rollback
 

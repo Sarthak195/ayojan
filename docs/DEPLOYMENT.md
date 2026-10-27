@@ -2,25 +2,25 @@
 
 This page is a record of what was done to put Ayojan on Google Cloud Run, not a plan. Every
 setting below was read back from the running service with `gcloud run services describe` on
-26 Oct 2026, and anything that was not checked is in the last section. The live address is
+26 Oct 2026 and again on 28 Oct 2026 for the table below, and anything that was not checked is in the last section. The live address is
 <https://ayojan-626015685685.asia-south1.run.app>. The service's other generated address,
 `https://ayojan-vdsl6cg5fa-el.a.run.app`, also answered `/api/health` with 200 on the same day.
 
 ## What is deployed
 
-| Fact (as read on 27 Oct 2026) | Value                                                                                                                                                                                                                 |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                      |
-| Revision serving traffic      | `ayojan-00004-4vl` at 100 percent of traffic; the earlier revisions, `ayojan-00001-jxf` to `ayojan-00003-lx6`, are kept for rollback                                                                                  |
-| Source of that revision       | commit `e632246` on `main`                                                                                                                                                                                            |
-| Request timeout               | 60 seconds                                                                                                                                                                                                            |
-| Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 3                                                                                                                              |
-| Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                          |
-| Startup CPU boost             | `startup-cpu-boost: true` appears in the revision's annotations; the deploy command did not pass a flag for it                                                                                                        |
-| Port                          | container listens on 8080                                                                                                                                                                                             |
-| Access                        | public (`allUsers` holds `roles/run.invoker`), because the deploy used `--allow-unauthenticated`                                                                                                                      |
-| Secrets                       | `GEMINI_API_KEY` from Secret Manager secret `gemini-api-key`, and `STATE_SEAL_KEY` from `state-seal-key`, both at version `latest` and both mounted as environment variables, with no plain-text value on the service |
-| Image                         | built by Cloud Build from the [Dockerfile](../Dockerfile), stored in the `cloud-run-source-deploy` Artifact Registry repository in `asia-south1`                                                                      |
+| Fact (as read on 28 Oct 2026) | Value                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service and region            | `ayojan`, `asia-south1` (Mumbai)                                                                                                                                                                                                                                                                                                                                                      |
+| Revision serving traffic      | `ayojan-00009-v7q` at 100 percent of traffic; `ayojan-00008-tes`, the `3ff942e` image without the Gemini secret, carries the tag `nokey` at 0 percent; the earlier revisions, `ayojan-00001-jxf` to `ayojan-00008-mr7`, are kept for rollback                                                                                                                                         |
+| Source of that revision       | commit `1abc9f6` on `main`                                                                                                                                                                                                                                                                                                                                                            |
+| Request timeout               | 60 seconds                                                                                                                                                                                                                                                                                                                                                                            |
+| Instances                     | no minimum (the `minScale` annotation is absent, so the default of 0 applies), maximum 1 (since `ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3)                                                                                                                                                                                                                     |
+| Per instance                  | 1 CPU, 512Mi memory, concurrency 80 (the Cloud Run default; no flag sets it)                                                                                                                                                                                                                                                                                                          |
+| Startup CPU boost             | `startup-cpu-boost: true` appears in the revision's annotations; the deploy command did not pass a flag for it                                                                                                                                                                                                                                                                        |
+| Port                          | container listens on 8080                                                                                                                                                                                                                                                                                                                                                             |
+| Access                        | public (`allUsers` holds `roles/run.invoker`), because the deploy used `--allow-unauthenticated`                                                                                                                                                                                                                                                                                      |
+| Secrets                       | `GEMINI_API_KEY` from Secret Manager secret `gemini-api-key`, and `STATE_SEAL_KEY` from `state-seal-key`, both at version `latest` and both mounted as environment variables, with no plain-text value on the service. `latest` of `gemini-api-key` is version 3, which holds one key (D46, read since `ayojan-00008-mr7`); versions 1 and 2, which held the seven-key pool, are kept |
+| Image                         | built by Cloud Build from the [Dockerfile](../Dockerfile), stored in the `cloud-run-source-deploy` Artifact Registry repository in `asia-south1`                                                                                                                                                                                                                                      |
 
 The second revision was built from `a9184fe` on 26 Oct 2026 at about 20:15 IST. Over the first
 it adds Hindi wording, the table caption fix, the small-celebration lead times, the slack wording,
@@ -31,8 +31,29 @@ only those needs no deploy.
 
 The third revision was built from `eb37d0d` on 26 Oct 2026 at about 23:20 IST. It adds the privacy
 sentence under every read button, in English and Hindi (`git log --oneline a9184fe..eb37d0d`). The fourth
-was built from `e632246` on 27 Oct 2026 at about 16:20 IST: requests set `store: false`, and a plan
+was built from `e632246` on 27 Oct 2026 at about 21:58 IST: requests set `store: false`, and a plan
 says "Not priced yet" until a comparable quote or a booking exists (`git log --oneline eb37d0d..e632246`).
+It still allowed 3 instances and read the seven-key secret.
+
+The later revisions, all on 27 and 28 Oct 2026:
+
+- `ayojan-00005-zaz`, about 22:05 IST: the `e632246` image without the Gemini secret, tagged
+  `nokey` with no traffic, so the form fallback can be shown on the real image.
+- `ayojan-00006-nhx`, about 23:44 IST, from `3ff942e`: the first with a maximum of 1 instance,
+  still on the seven-key secret (version 2).
+- `ayojan-00008-tes`, about 23:45 IST: the `3ff942e` image without the Gemini secret, tagged
+  `nokey` at 0 percent. It is the keyless twin today; the tag left `ayojan-00005-zaz`.
+- `ayojan-00008-mr7`, about 23:52 IST: the same `3ff942e` image with version 3 of
+  `gemini-api-key`, which holds one of the seven keys (D46). Versions 1 and 2 are kept.
+- `ayojan-00009-v7q`, 28 Oct 2026 at about 00:10 IST, from `1abc9f6`: the ladder's second rung
+  waits 18 s instead of 12 s, and each model call writes one log line (see
+  [DATA_HANDLING.md](DATA_HANDLING.md)). Maximum 1 instance, one key, 100 percent of traffic.
+
+A `--no-traffic` deploy pins traffic to the revision serving at that moment, by name. So after
+the `nokey` deploy of `ayojan-00005-zaz`, the next plain deploy, `ayojan-00006-nhx`, was built and
+got 0 percent; it took traffic only after
+`gcloud run services update-traffic ayojan --region asia-south1 --to-revisions ayojan-00006-nhx=100`.
+Every main deploy since has been routed the same way, by name.
 
 ## The container image
 
@@ -71,11 +92,24 @@ gcloud run deploy ayojan --source "$DEPLOY_DIR" --region asia-south1 \
   --set-secrets=GEMINI_API_KEY=gemini-api-key:latest,STATE_SEAL_KEY=state-seal-key:latest
 ```
 
+Two rules come from the keyless twin, a revision of the same image deployed with `--tag nokey
+--no-traffic` and only the seal key in `--set-secrets`:
+
+- **Pass both secrets on every main deploy.** `--set-secrets` replaces the whole list, so after a
+  `nokey` deploy the service template holds only `STATE_SEAL_KEY`. The command above names both.
+- **After a `nokey` deploy, route traffic explicitly.** Traffic stays pinned by name, so a new main
+  revision gets 0 percent until
+  `gcloud run services update-traffic ayojan --region asia-south1 --to-revisions REVISION_NAME=100`
+  is run; then check `status.traffic`. Do not use `--to-latest` while the keyless revision is the
+  newest, because it would send all traffic to the revision with no Gemini key.
+
 For the first deploy, on 26 Oct 2026, the directory was the archive of `f694edb`. gcloud
 reported "Building using Dockerfile", created the revision `ayojan-00001-jxf`, and routed 100
 percent of traffic to it. The second deploy, the same evening, used the archive of `a9184fe`
 and created `ayojan-00002-7hr`, which took all traffic. The third, from the archive of `eb37d0d`,
-created `ayojan-00003-lx6`; the fourth, from the archive of `e632246`, created `ayojan-00004-4vl`.
+created `ayojan-00003-lx6`; the fourth, from the archive of `e632246`, created `ayojan-00004-4vl`. The main deploys since
+then, from the archives of `3ff942e` and `1abc9f6`, created `ayojan-00006-nhx`, `ayojan-00008-mr7`
+and `ayojan-00009-v7q`, each routed by name as described above.
 
 Why a git archive and not `--source .`:
 
@@ -97,11 +131,12 @@ The flags, and why:
 - `--min-instances=0`: the service scales to zero when idle, so an idle service holds no
   instance. The price is a cold start on the first request after a quiet period.
 - `--max-instances=1`: a flood cannot start a second instance, and the one instance owns the
-  whole daily model budget of 60 actions (one key, three models, about 20 calls each). From the
-  first deploy after 27 Oct 2026 (D46) the service runs on one Gemini key from one project, because pooling
-  free-tier keys from several projects can read as getting around Google's documented usage
-  limits; the limits in [LIMITATIONS.md](LIMITATIONS.md) are sized for that. Revisions up to `ayojan-00004-4vl`
-  ran with a maximum of 3.
+  whole daily model budget of 60 actions (one key, three models, about 20 calls each). The
+  service has run one instance since `ayojan-00006-nhx` and one Gemini key from one project since
+  `ayojan-00008-mr7` (D46, both 27 Oct 2026), because pooling free-tier keys from several
+  projects can read as getting around Google's documented usage limits; the limits in
+  [LIMITATIONS.md](LIMITATIONS.md) are sized for that. Revisions up to `ayojan-00005-zaz` ran with
+  a maximum of 3, and revisions up to `ayojan-00006-nhx` on seven keys.
 - `--timeout=60`: the app's own budget for one model action is 40 seconds
   (`ACTION_BUDGET_MS` in [gateway.ts](../src/server/genai/gateway.ts)), so a slow model fails
   with the app's own message inside Cloud Run's limit and not with a bare 504.
@@ -118,14 +153,16 @@ The flags, and why:
 The project's default compute service account holds `roles/secretmanager.secretAccessor` on
 both. On 26 Oct 2026 `gemini-api-key` had two enabled versions and `state-seal-key` had one.
 `/api/health` reported 7 keys in the pool that day (the public output was trimmed later and no
-longer shows the key count; see the health endpoint section). The move to one key (D46) takes effect at the next deploy:
-`gemini-api-key` gets a version holding one key, and the deploy above sets one instance.
+longer shows the key count; see the health endpoint section). The move to one key (D46) came on
+27 Oct 2026: version 3 of `gemini-api-key` holds one of the seven keys, `ayojan-00008-mr7` was the
+first revision to read it, and versions 1 and 2 are kept.
 
 - **Changing the Gemini key** is `gcloud secrets versions add gemini-api-key --data-file=-`
   with the new key (or comma-separated list) on standard input (`printf`, not `echo`, so there is no
   trailing newline). Cloud Run reads a secret exposed as an environment variable when an
-  instance starts, so a warm instance keeps the old list until it is replaced. This has not
-  been exercised on the live service.
+  instance starts, so a warm instance keeps the old list until it is replaced. Version 3 was added
+  this way on 27 Oct 2026 and read by a new revision; a warm instance picking up a new version
+  was not observed.
 - **Rotating the seal key** makes every plan link issued so far stop opening, because there is
   one key and the link is authenticated with it ([seal-key.ts](../src/server/state/seal-key.ts)).
   Treat it as a break-glass step. While old and new instances overlap, a link sealed by one is
@@ -169,7 +206,7 @@ status and counts, an empty reading cache and no model action yet on that instan
 The endpoint is public and unauthenticated, so the public answer is limited to what an operator
 needs from outside. The key count and the per-key quota counters, which would show how much model
 capacity is left, appear only with `HEALTH_DETAIL=1`. It holds no key material and no user text.
-The numbers describe one instance. With `--max-instances=1` (from the next deploy; revision `ayojan-00004-4vl` allows 3) that is
+The numbers describe one instance. With `--max-instances=1` (since `ayojan-00006-nhx`; revisions up to `ayojan-00005-zaz` allowed 3) that is
 the service, except briefly during a deploy, when an old and a new revision can both answer.
 
 ## Verifying a deploy
@@ -186,7 +223,8 @@ gcloud run services describe ayojan --region asia-south1 \
 The first must answer `"status":"ok"` (the key count is not in the public output; set
 `HEALTH_DETAIL=1` to see it) with the expected counts (20 tasks, 7 levers, 19
 questions), the second must show timeout 60, a maximum of 1 instance and 100 percent of
-traffic on the new revision. Then read one sample brief by hand in a signed-out browser.
+traffic on the new revision (after a `nokey` deploy, only once traffic has been routed by name, see
+above). Then read one sample brief by hand in a signed-out browser.
 
 What was checked against the first revision, `ayojan-00001-jxf`, on 26 Oct 2026 (the `/api/health`
 rows quote the output of that day, which was later trimmed to drop the key count):
@@ -223,6 +261,9 @@ priced yet (add a quote or a booking to compare)" and not "Within budget"; its f
 budget claim; a guest increase through the form gave "over budget by Rs 29,933" (an unpriced plan
 that goes over still says so); and after a venue booking the status became a budget verdict.
 
+What was checked against `ayojan-00009-v7q` on 28 Oct 2026: `npm run smoke` passed 18 of 18
+against the live address, and `/api/health` answered `ok` with `ai: "available"`.
+
 ## Rollback
 
 A rollback is a traffic change; an earlier revision keeps its own image:
@@ -234,30 +275,30 @@ gcloud run services update-traffic ayojan --region asia-south1 --to-revisions RE
 
 Pinning traffic to a named revision stops later deploys from receiving traffic by themselves.
 To return to the newest revision, run `gcloud run services update-traffic ayojan --region
-asia-south1 --to-latest`. Plan links keep opening across revisions while the state schema version
+asia-south1 --to-latest`, unless the newest is a keyless `nokey` revision; then name the main
+revision with `--to-revisions` instead. Plan links keep opening across revisions while the state schema version
 is unchanged and the seal key is the same, which a rollback does not change.
 
 ## Still unverified
 
-- **Rollback has not been run.** Earlier revisions are kept, but traffic has never been moved
-  back to one. The commands above are the documented shape, not an exercised procedure.
+- **Rollback has not been run.** Earlier revisions are kept, and traffic has been moved by name
+  to a new revision with `update-traffic` (27 Oct 2026), but never back to an earlier one. The commands above are the documented shape, not an exercised procedure.
 - **Cold start time has not been measured.** The instance was already warm when it was probed,
   and the first-byte figure above is a warm one. A page carries about 132 KiB of gzip JavaScript
   (see [scripts/measure-pages.mjs](../scripts/measure-pages.mjs)), but how long a cold start
   adds is not known.
 - **Behaviour with more than one running instance under load** (revisions up to
-  `ayojan-00004-4vl` allowed three) was not seen; from D46 the service runs one. The 90-request burst
+  `ayojan-00005-zaz` allowed three) was not seen; since `ayojan-00006-nhx` the service runs one. The 90-request burst
   above ran against whichever instance Cloud Run chose.
 - **The client address on direct `run.app` traffic** is taken to be the entry Google's front end
   appends to `X-Forwarded-For`, from Google's documented behaviour and the made-up-header test
   above. It was only tried from one network.
-- **Adding a secret version while instances are running** was not done as part of this deploy
-  (both versions of `gemini-api-key` predate the revision), and its effect on a warm instance
-  was not observed (see Secrets).
+- **A warm instance reading a new secret version** was not observed. Version 3 of
+  `gemini-api-key` was added on 27 Oct 2026 and read by a newly deployed revision (see Secrets).
 - **The size of the source upload** was not recorded.
 - **A billing budget or alert** was not inspected. A budget alerts and never caps spending.
-- **A tagged revision without the Gemini secret** (for showing the form fallback on the real
-  image) has not been deployed.
+- **The keyless twin** (`ayojan-00008-tes`, tag `nokey`) is deployed, but no check against it is
+  recorded on this page.
 - **A throwaway service named `pw5-deploy-check`** (a ten-line Node server, used on 26 Oct 2026
   to prove Cloud Build, the public URL and the secret binding before the app was deployed) was
   deleted on 26 Oct 2026 at about 20:30 IST, with the owner's okay. It was not part of Ayojan.

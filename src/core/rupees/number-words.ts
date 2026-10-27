@@ -132,3 +132,28 @@ export function lookupQuantity(normalized: string): Quantity | undefined {
 export function lookupPrefix(normalized: string): Prefix | undefined {
   return PREFIXES.get(normalized);
 }
+
+// Words that join the two ends of a range ("do ya teen lakh", "do se teen lakh").
+const RANGE_WORDS: ReadonlySet<string> = new Set(
+  ['ya', 'se', 'aur', 'or', 'या', 'से', 'और'].map((word) => normalizeWord(word)),
+);
+const HYPHEN = 0x2d;
+const EN_DASH = 0x2013;
+const SLASH = 0x2f;
+
+/**
+ * True when only blanks and at most one range joiner (a hyphen, an en dash, a slash, or ya,
+ * se, aur, or) lie between `from` and `to`. A bare number word that close to an amount is
+ * one end of a range, so the amount cannot be read as a single figure.
+ */
+export function joinsRange(text: string, from: number, to: number): boolean {
+  let index = skipBlanks(text, from);
+  const code = text.charCodeAt(index);
+  if (code === HYPHEN || code === EN_DASH || code === SLASH) {
+    index = skipBlanks(text, index + 1);
+  } else if (index < to && isWordCharacter(code)) {
+    const end = readWord(text, index);
+    if (RANGE_WORDS.has(normalizeWord(text.slice(index, end)))) index = skipBlanks(text, end);
+  }
+  return index === to;
+}

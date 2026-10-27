@@ -5,10 +5,14 @@
 // left-to-right pass, every helper only moves forward, and there is no regex at all.
 // Currency markers (Rs, INR, the rupee sign, a trailing "/-") need no handling: they are
 // ordinary non-amount characters that the scan steps over.
+// A number word with no unit right beside an amount ("do-teen lakh", "do sau pachaas") makes
+// that amount one end of a range or an unread compound; it is reported as several amounts,
+// never as the one figure it would otherwise look like (D44).
 
 import { digitValue, readNumber } from './number-token';
 import {
   isWordCharacter,
+  joinsRange,
   lookupAttachedUnit,
   lookupNumeral,
   lookupPrefix,
@@ -19,7 +23,7 @@ import {
   skipBlanks,
 } from './number-words';
 
-export type UnusableReason = 'too-large' | 'fractional';
+export type UnusableReason = 'too-large' | 'fractional' | 'several-amounts';
 
 export type ScanHit =
   | { readonly kind: 'amount'; readonly inr: number; readonly start: number; readonly end: number }
@@ -30,7 +34,7 @@ export type ScanHit =
       readonly end: number;
     };
 
-export type UnclearReason = 'empty' | 'no-amount' | 'several-amounts' | UnusableReason;
+export type UnclearReason = 'empty' | 'no-amount' | UnusableReason;
 
 export type ParsedAmount =
   | { readonly kind: 'amount'; readonly inr: number }
@@ -79,6 +83,8 @@ function exactRupees(
 interface Scanned {
   readonly hit: ScanHit | null;
   readonly next: number;
+  /** A table number word with no unit after it, which may be one end of a range. */
+  readonly bare?: boolean;
 }
 
 function wordAt(text: string, start: number): { word: string; end: number } {
@@ -133,7 +139,8 @@ function scanHindiWords(text: string, start: number): Scanned {
   const skip: Scanned = { hit: null, next: first.end };
   const quantity = lookupQuantity(first.word);
   if (quantity !== undefined) {
-    return quartersHit(quantity.quarters, skipBlanks(text, first.end), text, start) ?? skip;
+    const read = quartersHit(quantity.quarters, skipBlanks(text, first.end), text, start);
+    return read ?? { ...skip, bare: true };
   }
   const prefix = lookupPrefix(first.word);
   if (prefix === undefined) return skip;
@@ -144,22 +151,37 @@ function scanHindiWords(text: string, start: number): Scanned {
 }
 
 /** Every amount in `text`, in order, with its position. Unreadable ones are reported as such. */
+function severalAmounts(start: number, end: number): ScanHit {
+  return { kind: 'unusable', reason: 'several-amounts', start, end };
+}
+
 export function scanAmounts(text: string): ScanHit[] {
   const hits: ScanHit[] = [];
+  let bareStart = -1;
+  let bareEnd = -1;
   let index = 0;
   while (index < text.length) {
     const code = text.charCodeAt(index);
-    if (digitValue(code) >= 0) {
-      const scanned = scanNumeric(text, index);
-      if (scanned.hit !== null) hits.push(scanned.hit);
-      index = scanned.next;
-    } else if (isWordCharacter(code)) {
-      const scanned = scanHindiWords(text, index);
-      if (scanned.hit !== null) hits.push(scanned.hit);
-      index = scanned.next;
-    } else {
+    let scanned: Scanned | null = null;
+    if (digitValue(code) >= 0) scanned = scanNumeric(text, index);
+    else if (isWordCharacter(code)) scanned = scanHindiWords(text, index);
+    if (scanned === null) {
       index += 1;
+      continue;
     }
+    const last = hits.at(-1);
+    if (scanned.bare === true) {
+      if (last !== undefined && joinsRange(text, last.end, index)) {
+        hits[hits.length - 1] = severalAmounts(last.start, scanned.next);
+      }
+      bareStart = index;
+      bareEnd = scanned.next;
+    } else if (scanned.hit !== null) {
+      const { hit } = scanned;
+      const ranged = bareEnd >= 0 && joinsRange(text, bareEnd, hit.start);
+      hits.push(ranged ? severalAmounts(bareStart, hit.end) : hit);
+    }
+    index = scanned.next;
   }
   return hits;
 }

@@ -68,8 +68,11 @@ export async function runChangeChecks({ call, check, origin, token, eventDate })
     if (state.revision === null) return { ok: false, detail: 'no revision link' };
     const { status, text } = await call(`/en/p/${state.revision}/revision`);
     const diff = text.includes('id="diff-table"');
-    const section = /id="reconfirm-heading"[\s\S]*$/.exec(text)?.[0] ?? '';
-    const item = section.includes('Needs re-confirmation') && /Venue/i.test(section);
+    // Scoped to the section and to the venue's own list item, so a stray "Venue" in the Undo form
+    // or the footer, or another vendor needing re-confirmation, cannot pass the check.
+    const section = /<section id="reconfirm"[\s\S]*?<\/section>/.exec(text)?.[0] ?? '';
+    const venueItem = /<li[^>]*>\s*<p[^>]*font-semibold[^>]*>\s*Venue[\s\S]*?<\/li>/i.exec(section);
+    const item = venueItem !== null && venueItem[0].includes('Needs re-confirmation');
     return {
       ok: status === 200 && diff && item,
       detail:
@@ -83,12 +86,15 @@ export async function runChangeChecks({ call, check, origin, token, eventDate })
     const back = tokenIn(res, '');
     const page = back === null ? null : await call(`/en/p/${back}`);
     const heading = planHeading(page?.text ?? '');
-    const ok = heading !== null && heading === state.bookedHeading && page.status === 200;
+    const html = page?.text ?? '';
+    // The heading proves the op was popped; the figures prove the content came back.
+    const budget = /Rs\s*8,00,000/.test(html) && !/Rs\s*7,00,000/.test(html);
+    const ok = heading !== null && heading === state.bookedHeading && page.status === 200 && budget;
     return {
       ok,
       detail: ok
         ? ''
-        : `status ${res.status || res.error}, heading ${heading} vs ${state.bookedHeading}`,
+        : `status ${res.status || res.error}, heading ${heading} vs ${state.bookedHeading}, budget restored ${budget}`,
     };
   });
 }

@@ -25,6 +25,8 @@ function polyfillNames(buildDir) {
     const manifest = JSON.parse(readFileSync(join(buildDir, 'build-manifest.json'), 'utf8'));
     return new Set((manifest.polyfillFiles ?? []).map((file) => basename(file)));
   } catch {
+    // Without the manifest the polyfill chunk is counted, so say why the total may look high.
+    console.warn('build-manifest.json unreadable, counting the polyfill chunk');
     return new Set();
   }
 }

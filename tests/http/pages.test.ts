@@ -107,7 +107,8 @@ describe('GET /[lang]/p/[token] (plan page)', () => {
     const why = /<details[\s\S]*?ये आँकड़े क्यों\?[\s\S]*?<\/details>/.exec(html)?.[0] ?? '';
     expect(why).toContain('<span lang="hi" class="font-medium">खाना-पीना</span>');
     expect(why).not.toContain('>Catering<');
-    expect(html).not.toContain('::');
+    // Visible text only: class names such as [&::-webkit-details-marker] legitimately hold '::'.
+    expect(html.replace(/<[^>]*>/g, '')).not.toContain('::');
   });
 
   it('shows the timeline with a status word and an icon for every task', async () => {

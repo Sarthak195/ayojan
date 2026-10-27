@@ -46,7 +46,7 @@ export interface AppliedLeverLine {
 }
 
 /**
- * `not-priced` while no category has a quote or a booking: the projection is then only the budget
+ * `not-priced` while no category has a comparable quote or booking: the projection is then only the budget
  * split by the planning weights, so "within budget" would be true by construction.
  */
 export type HeadlineStatus = Projection['status'] | 'not-priced';
@@ -181,7 +181,9 @@ export function planVersion(
   if (!comparisons.ok) return comparisons;
   const raisedInr = walk.value.raises.reduce((total, raise) => total + raise.amountInr, 0);
   const { projection } = application;
-  const priced = walk.value.quotes.length > 0 || evidence.bookings.length > 0;
+  // Only a comparable quote or a booking puts a category in the evidence map; unclear or
+  // over-cap quotes leave the projection as the plain budget split.
+  const priced = Object.keys(evidence.evidence).length > 0;
   return planOk({
     version: inputs.ops.length,
     brief,
@@ -194,7 +196,7 @@ export function planVersion(
       venue: venueCapacityOf(walk.value.done, context.tasks, brief.venueCapacity),
       projected: projection.projectedTotal,
       gap: projection.gap,
-      // An overshoot is real even before pricing (a must-have floor), so it is never hidden.
+      // A guest increase or a budget cut can push the split past the budget before any pricing, so an overshoot is never hidden.
       status: !priced && projection.status === 'within-budget' ? 'not-priced' : projection.status,
     },
     money: {

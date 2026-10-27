@@ -5,7 +5,17 @@ import { describe, expect, it } from 'vitest';
 import { Headline } from '@/app/[lang]/p/[token]/_plan/headline';
 import { dictionaryFor } from '@/i18n/dictionary';
 
-import { briefOp, change, first, QUOTE_A, versionOf, VENUE_BOOKED } from './plan-fixture';
+import {
+  AI_READ,
+  briefOp,
+  CATERER_A,
+  change,
+  EXPLAINER_CHANGE,
+  first,
+  QUOTE_A,
+  versionOf,
+  VENUE_BOOKED,
+} from './plan-fixture';
 
 const status = (ops: Parameters<typeof versionOf>[0]): string => versionOf(ops).headline.status;
 
@@ -14,6 +24,23 @@ describe('headline status before anything is priced', () => {
     expect(status([briefOp()])).toBe('not-priced');
     expect(status([briefOp(), change({ budgetInr: 900_000, sources: ['more budget'] })])).toBe(
       'not-priced',
+    );
+  });
+
+  it('is not-priced while every quote is unclear, since nothing is comparable', () => {
+    const unclear = { ...CATERER_A, rateInr: null };
+    expect(status([briefOp(), { kind: 'quoteAdded', quote: unclear, readBy: AI_READ }])).toBe(
+      'not-priced',
+    );
+  });
+
+  it('stays over-budget before pricing when a change alone overshoots the budget', () => {
+    expect(status([briefOp(), EXPLAINER_CHANGE])).toBe('over-budget');
+  });
+
+  it('keeps over-budget before pricing, never hiding an overshoot', () => {
+    expect(status([briefOp(), change({ guests: 400, sources: ['400 guests now'] })])).toBe(
+      'over-budget',
     );
   });
 
@@ -58,6 +85,7 @@ describe('headline status words and row', () => {
       expect(html).toContain(reason);
       expect(html).not.toContain(dictionaryFor(lang).plan.withinBudget);
       expect(html).not.toContain('M4 10.5l4 4 8-9');
+      expect(html).toContain('M10 9v5');
     },
   );
 

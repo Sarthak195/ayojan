@@ -199,6 +199,7 @@ async function views(): Promise<View[]> {
     planView('check, quote', quoteCheck, '/check', CheckPage),
     planView('check, change', changeCheck, '/check', CheckPage),
     planView('plan', quoted, '', PlanPage),
+    planView('plan, not priced', planToken(), '', PlanPage),
     planView('plan, over budget', OVER_BUDGET_TOKEN, '', PlanPage),
     {
       name: 'quotes',

@@ -15,7 +15,13 @@ automated and tool-based, and the gaps section lists what they cannot show.
   Sections below it use `h2` with `aria-labelledby`.
 - **Landmarks.** Every page has a `header`, a `main` and a `footer`
   ([layout.tsx](../src/app/layout.tsx)). The language switch is a labelled `nav`, and the plan
-  page adds a labelled "jump to" `nav` for its sections.
+  page adds a labelled "Jump to" `nav` for its sections (money, tasks, the change box, the ledger,
+  what to do next) and for the quotes, trade-offs and messages pages.
+- **A distinct title on every page** (WCAG 2.4.2), in the page's own language, such as "Start a
+  plan: Ayojan" or "योजना शुरू करें: Ayojan". The plan page title is built from its heading
+  (version, occasion and date), never from the link or the user's text, and a problem page
+  takes its heading as its title ([page-title.ts](../src/i18n/page-title.ts),
+  [tests/http/page-titles.test.ts](../tests/http/page-titles.test.ts)).
 - **Skip link first.** "Skip to main content" is the first focusable element and moves focus to
   `main` ([skip-link.tsx](../src/components/layout/skip-link.tsx)). It is hidden until it
   receives focus.
@@ -69,8 +75,9 @@ automated and tool-based, and the gaps section lists what they cannot show.
 - Radio and checkbox groups are `fieldset` elements with a `legend`
   ([choice-group.tsx](../src/components/form/choice-group.tsx)).
 - Amount and count fields use `inputmode="numeric"`, so a phone opens the number pad.
-- On the start page the read buttons are described by a sentence saying that reading can take
-  a while, so the wait is announced with the button.
+- Every read button (and the "Write it with AI" button on the messages page) is described by a
+  sentence saying that it can take up to 40 seconds and that Gemini's free tier may use what is
+  sent, so the wait and the privacy note are announced with the button.
 
 ### Tables
 
@@ -79,7 +86,9 @@ automated and tool-based, and the gaps section lists what they cannot show.
   `aria-labelledby` pointing at the caption ([scroll-table.tsx](../src/components/table/scroll-table.tsx)).
   Turning rows into cards with CSS would strip the table semantics in some browsers, so it is
   not done. The caption is pinned to the left edge of the region so its sentence stays readable
-  while the columns scroll.
+  while the columns scroll, the first column (the row label) stays in place, edge shadows show
+  that there is more to the side, and below 640 px a short hint above the table says it scrolls
+  sideways.
 
 ### Announcements after a submit
 
@@ -135,16 +144,17 @@ automated and tool-based, and the gaps section lists what they cannot show.
 process, wraps each in the same shell the root layout builds (skip link, header, `main`,
 footer), loads the result into jsdom, and runs axe-core 4.14.0 on it, in both `en` and `hi`.
 
-It covers 12 page states: the start page, the form twin, the form twin after a failed read,
-the check page for a brief, a quote and a change, the plan, an over-budget plan, the quotes
+It covers 13 page states: the start page, the form twin, the form twin after a failed read,
+the check page for a brief, a quote and a change, the plan, a plan with nothing priced yet, an
+over-budget plan, the quotes
 page, the revision page with levers, the revision page after a change, and the messages page.
 It also renders all 13 problem pages (not found, damaged link, link full, operation cap, too
 many requests, wrong type, too large, malformed, text too long, cannot apply, nothing to undo,
-nothing pending, server error). That is 25 renderings per language.
+nothing pending, server error). That is 26 renderings per language.
 
 The test has three cases: one that axe does flag a missing image alt (so a clean run means
 something), and one per language that expects no violations and an `h1` on every view. Result
-on 26 October 2026: 3 passed, no violations. Because jsdom computes no layout, the
+on 27 October 2026 at commit `3ff942e`: 3 passed, no violations. Because jsdom computes no layout, the
 `color-contrast` rule is switched off in this test and checked in a browser instead (below).
 
 ### Manual and tool runs on 26 October 2026

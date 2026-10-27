@@ -84,6 +84,18 @@ words are kept as a note. With under about 18 days' notice, the venue and catere
 celebration still shows Late, because the remaining days are fewer than the lead times, and a
 finish-by date that has already passed is shown as a date, with no "start now" wording.
 
+### It suggests no themes or ideas
+
+Ayojan does not generate decor concepts, themes, menus or other ideas. The reason is in the
+design rule: a value from the model counts only if its quote is found in the user's own words
+([ADR 0002](adr/0002-grounding-by-verbatim-quote.md)), and an idea is not in the user's text, so
+it cannot be quoted and code cannot check it. An idea list would be the one output a family might
+act on that nothing verifies. The same reasoning is in
+[GENAI_SERVICES.md](GENAI_SERVICES.md#8-considered-and-rejected). What the app does instead is
+ask: guest needs, diet and venue limits change the tasks, the levers and the vendor questions,
+and anything else the user names is kept as a note and never used in a decision. A user who wants
+ideas has to bring them.
+
 ### The reader asks instead of guessing
 
 A vague date such as "end of February", a budget range ("5 to 6 lakh"), a budget given per
@@ -100,11 +112,12 @@ trusted). The cost is real: a user who has only a rough figure must still type o
 correctly read brief can still come back with several questions. A quote longer than 160
 characters makes that one field unverified and the rest of the reading continues.
 
-One narrow exception: when the model marks a budget as given but returns no amount, code reads
-the amount from the quoted words with the same parser as the form ("budget dedh lakh" becomes
-Rs 1,50,000), and the quote is still checked against the text
-([read-brief.ts](../src/server/pipeline/read-brief.ts)). The guest count has no such step, so
-"do sau log" is still asked about. The line "N of M values matched your words" counts only
+One narrow exception: when the model marks a budget or a guest count as given but returns no
+number, code reads it from the quoted words with the same parser as the form ("budget dedh lakh"
+becomes Rs 1,50,000), and the quote is still checked against the text
+([read-brief.ts](../src/server/pipeline/read-brief.ts)). **Fixed on 27 Oct 2026 (`5f4a508`):**
+the guest count used to have no such step, so "do sau log" was asked about; it now fills 200,
+while a range or a number outside the guest bounds is still asked. The line "N of M values matched your words" counts only
 verified values: a quote that was found but whose number is out of range or not written in it
 gets its own badge ("In your words, but needs your answer"), and still counts as not matched.
 
@@ -113,9 +126,12 @@ gets its own badge ("In your words, but needs your answer"), and still counts as
 The interface exists in English and Hindi, and the family-update templates in both. Texts
 typed in Hindi, English or a mix are read by the model. The Hindi was written and then reviewed with AI assistance in one pass on 26 Oct 2026;
 it is not a professional translation and no native-speaker proofreader is recorded. The
-scanner that checks amounts reads digits, the units lakh, crore and hazaar, and a closed table
-of about 15 Hindi number words ("do lakh", "dedh lakh"). Any other number word, such as English
-"eight" or Hindi "pachaas", is left unread, so the user is asked for the figure.
+scanner that checks amounts reads digits, the units sau, hazaar, lakh and crore, and a closed
+table of Hindi number words: ek to das, the tens bees to nabbe, dedh, dhai, sava, saadhe and
+paune ("do lakh", "pachaas hazaar", "dedh sau"; `edbe882`, `3fb00cd`). A number word counts only
+with a unit after it, so "ke saath" stays a word. Any other number word, such as English "eight"
+or Hindi "pachpan", is left unread, and a compound or a range ("do sau pachaas", "do-teen lakh")
+is read as several amounts, so the user is asked for the figure.
 
 ## The money model is simple on purpose
 

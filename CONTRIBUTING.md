@@ -51,6 +51,14 @@ run `npx prettier --write` on the files you changed.
   like an API key. A 250-line cap on files in `src` and `scripts` (tests are exempt). Comments say
   why, not what. `npm run check:api`, `check:size` and `check:repo` enforce the strings, the line cap
   and the size cap. One branch and no binaries are kept by review, not by a script.
+- **Imports.** Across top-level areas (`src/core`, `src/schemas`, `src/server`, `src/components`,
+  `src/i18n`, `src/app`) use the `@/` alias, for example `@/core/money/money`. Inside one feature
+  folder (a route's `_change` or `_quote` folder, or a `src/core` area and its siblings) use relative
+  paths. ESLint does not enforce this; review does. The purity rule for `src/core` is separate and
+  is enforced.
+- **Ids in comments.** A comment or test name may cite an id such as `FR-24`, `NFR-SEC-2` or `D18`.
+  Ids in comments are defined in [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md); add a row there when
+  you cite a new one, and do not cite an id that page does not define.
 - **Next.js 16 is not the Next.js in most examples.** Read the matching guide in
   `node_modules/next/dist/docs/` before writing framework code, and heed deprecation notices
   (`src/proxy.ts` replaces `middleware.ts`).
@@ -172,3 +180,4 @@ replay test, and give it a reply schema with no field that could confirm, rank o
 - [`SECURITY.md`](SECURITY.md) and [`docs/ACCESSIBILITY.md`](docs/ACCESSIBILITY.md): controls, tests
   and known gaps.
 - [Decision records](docs/adr): why the design is the way it is.
+- [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md): what the ids in comments (`FR-24`, `D18`, "architecture 4.5") mean.

@@ -33,8 +33,12 @@ export interface PhrasePack {
     readonly leverAdds: (label: string, amount: string) => string;
     readonly attention: (items: string) => string;
     readonly attentionItem: (name: string, status: string, due: string) => string;
-    /** A Late task says what to do, not "late, due by" a date still ahead (D45). */
-    readonly lateItem: (name: string, due: string) => string;
+    /**
+     * A Late task says what to do, not "late, due by" a date still ahead (D45). It tells the
+     * family to start today only when the plan page does; a task waiting on another or on a
+     * recorded delay gets the wait, or no instruction when the date alone would be a guess.
+     */
+    readonly lateItem: (name: string, due: string, start: 'today' | 'after' | 'on') => string;
     readonly vendors: (count: number, names: string) => string;
     readonly unclear: (items: string) => string;
     readonly unclearItem: (vendor: string, fields: string) => string;

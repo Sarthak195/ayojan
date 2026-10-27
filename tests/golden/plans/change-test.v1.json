@@ -997,7 +997,8 @@
           "hi": "वेन्यू बुक करें"
         },
         "status": "atRisk",
-        "dueBy": "2026-11-18"
+        "dueBy": "2026-11-18",
+        "start": "today"
       },
       {
         "taskId": "book-caterer",
@@ -1006,7 +1007,8 @@
           "hi": "केटरर बुक करें"
         },
         "status": "atRisk",
-        "dueBy": "2026-11-28"
+        "dueBy": "2026-11-28",
+        "start": "after"
       }
     ],
     "vendors": [],

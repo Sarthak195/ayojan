@@ -55,7 +55,11 @@ export const HINDI: PhrasePack = {
     leverAdds: (label, amount) => `${label} (${amount} बढ़ेंगे)`,
     attention: (items) => `ध्यान देने वाले काम: ${items}।`,
     attentionItem: (name, status, due) => `${name} (${status}, आख़िरी तारीख़ ${due})`,
-    lateItem: (name, due) => `${name} (समय से पीछे, ${due} तक होना है: आज ही शुरू करें)`,
+    // आख़िरी तारीख़ has no tense, so it holds for a date already gone; matches attentionItem.
+    lateItem: (name, due, start) =>
+      start === 'on'
+        ? `${name} (समय से पीछे, आख़िरी तारीख़ ${due})`
+        : `${name} (समय से पीछे, आख़िरी तारीख़ ${due}: ${start === 'today' ? 'आज ही शुरू करें' : 'पिछला काम होते ही शुरू करें'})`,
     vendors: (count, names) => `हम ${String(count)} वेंडर से सवाल पूछेंगे: ${names}।`,
     unclear: (items) => `क़ीमत की ये बातें अभी साफ़ नहीं हैं: ${items}।`,
     unclearItem: (vendor, fields) => `${vendor} (${fields})`,

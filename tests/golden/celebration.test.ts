@@ -114,11 +114,12 @@ describe('a celebration at short notice', () => {
   });
 
   it('plans a birthday 6 days away with no Late task, a choreographer included', () => {
-    for (const mustHaves of [
+    const groups: Brief['mustHaves'][] = [
       [],
       ['choreographer'],
       ['mehndiArtist', 'choreographer', 'dhol'],
-    ] as const) {
+    ];
+    for (const mustHaves of groups) {
       const view = viewFor('birthday', '2026-11-01', mustHaves);
       expect(statuses(view).late).toBeUndefined();
     }

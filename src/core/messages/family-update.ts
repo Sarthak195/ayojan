@@ -62,7 +62,7 @@ function attentionLine(facts: MessageFacts, language: Language): string[] {
     const name = localized(task.name, language);
     const due = dateText(task.dueBy, language);
     return task.status === 'late'
-      ? pack.sentences.lateItem(name, due)
+      ? pack.sentences.lateItem(name, due, task.start)
       : pack.sentences.attentionItem(name, pack.status.atRisk, due);
   });
   return [pack.sentences.attention(items.join(', '))];

@@ -36,6 +36,11 @@ export interface AtRiskTask {
   readonly name: LocalText;
   readonly status: 'late' | 'atRisk';
   readonly dueBy: IsoDate;
+  /**
+   * What the plan page tells a Late task to do, so the family hears the same thing: start now,
+   * start once its binding predecessor is done, or start on a date a recorded delay sets.
+   */
+  readonly start: 'today' | 'after' | 'on';
 }
 
 export interface VendorFact {

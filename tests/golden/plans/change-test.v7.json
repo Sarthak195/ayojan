@@ -2368,7 +2368,8 @@
           "hi": "केटरर बुक करें"
         },
         "status": "atRisk",
-        "dueBy": "2026-11-14"
+        "dueBy": "2026-11-14",
+        "start": "today"
       },
       {
         "taskId": "book-decorator",
@@ -2377,7 +2378,8 @@
           "hi": "डेकोरेटर बुक करें"
         },
         "status": "atRisk",
-        "dueBy": "2026-11-29"
+        "dueBy": "2026-11-29",
+        "start": "on"
       },
       {
         "taskId": "book-photographer",
@@ -2386,7 +2388,8 @@
           "hi": "फ़ोटोग्राफ़र बुक करें"
         },
         "status": "atRisk",
-        "dueBy": "2026-11-14"
+        "dueBy": "2026-11-14",
+        "start": "today"
       }
     ],
     "vendors": [

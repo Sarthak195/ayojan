@@ -11,7 +11,7 @@ import {
 } from '@/core/messages/templates';
 import type { Language } from '@/core/rupees/format';
 
-import { REVISED, VENUE, dataQuestions, makeFacts, questionRow } from './facts-fixture';
+import { REVISED, VENUE, dataQuestions, date, makeFacts, questionRow } from './facts-fixture';
 
 const LANGUAGES: readonly Language[] = ['en', 'hi'];
 
@@ -92,6 +92,44 @@ describe('the family update template', () => {
     expect(text).toContain('We will send questions to 2 vendors: Caterer A, Venue.');
     expect(text).toContain('Caterer A (tax rate)');
     expect(text).toContain('Kept in mind: vegetarian food only, everything indoors.');
+  });
+
+  it('says what a Late task waits on, in step with the plan page, in both languages', () => {
+    type Start = 'today' | 'after' | 'on';
+    const textOf = (start: Start, dueBy: string, language: Language): string =>
+      familyUpdateTemplate(
+        makeFacts({
+          atRisk: [
+            {
+              taskId: 'final-headcount',
+              name: { en: 'Final headcount', hi: 'अंतिम गिनती' },
+              status: 'late',
+              dueBy: date(dueBy),
+              start,
+            },
+          ],
+        }),
+        language,
+      ).text;
+    // A due date already past (today is 26 Oct) and one still ahead read the same in English.
+    for (const [dueBy, when] of [
+      ['2026-10-25', '25 Oct 2026'],
+      ['2026-11-20', '20 Nov 2026'],
+    ] as const) {
+      expect(textOf('today', dueBy, 'en')).toContain(`(behind schedule for ${when}: start today)`);
+      expect(textOf('after', dueBy, 'en')).toContain(
+        `(behind schedule for ${when}: start when the earlier step is done)`,
+      );
+      expect(textOf('on', dueBy, 'en')).toContain(`(behind schedule for ${when})`);
+    }
+    const hi = (start: Start): string => textOf(start, '2026-10-25', 'hi');
+    expect(hi('today')).toContain('(समय से पीछे, आख़िरी तारीख़ 25 अक्टूबर 2026: आज ही शुरू करें)');
+    expect(hi('after')).toContain(
+      '(समय से पीछे, आख़िरी तारीख़ 25 अक्टूबर 2026: पिछला काम होते ही शुरू करें)',
+    );
+    expect(hi('on')).toContain('(समय से पीछे, आख़िरी तारीख़ 25 अक्टूबर 2026)');
+    // "तक होना है" is future tense: wrong for a date that has passed.
+    expect(hi('after')).not.toContain('तक होना है');
   });
 
   it('adds a lakh word only when it reads back as the same rupees', () => {

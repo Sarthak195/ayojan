@@ -55,6 +55,13 @@ function atRiskTasks(version: PlanVersion): AtRiskTask[] {
       name: { en: task.en, hi: task.hi },
       status: task.status,
       dueBy: task.latestFinish,
+      // Same order as the plan page's late line: a predecessor, then a recorded delay, then now.
+      start:
+        task.bindingPredecessor !== null
+          ? 'after'
+          : task.earliestStart > version.schedule.today
+            ? 'on'
+            : 'today',
     });
   }
   return tasks;

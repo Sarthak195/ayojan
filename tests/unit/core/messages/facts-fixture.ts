@@ -43,6 +43,7 @@ export const REVISED: MessageFactsInput = {
       name: { en: 'Print invitations', hi: 'निमंत्रण छपवाना' },
       status: 'late',
       dueBy: date('2026-11-20'),
+      start: 'today',
     },
   ],
   vendors: [

@@ -134,10 +134,13 @@ typed in Hindi, English or a mix are read by the model. The Hindi was written an
 it is not a professional translation and no native-speaker proofreader is recorded. The
 scanner that checks amounts reads digits, the units sau, hazaar, lakh and crore, and a closed
 table of Hindi number words: ek to das, the tens bees to nabbe, dedh, dhai, sava, saadhe and
-paune ("do lakh", "pachaas hazaar", "dedh sau"; `edbe882`, `3fb00cd`). A number word counts only
-with a unit after it, so "ke saath" stays a word. Any other number word, such as English "eight"
-or Hindi "pachpan", is left unread, and a compound or a range ("do sau pachaas", "do-teen lakh")
-is read as several amounts, so the user is asked for the figure.
+paune ("do lakh", "pachaas hazaar", "dedh sau"; `edbe882`, `3fb00cd`). Sixty is read only as
+Devanagari साठ: Latin "saath" is also a spelling of saat (7) and means "with", so "saath lakh" is
+asked. Any other number word, such as English "eight" or Hindi "pachpan", is left unread, and a
+compound or a range ("do sau pachaas", "do-teen lakh", "do to teen lakh", "pachees-tees hazaar",
+"do sau hazaar") is read as several amounts, so the user is asked for the figure. Grounding reads
+a quote's numbers from the whole text, so a quote cut from one end of a range is not verified,
+and a brief's budget, guest count and venue capacity must be the only amount in their quote.
 
 ## The money model is simple on purpose
 

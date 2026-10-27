@@ -26,8 +26,10 @@ question with no default.
   the reason text instead of being pre-filled. A blank form field is a question, never a zero.
   The venue capacity may stay empty.
 - **Vague input is not resolved by guessing.** A vague date such as "Feb end mein" is `unclear`; a day and month with no year are resolved by code against today, never by the model, and a date that has passed becomes a question.
-  Number words outside the closed table (English "eight", Hindi "pachpan") are left unread
-  ([`number-words.ts`](../../src/core/rupees/number-words.ts)). A change that moves a budget in a
+  Number words outside the closed table (English "eight", Hindi "pachpan", Latin "saath",
+  which may mean 60, 7 or "with") are left unread
+  ([`number-words.ts`](../../src/core/rupees/number-words.ts)), and an unread Hindi numeral
+  beside an amount ("pachees-tees hazaar") makes a range that is asked, never its far end. A change that moves a budget in a
   direction only asks "By how much?", and a day shift that disagrees with a written date asks
   "Which date?".
 - **A total is only as known as its inputs.** In

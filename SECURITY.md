@@ -156,8 +156,9 @@ The plan is `{ schema, ops, pending? }`: inputs and confirmed steps, never compu
   both are mounted from Secret Manager, not set as plain environment values.
 - `src/server/config/key-pool.ts` and `src/server/state/seal-key.ts` read the environment on
   each call, so `next build` needs no secret. Errors name the variable and never its value.
-  Key pool entries are referred to by index in logs, and in `/api/health` only under `detail` when
-  `HEALTH_DETAIL=1` is set.
+  No log line names a key or its position in the pool: the logger's allowlist has a `keyIndex`
+  field, but no log call writes it. A key's index appears only in `/api/health` under `detail`,
+  when `HEALTH_DETAIL=1` is set.
 - `.env*` is ignored by git except `.env.example`, which holds no value. `.dockerignore` and
   `.gcloudignore` exclude `.env*` because `next build` would otherwise copy one into the
   standalone output.
@@ -268,7 +269,9 @@ value, not the rules.
   for the production dependencies. Next.js is 16.4.2.
 - CI runs `npm audit --omit=dev --audit-level=high` right after `npm ci`, so a new high or
   critical advisory in a production dependency fails the build. Lower severities and dev-only
-  packages are not gated. `package.json` lists dev tooling (including `jsdom` and
+  packages are not gated. Automatic dependency-update pull requests (Dependabot or Renovate)
+  are not used, because the contest requires a repository with a single branch and each such
+  pull request opens a branch; the `npm audit` step in CI takes their place. `package.json` lists dev tooling (including `jsdom` and
   `axe-core` for the accessibility tests) that is not shipped: the `Dockerfile` copies only the
   standalone build, static files and the data the app reads.
 - No third-party script, font, stylesheet or image host appears in a page, and the CSP lists

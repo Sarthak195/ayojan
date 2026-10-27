@@ -14,21 +14,23 @@ npm ci
 npm run verify
 ```
 
-`npm run verify` runs seven steps in order and stops at the first failure:
+`npm run verify` runs eight steps in order and stops at the first failure:
 
-| Step       | Command              | What it checks                                                                                         |
-| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------ |
-| Type check | `npm run typecheck`  | `next typegen`, then `tsc --noEmit`                                                                    |
-| Lint       | `npm run lint`       | ESLint with strict type-aware rules, including the purity boundary of `src/core`                       |
-| Data       | `npm run validate`   | Loads `data/*.yaml` the way the server does, and checks that `src/schemas/generated/ids.ts` is current |
-| Tests      | `npm run test`       | The whole Vitest suite, offline: `tests/setup.ts` makes any network call throw                         |
-| File size  | `npm run check:size` | No file in `src` or `scripts` is longer than 250 lines                                                 |
-| Forbidden  | `npm run check:api`  | Banned patterns and key-shaped strings in every tracked and untracked file                             |
-| Repo size  | `npm run check:repo` | The git object database, history included, is under 9 MB (the contest cap is 10 MB)                    |
+| Step       | Command                | What it checks                                                                                         |
+| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------ |
+| Type check | `npm run typecheck`    | `next typegen`, then `tsc --noEmit`                                                                    |
+| Lint       | `npm run lint`         | ESLint with strict type-aware rules, including the purity boundary of `src/core`                       |
+| Format     | `npm run format:check` | Prettier finds every file already formatted                                                            |
+| Data       | `npm run validate`     | Loads `data/*.yaml` the way the server does, and checks that `src/schemas/generated/ids.ts` is current |
+| Tests      | `npm run test`         | The whole Vitest suite, offline: `tests/setup.ts` makes any network call throw                         |
+| File size  | `npm run check:size`   | No file in `src` or `scripts` is longer than 250 lines                                                 |
+| Forbidden  | `npm run check:api`    | Banned patterns and key-shaped strings in every tracked and untracked file                             |
+| Repo size  | `npm run check:repo`   | The git object database, history included, is under 9 MB (the contest cap is 10 MB)                    |
 
-CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `npm audit --omit=dev --audit-level=high` after `npm ci`, then the same steps, then `npm run build`,
-with no API key. No test needs a key. `npm run format:check` (Prettier) is not part of `verify`, so
-run `npx prettier --write` on the files you changed.
+CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs `npm audit --omit=dev --audit-level=high` after `npm ci`, then the same steps (the tests as
+`npm run coverage`, which runs the same suite and measures `src/core`), then `npm run build`, with
+no API key. No test needs a key. Run `npx prettier --write` on the files you changed so the format
+check passes.
 
 ## The repository rules
 

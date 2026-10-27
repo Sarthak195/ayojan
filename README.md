@@ -54,7 +54,7 @@ Every output is one of three kinds, and only the first and the third involve a m
 ### The big ideas
 
 1. **Gemini reads, code decides.** The model's schemas are its whole vocabulary: closed enums, no field for confirmation, availability, ranking or a total. Budgets, schedules, comparisons and trade-offs are computed in [`src/core`](src/core) from [`data/`](data). Text the user pastes is data, wrapped in a delimiter and never treated as instructions ([`src/server/prompts/shared/guardrails.ts`](src/server/prompts/shared/guardrails.ts)).
-2. **Every claim carries a quote, and code checks the quote.** Each value the model returns comes with the words it came from. [`src/core/grounding`](src/core/grounding) finds the quote in the input (exact first, then with whitespace, emoji, smart quotes and WhatsApp timestamps normalised) and, for numbers, parses the number out of its own quote with an Indian-number parser that understands lakh, crore, "k", Devanagari digits and Hindi number words. The check page shows each value beside its quote and "N of M values matched your words". A value that fails is shown as unverified, never dropped and never silently accepted.
+2. **Every claim carries a quote, and code checks the quote.** Each value the model returns comes with the words it came from. [`src/core/grounding`](src/core/grounding) finds the quote in the input (exact first, then with whitespace, emoji, smart quotes and WhatsApp timestamps normalised) and, for numbers, reads the amounts at the quote in the whole text (so a quote cut from one end of a range does not pass, and a budget, guest count or venue capacity must be the only amount in its quote) with an Indian-number parser that understands lakh, crore, "k", Devanagari digits and Hindi number words. The check page shows each value beside its quote and "N of M values matched your words". A value that fails is shown as unverified, never dropped and never silently accepted.
 3. **Unknowns become questions.** Every field is three-valued (present, absent, unclear). An unclear or unverified value turns into a question with no preselected answer. A brief cannot be confirmed without an occasion, budget, guest count and date. The rest can stay "not sure".
 4. **The plan lives in the link, with no database.** The plan is a list of confirmed operations (brief, quote, task done, task delayed, change, levers applied). Everything on screen (the plan, the ledger, the diff, the kept list, Undo) is derived by folding that list ([`src/core/plan/fold.ts`](src/core/plan/fold.ts)). The list is compressed and sealed with AES-256-GCM into the URL path ([`src/server/state/seal.ts`](src/server/state/seal.ts), [`token-codec.ts`](src/server/state/token-codec.ts)). Sharing the link shares the plan. A link that is edited, truncated or sealed with another key is refused.
 5. **A form twin for every model step.** Each reading (brief, quote, change) has a plain form that produces the same validated object and the same operation, with no model call. If Gemini is out of quota, times out or the server has no key, the app says why and shows the matching form. The check page, when there is a reading, is pre-filled only with what was verified. The whole loop works without a model and without JavaScript ([`tests/http/no-model-path.test.ts`](tests/http/no-model-path.test.ts)).
@@ -227,7 +227,7 @@ Requires Node 24 (see `.nvmrc`).
 npm ci && npm run verify
 ```
 
-`verify` runs the type check, lint, validation of the planning data, the tests, the 250-line file cap, the forbidden-pattern and leaked-key scan, and the repository size check. It needs no API key, because the tests run offline and any attempt to fetch fails the test. The CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same steps, plus `npm audit --omit=dev --audit-level=high` right after `npm ci` and the build, with no key.
+`verify` runs the type check, lint, the Prettier format check, validation of the planning data, the tests, the 250-line file cap, the forbidden-pattern and leaked-key scan, and the repository size check. It needs no API key, because the tests run offline and any attempt to fetch fails the test. The CI workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same steps, with the tests run under coverage (`npm run coverage`), plus `npm audit --omit=dev --audit-level=high` right after `npm ci` and the build at the end, with no key.
 
 To run the app:
 
@@ -246,12 +246,12 @@ npm run dev              # http://localhost:3000
 
 ## Testing
 
-On 27 Oct 2026, `npx vitest run` at commit `28c5d95` ended with:
+On 27 Oct 2026, `npx vitest run` at commit `3ff942e` ended with:
 
 ```
- Test Files  117 passed (117)
-      Tests  2427 passed (2427)
-   Duration  31.31s
+ Test Files  123 passed (123)
+      Tests  2579 passed (2579)
+   Duration  60.73s
 ```
 
 The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network call throw. What the main groups prove:
@@ -275,7 +275,7 @@ The suite runs offline: [`tests/setup.ts`](tests/setup.ts) makes any network cal
 | Plain forms and the no-model path | Every step works through a plain form and a 303 when no model call succeeds, and gives the same plan | [`tests/http/no-model-path.test.ts`](tests/http/no-model-path.test.ts), [`tests/http/enter.test.ts`](tests/http/enter.test.ts), [`tests/http/quotes`](tests/http/quotes), [`tests/http/change`](tests/http/change) |
 | Accessibility | No automated axe violations on any page in either language; the focusable table scroll region and the read-button hints are unit-tested | [`tests/a11y`](tests/a11y), [`tests/unit/components`](tests/unit/components) |
 
-**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 27 Oct 2026 it reported line coverage of 99.51% (2,275 of 2,286 lines) for `src/core`, with 97.06% of statements, 92.49% of branches and 99.14% of functions. The figure is a measurement, not a gate: the config sets no threshold.
+**Coverage.** `npm run coverage` (`vitest run --coverage`) measures `src/core` only, on purpose: it holds every decision, whereas a figure over the whole app would average in framework glue. On 27 Oct 2026 it reported line coverage of 99.52% (2,308 of 2,319 lines) for `src/core`, with 97.11% of statements, 92.53% of branches and 99.16% of functions, at commit `3ff942e`. The figure is a measurement, not a gate: the config sets no threshold.
 
 A deployed URL is checked separately with `npm run smoke` (or `node scripts/smoke.mjs <url>`; the default is the Cloud Run service). [`scripts/smoke.mjs`](scripts/smoke.mjs) makes no model call: it checks the health route, distinct page titles in both languages, the fixed security headers, the form twin through to a plan page, a damaged plan link, a wrong method and the privacy sentence under the read button. It prints one PASS or FAIL line per check and exits non-zero on any failure. It needs a live URL, so it is not part of `verify` or CI.
 
@@ -312,7 +312,7 @@ The app is built for a small phone, a slow connection, a keyboard, a screen read
 
 - **Prompt injection.** Pasted text is data inside a delimiter. The model's schemas have no field for a decision, so a planted instruction has nowhere to land, and decision code works only on the structured values the user has confirmed. The injection test covers this.
 - **State.** The plan link is AES-256-GCM sealed with a key that never leaves the server, a random nonce per link and associated data that binds it to this purpose. Decoding checks length, character set, authentication tag, an inflate size cap and the schema, in that order.
-- **Headers.** Every response carries a Content-Security-Policy with a fresh nonce for each request (`script-src` uses `'self'`, the nonce and `'strict-dynamic'`, with no `unsafe-inline` or `unsafe-eval`), `frame-ancestors 'none'`, `form-action 'self'`, `nosniff`, a same-origin referrer policy and a Permissions-Policy that refuses powerful browser features.
+- **Headers.** Every response carries a Content-Security-Policy with a fresh nonce for each request (`script-src` uses `'self'`, the nonce and `'strict-dynamic'`, with no `unsafe-inline` or `unsafe-eval`), `frame-ancestors 'none'` (and `X-Frame-Options: DENY`), `form-action 'self'`, `nosniff`, a same-origin referrer policy, a Permissions-Policy that refuses powerful browser features, HSTS for two years, and same-origin Cross-Origin-Opener-Policy and Cross-Origin-Resource-Policy.
 - **Input.** Request bodies are capped and parsed with Zod. A malformed body is answered with a 4xx, never a 500. Every redirect is built from fixed words and a closed list.
 - **Secrets.** Keys come from the environment (Secret Manager on Cloud Run) and are never logged. The logger writes only allowlisted, shape-checked fields, so pasted text and tokens cannot reach a log line. CI scans for key-shaped strings.
 - **Rate limiting** is per instance and keyed on the address Google's front end appends, so a caller cannot choose their own bucket. A caller with many addresses still gets many buckets, and the limits are stated as such.

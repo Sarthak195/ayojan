@@ -590,7 +590,7 @@
             "hi": "दो की जगह एक कैमरा टीम, और ड्रोन या लंबी फ़िल्म नहीं।"
           },
           "basis": "Planning assumption chosen by the author: one crew instead of two and no extras cuts about a quarter of a photo package.",
-          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: दो की जगह एक टीम और कोई अतिरिक्त चीज़ नहीं, इससे फ़ोटो पैकेज का लगभग एक चौथाई ख़र्च कम हो जाता है।",
+          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: दो की जगह एक टीम रखने और ड्रोन जैसी अतिरिक्त चीज़ें छोड़ने से फ़ोटो पैकेज का लगभग एक चौथाई ख़र्च कम हो जाता है।",
           "category": "photo",
           "percent": 25,
           "status": "offered",
@@ -674,7 +674,7 @@
             "hi": "आयोजन के दिन अचानक के ख़र्च के लिए कम पैसे बचेंगे।"
           },
           "basis": "Planning assumption chosen by the author: half the reserve is the most that can be spent while still keeping some cover.",
-          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: अचानक के ख़र्च के लिए रखी रक़म में से आधी तक ही ख़र्च की जा सकती है, ताकि कुछ सहारा बचा रहे।",
+          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: कमी पूरी करने के लिए अचानक के ख़र्च वाली रक़म में से ज़्यादा से ज़्यादा आधी ही ली जा सकती है, ताकि कुछ सहारा बचा रहे।",
           "category": "contingency",
           "percent": null,
           "status": "offered",
@@ -703,7 +703,7 @@
             "hi": "परिवार पहले सोचे गए बजट से ज़्यादा ख़र्च करेगा।"
           },
           "basis": "Planning assumption chosen by the author: raising the budget by exactly the gap is always an honest option to show.",
-          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: बजट को ठीक कमी जितना बढ़ाना हमेशा दिखाने लायक एक ईमानदार विकल्प है।",
+          "basisHi": "योजना के लिए लेखक का चुना हुआ अनुमान: बजट को ठीक उतना बढ़ाना जितना पैसा कम पड़ रहा है, हमेशा दिखाने लायक एक ईमानदार विकल्प है।",
           "category": null,
           "percent": null,
           "status": "offered",

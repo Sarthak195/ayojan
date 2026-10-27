@@ -411,6 +411,14 @@ const plantedFaults: readonly [string, string, Mutation, RegExp][] = [
     /\(smaller-band\): basisHi: Hindi text must be written in Devanagari/,
   ],
   [
+    'hindi-basis-with-english-body',
+    'levers.yaml',
+    (d) => {
+      byId(d, 'levers', 'smaller-band').basisHi = `${BASIS_PREFIX_HI}half the band.`;
+    },
+    /\(smaller-band\): basisHi: The Hindi basis must continue in Devanagari/,
+  ],
+  [
     'hindi-basis-without-the-phrase',
     'budget-weights.yaml',
     (d) => {

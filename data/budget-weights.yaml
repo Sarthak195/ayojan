@@ -5,6 +5,7 @@
 # occasions: the occasions that use the profile; every occasion appears in exactly one profile.
 # multipliers: applied to baseWeight by the priority the family chose, then everything is normalised again.
 # reviewed: a record of who reviewed the row and when, for people; no plan or page uses it.
+# basisHi: the basis in Hindi, AI-written on 2026-10-28 and not reviewed by a person; the reviewed line does not cover it.
 
 multipliers:
   - priority: more
@@ -66,7 +67,7 @@ profiles:
         perGuestSharePercent: 20
         floor: { of: allocation, percent: 50 }
         basis: 'Planning assumption chosen by the author: decor is a mid-sized share that grows a little with more tables and seating.'
-        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: सजावट बीच के आकार का हिस्सा है, जो ज़्यादा मेज़ों और कुर्सियों के साथ थोड़ा बढ़ता है।'
+        basisHi: 'योजना के लिए लेखक का चुना हुआ अनुमान: सजावट का हिस्सा न बहुत बड़ा है न बहुत छोटा, और ज़्यादा मेज़ों और कुर्सियों के साथ थोड़ा बढ़ता है।'
         reviewed: "2026-10-26 AI-assisted review at the author's request"
       - category: photo
         en: Photo and video

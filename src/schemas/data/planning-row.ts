@@ -36,6 +36,11 @@ export const BasisHi = Hindi.refine(
   (text) => text.startsWith(BASIS_PREFIX_HI) && text.length > BASIS_PREFIX_HI.length,
   `The Hindi basis must read "${BASIS_PREFIX_HI}" followed by one line of reasoning.`,
 )
+  // The fixed phrase is Devanagari on its own, so the reasoning after it needs its own check.
+  .refine(
+    (text) => DEVANAGARI.test(text.slice(BASIS_PREFIX_HI.length)),
+    'The Hindi basis must continue in Devanagari after the fixed phrase.',
+  )
   .refine((text) => !text.includes('\n'), 'The Hindi basis must be one line.')
   .refine(
     (text) => !CITATION.test(text),
